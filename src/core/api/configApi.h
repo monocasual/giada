@@ -29,6 +29,8 @@
 
 #include "src/core/kernelAudio.h"
 #include "src/core/kernelMidi.h"
+#include "src/core/model/behaviors.h"
+#include "src/core/model/types.h"
 #include <vector>
 
 namespace giada::m::model
@@ -73,7 +75,7 @@ public:
 	const std::vector<std::string>&     midi_getMidiMapFilesFound() const;
 	std::string                         midi_getCurrentMidiMapPath() const;
 
-	bool               midi_setAPI(RtMidi::Api);
+	void               midi_setAPI(RtMidi::Api);
 	KernelMidi::Result midi_openOutDevice(std::size_t);
 	KernelMidi::Result midi_openInDevice(std::size_t);
 	void               midi_closeOutDevice(std::size_t);
@@ -82,7 +84,7 @@ public:
 	void midi_setSyncMode(int syncMode);
 	void midi_setMidiMapPath(const std::string& midiMapPath);
 
-	const model::Behaviors& behaviors_getData() const;
+	model::Behaviors behaviors_getData() const;
 
 	void behaviors_storeData(const model::Behaviors&);
 

@@ -39,9 +39,9 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-geChannel::geChannel(int x, int y, int w, int h, c::channel::Data d)
+geChannel::geChannel(int x, int y, int w, int h, const c::channel::Channel& c)
 : geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
-, m_channel(d)
+, m_channel(c)
 {
 }
 
@@ -82,9 +82,13 @@ void geChannel::refresh()
 
 	playButton->setValue(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
 	midiActivity->redraw();
-	arm->setValue(m_channel.isArmed());
-	mute->setValue(m_channel.isMuted());
-	solo->setValue(m_channel.isSoloed());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geChannel::update()
+{
+	arm->setValue(m_channel.armed);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -129,7 +133,7 @@ bool geChannel::handleKey(int e)
 
 /* -------------------------------------------------------------------------- */
 
-const c::channel::Data& geChannel::getData() const
+const c::channel::Channel& geChannel::getData() const
 {
 	return m_channel;
 }

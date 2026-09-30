@@ -27,6 +27,7 @@
 #ifndef G_PLUGINS_API_H
 #define G_PLUGINS_API_H
 
+#include "src/core/model/types.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/types.h"
 
@@ -46,9 +47,9 @@ class Plugin;
 class PluginsApi
 {
 public:
-	PluginsApi(KernelAudio&, PluginManager&, PluginHost&, model::Model&);
+	PluginsApi(model::Model&, PluginManager&, PluginHost&);
 
-	const Plugin*           get(ID pluginId) const;
+	bool                    hasEditor(ID pluginId) const;
 	std::vector<PluginInfo> getInfo() const;
 	int                     countAvailablePlugins() const;
 
@@ -63,10 +64,9 @@ public:
 	void scan(const std::string& dir, const std::function<bool(float)>& progress);
 
 private:
-	KernelAudio&   m_kernelAudio;
+	model::Model&  m_model;
 	PluginManager& m_pluginManager;
 	PluginHost&    m_pluginHost;
-	model::Model&  m_model;
 };
 } // namespace giada::m
 

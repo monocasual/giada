@@ -40,15 +40,17 @@ IOApi::IOApi(model::Model& m, MidiDispatcher& md)
 
 const model::MidiIn& IOApi::getModelMidiIn() const
 {
-	return m_model.get().midiIn;
+	return m_model.read().getDocument().midiIn;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void IOApi::channel_enableMidiInput(ID channelId, bool v)
 {
-	m_model.get().tracks.getChannel(channelId).midiInput.enabled = v;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [channelId, v](model::DocumentEdit& e)
+	{
+		e.get().tracks.getChannel(channelId).midiInput.enabled = v;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -58,52 +60,62 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 	/* Enabling MIDI lightning also enables MIDI input, because MIDI input is
 	needed for learning the lightning actions. */
 
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
+	m_model.write(model::SwapType::NONE, [channelId, v](model::DocumentEdit& e)
+	{
+		model::Channel& ch = e.get().tracks.getChannel(channelId);
 
-	ch.midiLightning.enabled = v;
-	if (v)
-		ch.midiInput.enabled = true;
-
-	m_model.swap(m::model::SwapType::NONE);
+		ch.midiLightning.enabled = v;
+		if (v)
+			ch.midiInput.enabled = true;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 {
-	m_model.get().tracks.getChannel(channelId).midiChannel->outputEnabled = v;
-	m_model.swap(m::model::SwapType::HARD); // Rebuild info printed in MIDI channels
+	m_model.write(model::SwapType::SOFT, [channelId, v](model::DocumentEdit& e)
+	{
+		e.get().tracks.getChannel(channelId).midiChannel->outputEnabled = v;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 {
-	m_model.get().tracks.getChannel(channelId).sampleChannel->velocityAsVol = v;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [channelId, v](model::DocumentEdit& e)
+	{
+		e.get().tracks.getChannel(channelId).sampleChannel->velocityAsVol = v;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 {
-	m_model.get().tracks.getChannel(channelId).midiInput.filter = ch;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [channelId, ch](model::DocumentEdit& e)
+	{
+		e.get().tracks.getChannel(channelId).midiInput.filter = ch;
+	});
 }
 
 void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 {
-	m_model.get().tracks.getChannel(channelId).midiChannel->outputFilter = ch;
-	m_model.swap(m::model::SwapType::HARD); // Rebuild info printed in MIDI channels
+	m_model.write(model::SwapType::SOFT, [channelId, ch](model::DocumentEdit& e)
+	{
+		e.get().tracks.getChannel(channelId).midiChannel->outputFilter = ch;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool IOApi::channel_setKey(ID channelId, int k)
+void IOApi::channel_setKey(ID channelId, int k)
 {
-	m_model.get().tracks.getChannel(channelId).key = k;
-	m_model.swap(m::model::SwapType::HARD);
-	return true;
+	m_model.write(model::SwapType::SOFT, [channelId, k](model::DocumentEdit& e)
+	{
+		e.get().tracks.getChannel(channelId).key = k;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,15 +163,19 @@ void IOApi::plugin_clearMidiLearn(int param, ID pluginId, std::function<void()> 
 
 void IOApi::master_enableMidiLearn(bool v)
 {
-	m_model.get().midiIn.enabled = v;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [v](model::DocumentEdit& e)
+	{
+		e.get().midiIn.enabled = v;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void IOApi::master_setMidiFilter(int c)
 {
-	m_model.get().midiIn.filter = c;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [c](model::DocumentEdit& e)
+	{
+		e.get().midiIn.filter = c;
+	});
 }
 } // namespace giada::m

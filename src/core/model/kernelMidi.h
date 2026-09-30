@@ -29,6 +29,7 @@
 
 #include "src/core/const.h"
 #include <RtMidi.h>
+#include <set>
 
 namespace giada::m::model
 {

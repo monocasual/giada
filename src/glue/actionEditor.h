@@ -27,11 +27,18 @@
 #ifndef G_GLUE_ACTION_EDITOR_H
 #define G_GLUE_ACTION_EDITOR_H
 
-#include "src/core/actions/action.h"
+#include "src/core/model/action.h"
+#include "src/core/model/modelView.h"
 #include "src/core/types.h"
 #include <optional>
 #include <string>
 #include <vector>
+
+namespace giada::m::model
+{
+class ModelView;
+class SampleChannel;
+} // namespace giada::m::model
 
 namespace giada::m
 {
@@ -39,42 +46,57 @@ class SampleChannel;
 class Channel;
 } // namespace giada::m
 
-/* giada::c::actionEditor
-Functions to interact with the Action Editor. Only the main thread can use these! */
-
 namespace giada::c::actionEditor
 {
-struct SampleData
+class Action
 {
-	SampleData(const m::SampleChannel&);
+public:
+	Action(const m::model::Action&);
+
+	ID           id;
+	Tick         tick;
+	m::MidiEvent event;
+	ID           prevId;
+	ID           nextId;
+	bool         isValid;
+	bool         isVolumeEnvelope;
+};
+
+class SampleData
+{
+public:
+	SampleData(const m::model::SampleChannel&);
 
 	SamplePlayerMode channelMode;
 	bool             isLoopMode;
 };
 
-struct Data
+class Data
 {
-	Data() = default;
-	Data(const m::Channel&, Scene);
+public:
+	Data(const m::model::ModelView&, ID channelId);
 
 	Tick getCurrentTick() const;
-	bool isChannelPlaying() const;
 
-	ID                            channelId;
-	Scene                         scene;
-	std::string                   channelName;
-	Tick                          ticksInSeq;
-	Tick                          ticksInBeat;
-	Tick                          ticksInBar;
-	Tick                          ticksInLoop;
-	std::vector<const m::Action*> actions;
+	ID                  channelId;
+	Scene               scene;
+	std::string         channelName;
+	bool                isChannelPlaying;
+	Tick                ticksInSeq;
+	Tick                ticksInBeat;
+	Tick                ticksInBar;
+	Tick                ticksInLoop;
+	std::vector<Action> actions;
 
 	std::optional<SampleData> sample;
+
+private:
+	m::model::ModelView m_view;
 };
 
 Data getData(ID channelId);
 
-const m::Action* findAction(ID);
+std::optional<Action> findAction(ID);
 
 /* MIDI actions.  */
 

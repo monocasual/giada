@@ -33,19 +33,19 @@
 
 namespace giada::c::channel
 {
-struct Data;
+class Channel;
 }
 namespace giada::v
 {
 class geChannelProgress : public Fl_Box
 {
 public:
-	geChannelProgress(int x, int y, int w, int h, c::channel::Data& d);
+	geChannelProgress(int x, int y, int w, int h, const c::channel::Channel&);
 
 	void draw() override;
 
 private:
-	c::channel::Data& m_channel;
+	const c::channel::Channel& m_channel;
 };
 } // namespace giada::v
 

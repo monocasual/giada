@@ -33,7 +33,6 @@
 #include "src/deps/concurrentqueue/concurrentqueue.h"
 #include <RtMidi.h>
 #include <concepts>
-#include <cstdint>
 #include <functional>
 #include <memory>
 #include <string>
@@ -76,7 +75,7 @@ public:
 	/* setAPI
 	Sets new RtMidi API. Also resets all model::KernelMidi data. */
 
-	bool setAPI(RtMidi::Api API);
+	void setAPI(RtMidi::Api API);
 
 	/* [open|close][I/0]device
 	Opens or closes a new I/O device. Also updates model::KernelMidi data if

@@ -27,8 +27,8 @@
 #ifndef G_STORAGE_API_H
 #define G_STORAGE_API_H
 
+#include "src/core/model/loadState.h"
 #include "src/core/model/model.h"
-#include "src/core/types.h"
 #include "src/gui/model.h"
 #include <functional>
 #include <string>
@@ -40,6 +40,7 @@ class Engine;
 class Mixer;
 class MidiDispatcher;
 class MidiSynchronizer;
+class PluginManager;
 class ChannelManager;
 class KernelAudio;
 class Sequencer;

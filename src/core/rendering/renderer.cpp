@@ -33,7 +33,9 @@
 #include "src/core/rendering/pluginRendering.h"
 #include "src/core/rendering/sampleAdvance.h"
 #include "src/core/rendering/sampleRendering.h"
+#include "src/utils/time.h"
 #include <chrono>
+#include <cmath>
 #ifdef WITH_AUDIO_JACK
 #include "src/core/jackSynchronizer.h"
 #include "src/core/jackTransport.h"
@@ -41,12 +43,14 @@
 
 namespace giada::m::rendering
 {
+namespace
+{
 using Now      = std::chrono::time_point<std::chrono::high_resolution_clock>;
 using Duration = std::chrono::duration<double, std::micro>;
 
 /* -------------------------------------------------------------------------- */
 
-double computeCPULoad_(const Now& startTime, unsigned int sampleRate, int bufferSize)
+double computeCpuLoad_(const Now& startTime, unsigned int sampleRate, int bufferSize)
 {
 	const Now      endTime        = std::chrono::high_resolution_clock::now();
 	const Duration processingTime = endTime - startTime;
@@ -56,6 +60,42 @@ double computeCPULoad_(const Now& startTime, unsigned int sampleRate, int buffer
 
 	return load;
 }
+
+/* -------------------------------------------------------------------------- */
+
+RenderInfo findRenderInfo_(const RenderCommands& commands, ID channelId)
+{
+	for (const auto& [id, info] : commands)
+		if (id == channelId)
+			return info;
+	return {RenderInfo::Mode::NONE};
+}
+
+/* -------------------------------------------------------------------------- */
+
+juce::AudioPlayHead::PositionInfo makePluginPositionInfo_(
+    const model::Sequencer& sequencer,
+    Frame                   blockStart,
+    int                     sampleRate,
+    bool                    isPlaying)
+{
+	const TimeSignature signature   = sequencer.getTimeSignature();
+	const double        bpm         = sequencer.getBpm();
+	const double        ppqPosition = u::time::frameToQuarterNotes(blockStart, sampleRate, bpm);
+	const int           beatsPerBar = signature.beats / signature.bars;
+
+	juce::AudioPlayHead::PositionInfo position;
+	position.setTimeInSamples(blockStart);
+	position.setTimeInSeconds(static_cast<double>(blockStart) / sampleRate);
+	position.setBpm(bpm);
+	position.setPpqPosition(ppqPosition);
+	position.setPpqPositionOfLastBarStart(std::floor(ppqPosition / beatsPerBar) * beatsPerBar);
+	position.setTimeSignature(juce::AudioPlayHead::TimeSignature{beatsPerBar, 4});
+	position.setIsPlaying(isPlaying);
+
+	return position;
+}
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -75,234 +115,323 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 , m_jackTransport(jt)
 #endif
 {
+	/* Reserve enough space for the render commands so that we never allocate
+	on the real-time thread. We assume here maximum 512 channels per project,
+	it feels enough for now. */
+
+	m_renderCommands.reserve(512);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model& model) const
+void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::Model& model) const
 {
+	const Now startTime = std::chrono::high_resolution_clock::now();
+
 	/* Clean up output buffer before any rendering. Do this even if mixer is
 	disabled to avoid audio leftovers during a temporary suspension (e.g. when
 	loading a new patch). */
 
 	out.clear();
 
-	/* Prepare the DocumentLock. From this point on (until out of scope) the
-	Document is locked for realtime rendering by the audio thread. Rendering
-	functions must access the realtime Document coming from documentLock.get(). */
-
-	const model::DocumentLock documentLock = model.get_RT();
-	const model::Document&    document_RT  = documentLock.get();
-	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
-	const model::Mixer&       mixer        = document_RT.mixer;
-	const model::Sequencer&   sequencer    = document_RT.sequencer;
-	const model::Tracks&      tracks       = document_RT.tracks;
-	const model::Actions&     actions      = document_RT.actions;
+	const model::ModelView    view   = model.readRealtime();
+	const model::Document&    doc    = view.getDocument();
+	const model::Assets&      assets = view.getAssets();
+	const model::Parameters&  params = view.getParameters();
 
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
-	if (!mixer.a_isActive())
+	if (!params.mixer.isActive())
 		return;
 
+	const int bufferSize = out.countFrames();
+	const int sampleRate = doc.kernelAudio.samplerate;
+
 #ifdef WITH_AUDIO_JACK
-	if (kernelAudio.api == RtAudio::Api::UNIX_JACK)
+	if (doc.kernelAudio.api == RtAudio::Api::UNIX_JACK)
 		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
-	/* If the m_sequencer is running, advance it first (i.e. parse it for events).
-	Also advance channels (i.e. let them react to m_sequencer events), only if the
-	document is not locked: another thread might altering channel's data in the
-	meantime (e.g. Plugins or Waves). */
+	const Frame currentFrame   = params.sequencer.getCurrentFrame();
+	const auto  pluginPosition = makePluginPositionInfo_(doc.sequencer, currentFrame,
+	     sampleRate, doc.sequencer.isRunning());
 
-	if (sequencer.isRunning())
+	/* If the sequencer is running, advance it first (i.e. parse it for events).
+	Also advance channels (i.e. let them react to sequencer events). */
+
+	if (doc.sequencer.isRunning())
 	{
-		const Frame      currentFrame  = sequencer.a_getCurrentFrame();
-		const int        bufferSize    = out.countFrames();
 		const int        quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const FrameRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, actions);
-		m_sequencer.render(out, document_RT);
-		if (!document_RT.locked)
-			advanceTracks(events, tracks, renderRange, quantizerStep);
+		const Sequencer::EventBuffer& events = m_sequencer.advance(doc.sequencer, params.sequencer, doc.actions, bufferSize);
+		advanceTracks(events, view, renderRange, quantizerStep, m_renderCommands);
+
+		if (doc.sequencer.metronome)
+			m_sequencer.render(out);
 	}
+	else
+		m_renderCommands.clear(); // Don't reuse stale commands from the previous block
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int      sampleRate     = kernelAudio.samplerate;
-	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(sampleRate) : sequencer.getFramesInLoop(sampleRate);
-	const Scene    scene          = sequencer.a_getCurrentScene();
-	const bool     hasSolos       = mixer.hasSolos;
-	const bool     hasInput       = in.isAllocd();
-	const Channel& masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
-	const Channel& masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
-	const Channel& previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const model::Channel&           masterOutCh   = doc.tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const model::ChannelView        masterOutView = view.makeChannelView(masterOutCh);
+	const model::Channel&           masterInCh    = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
+	const model::ChannelView        masterInView  = view.makeChannelView(masterInCh);
+	const model::Channel&           previewCh     = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const model::SampleChannelView& previewChView = view.makeSampleChannelView(previewCh, Scene{0});
 
-	m_mixer.render(in, document_RT, maxFramesToRec);
+	/* Take care of the input side of audio: prepare it, check for recording
+	threshold, record it if required. */
 
-	if (hasInput)
-		renderMasterIn(masterInCh, mixer.getInBuffer());
+	m_mixer.handleAudioInput(in, view);
 
-	if (!document_RT.locked)
-		renderTracks(tracks, masterOutCh.shared->audioBuffer, out, mixer.getInBuffer(),
-		    scene, hasSolos, sequencer.isRunning());
+	/* Then render the Master input channel. */
 
-	renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
-	if (mixer.renderPreview)
-		renderPreview(previewCh, out);
+	renderMasterIn(masterInView, assets, pluginPosition, assets.mixerRendering->getInBuffer());
 
-	m_mixer.updateOutputPeak(mixer, masterOutCh.shared->audioBuffer);
+	/* Render tracks. */
+
+	renderTracks(view, pluginPosition, masterOutView, out);
+
+	renderMasterOut(masterOutView, assets, pluginPosition, out, doc.kernelAudio.deviceOut.channelsStart);
+
+	if (doc.mixer.renderPreview)
+		renderPreview(previewChView, out);
+
+	m_mixer.updateOutputPeak(params.mixer, masterOutView.getRendering().getAudioBuffer());
 
 	/* Post processing. */
 
-	m_mixer.finalizeOutput(mixer, out, mixer.inToOut, kernelAudio.limitOutput, masterOutCh.volume);
+	m_mixer.finalizeOutput(masterInView.getRendering().getAudioBuffer(), out, doc.mixer.inToOut,
+	    doc.kernelAudio.limitOutput, masterOutCh.volume);
+
+	/* CPU load computation. */
+
+	params.kernelAudio.setCpuLoad(computeCpuLoad_(startTime, doc.kernelAudio.samplerate, bufferSize));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::Tracks& tracks,
-    FrameRange block, int quantizerStep) const
+void Renderer::advanceTracks(
+    const Sequencer::EventBuffer& events,
+    const model::ModelView&       view,
+    FrameRange                    block,
+    Frame                         quantizerStep,
+    RenderCommands&               renderCommands) const
 {
-	for (const model::Track& track : tracks.getAll())
-		for (const Channel& c : track.getChannels().getAll())
-			if (!c.isInternal())
-				advanceChannel(c, events, block, quantizerStep);
+	renderCommands.clear(); // Keeps the capacity, no reallocation
+
+	for (const model::Track& track : view.getDocument().tracks.getAll())
+	{
+		for (const model::Channel& c : track.getChannels().getAll())
+		{
+			if (c.isInternal())
+				continue;
+			const model::ChannelView channelView = view.makeChannelView(c);
+			renderCommands.push_back({c.id, advanceChannel(channelView, events, block, quantizerStep)});
+		}
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events,
-    FrameRange block, Frame quantizerStep) const
+RenderInfo Renderer::advanceChannel(const model::ChannelView& channelView,
+    const Sequencer::EventBuffer&                             events,
+    FrameRange                                                block,
+    Frame                                                     quantizerStep) const
 {
-	if (ch.shared->quantizer)
-		ch.shared->quantizer->advance(block, quantizerStep);
+	const model::Channel& ch = channelView.getChannel();
+
+	// TODO
+	// if (ch.shared->quantizer)
+	//	ch.shared->quantizer->advance(block, quantizerStep);
+
+	RenderInfo info = {RenderInfo::Mode::NONE};
 
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-			advanceMidiChannel(ch, e, m_kernelMidi);
+			advanceMidiChannel(channelView, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			advanceSampleChannel(ch, e);
+			info = advanceSampleChannel(channelView, e);
 	}
+
+	return info;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& masterOut,
-    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene scene, bool hasSolos,
-    bool seqIsRunning) const
+void Renderer::renderTracks(
+    const model::ModelView&                  view,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    const model::ChannelView&                masterOut,
+    mcl::AudioBuffer&                        hardwareOut) const
 {
-	masterOut.clear();
+	const model::Document&           doc                = view.getDocument();
+	const model::Assets&             assets             = view.getAssets();
+	const model::Parameters&         params             = view.getParameters();
+	const model::Channel::Rendering& masterOutRendering = masterOut.getRendering();
 
-	for (const model::Track& track : tracks.getAll())
+	const mcl::AudioBuffer& in           = assets.mixerRendering->getInBuffer();
+	const bool              seqIsRunning = doc.sequencer.isRunning();
+	const bool              hasSolos     = doc.mixer.hasSolos;
+	const Scene             scene        = params.sequencer.getCurrentScene();
+
+	masterOutRendering.clearAudioBuffer(0);
+
+	for (const model::Track& track : doc.tracks.getAll())
 	{
 		if (track.isInternal())
 			continue;
 
-		const Channel& group = track.getGroupChannel();
-		group.shared->audioBuffer.clear();
+		const model::Channel&    group     = track.getGroupChannel();
+		const model::ChannelView groupView = view.makeChannelView(group);
 
-		for (const Channel& c : track.getChannels().getAll())
+		groupView.getRendering().clearAudioBuffer(0);
+
+		for (const model::Channel& c : track.getChannels().getAll())
 		{
-			renderNormalChannel(c, in, scene, seqIsRunning);
+			const model::ChannelView channelView = view.makeChannelView(c);
+			const RenderInfo         renderInfo  = findRenderInfo_(m_renderCommands, c.id);
+
+			renderNormalChannel(channelView, view, renderInfo, pluginPosition, in, scene, seqIsRunning);
+
 			if (!c.isAudible(hasSolos))
 				continue;
 			if (c.sendToMaster)
-				mergeChannel(c, group.shared->audioBuffer);
+				mergeChannel(channelView, groupView);
 			for (const int offset : c.extraOutputs)
-				mergeChannel(c, hardwareOut, offset);
+				mergeChannel(channelView, hardwareOut, offset);
 		}
 
-		renderAudioPlugins(group, m_pluginHost);
+		renderAudioPlugins(groupView, assets, pluginPosition, m_pluginHost);
 
 		if (!group.isAudible(hasSolos))
 			continue;
 		if (group.sendToMaster)
-			mergeChannel(group, masterOut);
+			mergeChannel(groupView, masterOut);
 		for (const int offset : group.extraOutputs)
-			mergeChannel(group, hardwareOut, offset);
+			mergeChannel(groupView, hardwareOut, offset);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in,
-    Scene scene, bool seqIsRunning) const
+void Renderer::renderNormalChannel(
+    const model::ChannelView&                channelView,
+    const model::ModelView&                  view,
+    RenderInfo                               renderInfo,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    const mcl::AudioBuffer&                  in,
+    Scene                                    scene,
+    bool                                     seqIsRunning) const
 {
-	ch.shared->audioBuffer.clear();
+	const model::Assets& assets = view.getAssets();
+	channelView.getRendering().clearAudioBuffer(0);
 
-	if (ch.type == ChannelType::SAMPLE)
-		renderSampleChannel(ch, in, scene, seqIsRunning);
-	else if (ch.type == ChannelType::MIDI)
-		renderMidiChannel(ch);
+	if (channelView.getChannel().type == ChannelType::SAMPLE)
+	{
+		renderSampleChannel(view.makeSampleChannelView(channelView, scene), renderInfo, in, seqIsRunning);
+		renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
+	}
+	else if (channelView.getChannel().type == ChannelType::MIDI)
+	{
+		renderAudioAndMidiPlugins(channelView, assets, pluginPosition, m_pluginHost);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
+void Renderer::renderMasterOut(
+    const model::ChannelView&                channelView,
+    const model::Assets&                     assets,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    mcl::AudioBuffer&                        out,
+    int                                      channelOffset) const
 {
-	m_pluginHost.processStack(in, ch.plugins, nullptr);
+	renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
+	mergeChannel(channelView, out, channelOffset);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, int channelOffset) const
+void Renderer::renderMasterIn(
+    const model::ChannelView&                channelView,
+    const model::Assets&                     assets,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    const mcl::AudioBuffer&                  input) const
 {
-	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	mergeChannel(ch, out, channelOffset);
+	const model::Channel::Rendering& rendering = channelView.getRendering();
+
+	rendering.clearAudioBuffer(0);
+	rendering.copyToAudioBufferFrom(input, input.countFrames(), 0, 0);
+
+	renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
+void Renderer::renderPreview(const model::SampleChannelView& sampleView, mcl::AudioBuffer& out) const
 {
-	ch.shared->audioBuffer.clear();
+	const model::Channel::Rendering& rendering = sampleView.getRendering();
 
-	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, Scene{0}, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
+	rendering.clearAudioBuffer(0);
 
-	out.sumAll(ch.shared->audioBuffer, ch.volume);
+	if (sampleView.getParameters().isPlaying())
+		rendering::renderSampleChannel(sampleView, {}, /*seqIsRunning=*/false);
+
+	out.sumAll(rendering.getAudioBuffer(), sampleView.getChannel().volume);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, Scene scene, bool seqIsRunning) const
+void Renderer::renderSampleChannel(
+    const model::SampleChannelView& sampleView,
+    RenderInfo                      renderInfo,
+    const mcl::AudioBuffer&         in,
+    bool                            seqIsRunning) const
 {
-	assert(ch.type == ChannelType::SAMPLE);
+	assert(sampleView.getChannel().type == ChannelType::SAMPLE);
 
-	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, scene, seqIsRunning);
+	if (sampleView.getParameters().isPlaying())
+		rendering::renderSampleChannel(sampleView, renderInfo, seqIsRunning);
 
-	if (ch.canReceiveAudio())
-		renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
-
-	renderAudioPlugins(ch, m_pluginHost);
+	// TODO
+	// if (ch.canReceiveAudio())
+	//	renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMidiChannel(const Channel& ch) const
+void Renderer::mergeChannel(
+    const model::ChannelView& src,
+    const model::ChannelView& dest) const
 {
-	assert(ch.type == ChannelType::MIDI);
+	const model::Channel& channel = src.getChannel();
 
-	renderAudioAndMidiPlugins(ch, m_pluginHost);
+	dest.getRendering().sumToAudioBufferFrom(
+	    src.getRendering().getAudioBuffer(),
+	    channel.pan,
+	    channel.volume * src.getParameters().getVolumeInternal());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out) const
+void Renderer::mergeChannel(
+    const model::ChannelView& channelView,
+    mcl::AudioBuffer&         out,
+    int                       destChannelOffset) const
 {
-	out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
-}
+	const model::Channel&            channel = channelView.getChannel();
+	const model::Channel::Rendering& src     = channelView.getRendering();
+	const mcl::AudioBuffer&          buf     = src.getAudioBuffer();
 
-/* -------------------------------------------------------------------------- */
+	assert(buf.countChannels() == static_cast<int>(channel.pan.get().size()));
 
-void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out, int destChannelOffset) const
-{
-	assert(ch.shared->audioBuffer.countChannels() == static_cast<int>(ch.pan.get().size()));
-
-	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
+	for (int i = 0; i < buf.countChannels(); i++)
 		if (destChannelOffset < out.countChannels())
-			out.sum(ch.shared->audioBuffer, i, i + destChannelOffset, ch.volume * ch.pan.get()[i]);
+			out.sum(buf, i, i + destChannelOffset, channel.volume * channel.pan.get()[i]);
 }
 } // namespace giada::m::rendering

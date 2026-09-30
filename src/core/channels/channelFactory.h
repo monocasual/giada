@@ -29,6 +29,7 @@
 
 #include "src/core/channels/channel.h"
 #include "src/core/idManager.h"
+#include "src/core/model/channel.h"
 #include "src/core/patch.h"
 #include "src/core/types.h"
 
@@ -42,31 +43,33 @@ namespace giada::m::channelFactory
 {
 struct Data
 {
-	Channel                        channel;
-	std::unique_ptr<ChannelShared> shared;
+	model::Channel                              channel;
+	std::shared_ptr<model::Channel::Parameters> parameters;
+	std::shared_ptr<model::Channel::Rendering>  rendering;
 };
 
 /* getNextId
-    Returns the next channel ID that will be assigned to a new channel. */
+Returns the next channel ID that will be assigned to a new channel. */
 
 ID getNextId();
 
 /* reset
-    Resets internal ID generator. */
+Resets internal ID generator. */
 
 void reset();
 
 /* create (1)
-    Creates a new channel. If channelId == 0 generates a new ID, reuse the one
-    passed in otherwise. */
+Creates a new channel. If channelId == 0 generates a new ID, reuse the one
+passed in otherwise. */
 
-Data create(ID channelId, ChannelType type, int sampleRate,
-    int bufferSize, Resampler::Quality, bool overdubProtection);
+Data create(ID channelId, ChannelType type, int sampleRate, int bufferSize,
+    Resampler::Quality, bool overdubProtection);
 
 /* create (2)
-    Creates a new channel given an existing one (i.e. clone). */
+Creates a new channel given an existing one (i.e. clone). */
 
-Data create(const Channel& ch, int sampleRate, int bufferSize, Resampler::Quality);
+Data create(const model::Channel& ch, int sampleRate, int bufferSize,
+    Resampler::Quality);
 
 /* (de)deserializeChannel
 Creates a new channel given the patch raw data and vice versa. */

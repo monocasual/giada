@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/midiIO/midiInputMaster.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/choice.h"
 #include "src/gui/elems/basics/flex.h"
@@ -37,6 +38,8 @@
 #include <format>
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {

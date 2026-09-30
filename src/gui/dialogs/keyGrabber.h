@@ -31,11 +31,6 @@
 #include <FL/Fl.H>
 #include <functional>
 
-namespace giada::c::channel
-{
-struct Data;
-}
-
 namespace giada::v
 {
 class geBox;
@@ -45,8 +40,9 @@ class gdKeyGrabber : public gdWindow
 public:
 	gdKeyGrabber(int key);
 
-	int  handle(int e) override;
-	void rebuild() override;
+	int handle(int e) override;
+
+	void rebuild();
 
 	/* onSetKey
 	Callback fired when this widget has grabbed an event. Returns a boolean value

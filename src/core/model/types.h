@@ -27,32 +27,15 @@
 #ifndef G_MODEL_TYPES_H
 #define G_MODEL_TYPES_H
 
+#include "src/core/model/assets.h"
 #include "src/core/model/document.h"
-#include "src/deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
+#include "src/core/model/parameters.h"
+#include "src/deps/realtime-model/RealtimeModel.hpp"
 
 namespace giada::m::model
 {
-/* DocumentLock
-Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
-real-time thread to lock the Document. */
-
-using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
-using DocumentLock  = AtomicSwapper::RtLock;
-
-/* SwapType
-Type of Document change.
-    Hard: the structure has changed (e.g. add a new channel);
-    Soft: a property has changed (e.g. change volume);
-    None: something has changed but we don't care.
-Used by model listeners to determine the type of change that occurred in the
-Document. */
-
-enum class SwapType
-{
-	HARD,
-	SOFT,
-	NONE
-};
+using RealtimeModel = mcl::RealtimeModel<model::Document, model::Assets, model::Parameters>;
+using SwapType      = mcl::SwapType;
 } // namespace giada::m::model
 
 #endif

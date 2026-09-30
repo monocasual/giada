@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_SHARED_H
-#define G_MODEL_SHARED_H
+#ifndef G_MODEL_DEPR_SHARED_H
+#define G_MODEL_DEPR_SHARED_H
 
-#include "src/core/model/channels.h"
-#include "src/core/model/kernelAudio.h"
-#include "src/core/model/loadState.h"
-#include "src/core/model/mixer.h"
-#include "src/core/model/sequencer.h"
+#include "src/core/model_DEPR_/channels.h"
+#include "src/core/model_DEPR_/kernelAudio.h"
+#include "src/core/model_DEPR_/loadState.h"
+#include "src/core/model_DEPR_/mixer.h"
+#include "src/core/model_DEPR_/sequencer.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/wave.h"
 
@@ -40,7 +40,7 @@ namespace giada::m
 class PluginManager;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Shared
 {

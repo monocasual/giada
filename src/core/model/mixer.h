@@ -32,28 +32,75 @@
 #include "src/core/weakAtomic.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/types.h"
-#include <atomic>
 
 namespace giada::m::model
 {
 class Mixer
 {
-	friend class Model;
-	friend class Shared;
-
 public:
-	bool  a_isActive() const;
-	Frame a_getInputTracker() const;
-	Peak  a_getPeakOut() const;
-	Peak  a_getPeakIn() const;
+	class Parameters
+	{
+	public:
+		bool  isActive() const;
+		Frame getInputTracker() const;
+		Peak  getPeakOut() const;
+		Peak  getPeakIn() const;
 
-	void a_setActive(bool) const;
-	void a_setInputTracker(Frame) const;
-	void a_setPeakOut(Peak) const;
-	void a_setPeakIn(Peak) const;
+		void setActive(bool) const;
+		void setInputTracker(Frame) const;
+		void setPeakOut(Peak) const;
+		void setPeakIn(Peak) const;
 
-	mcl::AudioBuffer& getRecBuffer() const;
-	mcl::AudioBuffer& getInBuffer() const;
+	private:
+		mutable WeakAtomic<bool>  m_active       = false;
+		mutable WeakAtomic<float> m_peakOutL     = 0.0f;
+		mutable WeakAtomic<float> m_peakOutR     = 0.0f;
+		mutable WeakAtomic<float> m_peakInL      = 0.0f;
+		mutable WeakAtomic<float> m_peakInR      = 0.0f;
+		mutable WeakAtomic<Frame> m_inputTracker = 0;
+	};
+
+	class Rendering final
+	{
+	public:
+		Rendering(int maxFramesInLoop, int framesInBuffer);
+
+		const mcl::AudioBuffer& getInBuffer() const;
+		const mcl::AudioBuffer& getRecBuffer() const;
+
+		/* getMaximumRecLength
+		Returns how many frame you can record with the current recording buffer
+		size. */
+
+		Frame getMaximumRecLength() const;
+
+		/* prepareInputBufferFrom
+		Prepares internal buffer for audio input, by filling it with 'src' and
+		a certain gain value. Typically 'src' is the hardware input. */
+
+		void prepareInputBufferFrom(const mcl::AudioBuffer& src, float gain) const;
+
+		/* sumInputToRecBuffer
+		Adds the prepared (with prepareInputBufferFrom()) input buffer to the
+		recording buffer, starting at offset. Existing recorded audio is
+		preserved and mixed with the new input. */
+
+		void sumInputToRecBuffer(Frame offset) const;
+
+		void resizeRecBuffer(Frame) const;
+		void clearRecBuffer() const;
+
+	private:
+		/* recBuffer
+		Working buffer for audio recording. */
+
+		mutable mcl::AudioBuffer m_recBuffer;
+
+		/* inBuffer
+		Working buffer for input channel. Used for the in->out bridge. */
+
+		mutable mcl::AudioBuffer m_inBuffer;
+	};
 
 #if G_DEBUG_MODE
 	void debug() const;
@@ -66,31 +113,6 @@ public:
 	bool           renderPreview      = false;
 	InputRecMode   inputRecMode       = InputRecMode::RIGID;
 	RecTriggerMode recTriggerMode     = RecTriggerMode::NORMAL;
-
-private:
-	struct Shared
-	{
-		Shared& operator=(const Shared&);
-
-		std::atomic<bool>  active       = false;
-		std::atomic<float> peakOutL     = 0.0f;
-		std::atomic<float> peakOutR     = 0.0f;
-		std::atomic<float> peakInL      = 0.0f;
-		std::atomic<float> peakInR      = 0.0f;
-		WeakAtomic<Frame>  inputTracker = 0;
-
-		/* recBuffer
-		Working buffer for audio recording. */
-
-		mcl::AudioBuffer recBuffer;
-
-		/* inBuffer
-		Working buffer for input channel. Used for the in->out bridge. */
-
-		mcl::AudioBuffer inBuffer;
-	};
-
-	Shared* shared = nullptr;
 };
 } // namespace giada::m::model
 

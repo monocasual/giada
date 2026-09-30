@@ -24,23 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_SHAREDLOCK_H
-#define G_MODEL_SHAREDLOCK_H
+#ifndef G_MODEL_PARAMETERS_H
+#define G_MODEL_PARAMETERS_H
 
-#include "src/core/model/types.h"
+#include "src/core/model/kernelAudio.h"
+#include "src/core/model/mixer.h"
+#include "src/core/model/sequencer.h"
 
 namespace giada::m::model
 {
-class Model;
-class SharedLock
+struct Parameters
 {
-public:
-	SharedLock(Model&, SwapType t);
-	~SharedLock();
-
-private:
-	Model&   m_model;
-	SwapType m_swapType;
+	Sequencer::Parameters   sequencer;
+	Mixer::Parameters       mixer;
+	KernelAudio::Parameters kernelAudio;
 };
 } // namespace giada::m::model
 

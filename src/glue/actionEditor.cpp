@@ -26,7 +26,7 @@
 
 #include "src/glue/actionEditor.h"
 #include "src/core/engine.h"
-#include "src/core/model/model.h"
+#include "src/core/model/modelView.h"
 #include "src/core/sequencer.h"
 #include "src/glue/channel.h"
 #include "src/glue/main.h"
@@ -36,7 +36,22 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::actionEditor
 {
-SampleData::SampleData(const m::SampleChannel& s)
+Action::Action(const m::model::Action& a)
+: id(a.id)
+, tick(a.tick)
+, event(a.event)
+, prevId(a.prevId)
+, nextId(a.nextId)
+, isValid(a.isValid())
+, isVolumeEnvelope(a.isVolumeEnvelope())
+{
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+SampleData::SampleData(const m::model::SampleChannel& s)
 : channelMode(s.mode)
 , isLoopMode(s.isAnyLoopMode())
 {
@@ -44,32 +59,32 @@ SampleData::SampleData(const m::SampleChannel& s)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, Scene scene)
-: channelId(c.id)
-, scene(scene)
-, channelName(c.getName(scene))
-, ticksInSeq(g_engine->getMainApi().getTicksInSeq())
-, ticksInBeat(g_engine->getMainApi().getTicksInBeat())
-, ticksInBar(g_engine->getMainApi().getTicksInBar())
-, ticksInLoop(g_engine->getMainApi().getTicksInLoop())
-, actions(g_engine->getActionEditorApi().getActionsOnChannel(c.id))
+Data::Data(const m::model::ModelView& view, ID channelId)
+: channelId(channelId)
+, scene(view.getParameters().sequencer.getCurrentScene())
+, channelName(view.getDocument().tracks.getChannel(channelId).getName(scene))
+, isChannelPlaying(view.getAssets().channelsParameters.get(channelId)->isPlaying())
+, ticksInSeq(view.getDocument().sequencer.getTicksInSeq())
+, ticksInBeat(view.getDocument().sequencer.getTicksInBeat())
+, ticksInBar(view.getDocument().sequencer.getTicksInBar())
+, ticksInLoop(view.getDocument().sequencer.getTicksInLoop())
+, m_view(view)
 {
-	if (c.type == ChannelType::SAMPLE)
-		sample = std::make_optional<SampleData>(c.sampleChannel.value());
+	const m::model::Channel& ch = m_view.getDocument().tracks.getChannel(channelId);
+	if (ch.type == ChannelType::SAMPLE)
+		sample = std::make_optional<SampleData>(ch.sampleChannel.value());
+
+	for (const m::model::Action& action : m_view.getDocument().actions.getActionsOnChannel(channelId, scene))
+		actions.push_back(Action(action));
 }
 
 /* -------------------------------------------------------------------------- */
 
 Tick Data::getCurrentTick() const
 {
-	return g_engine->getMainApi().getCurrentTick();
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Data::isChannelPlaying() const
-{
-	return g_engine->getChannelsApi().get(channelId).isPlaying();
+	return m_view.getParameters().sequencer.getCurrentTick(
+	    m_view.getDocument().kernelAudio.samplerate,
+	    m_view.getDocument().sequencer.getBpm());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,14 +93,18 @@ bool Data::isChannelPlaying() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getChannelsApi().get(channelId), g_engine->getMainApi().getCurrentScene());
+	const auto view = g_engine->readModel();
+	return Data(view, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-const m::Action* findAction(ID id)
+std::optional<Action> findAction(ID id)
 {
-	return g_engine->getActionEditorApi().findAction(id);
+	const auto a = g_engine->getActionEditorApi().findAction(id);
+	if (a.has_value())
+		return *a;
+	return {};
 }
 
 /* -------------------------------------------------------------------------- */

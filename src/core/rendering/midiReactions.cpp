@@ -27,13 +27,15 @@
 #include "src/core/rendering/midiReactions.h"
 #include "src/core/actions/ActionManager.h"
 #include "src/core/kernelMidi.h"
+#include "src/core/model/channel.h"
 #include <cassert>
 
 namespace giada::m::rendering
 {
-void playMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
+void playMidiChannel(const model::ChannelView& channelView)
 {
-	ChannelStatus playStatus = a_playStatus.load();
+	const model::Channel::Parameters& params     = channelView.getParameters();
+	ChannelStatus                     playStatus = params.getPlayStatus();
 
 	switch (playStatus)
 	{
@@ -57,28 +59,29 @@ void playMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
 		break;
 	}
 
-	a_playStatus.store(playStatus);
+	params.setPlayStatus(playStatus);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void stopMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
+void stopMidiChannel(const model::ChannelView& channelView)
 {
-	a_playStatus.store(ChannelStatus::OFF);
+	channelView.getParameters().setPlayStatus(ChannelStatus::OFF);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void rewindMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
+void rewindMidiChannel(const model::ChannelView& channelView)
 {
-	ChannelStatus playStatus = a_playStatus.load();
+	const model::Channel::Parameters& params     = channelView.getParameters();
+	ChannelStatus                     playStatus = params.getPlayStatus();
 
 	if (playStatus == ChannelStatus::ENDING)
 		playStatus = ChannelStatus::OFF;
 	else if (playStatus == ChannelStatus::WAIT)
 		playStatus = ChannelStatus::PLAY;
 
-	a_playStatus.store(playStatus);
+	params.setPlayStatus(playStatus);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -28,12 +28,9 @@
 #define G_MODEL_ACTIONS_H
 
 #include "src/const.h"
-#include "src/core/actions/action.h"
 #include "src/core/midiEvent.h"
-#include "src/core/types.h"
+#include "src/core/model/action.h"
 #include <functional>
-#include <map>
-#include <memory>
 #include <span>
 #include <vector>
 
@@ -45,7 +42,7 @@ public:
 	/* getActionsOnChannel
 	Returns a vector of actions belonging to channel 'ch'. */
 
-	std::vector<const Action*> getActionsOnChannel(ID channelId, Scene) const;
+	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* getActionsInTickRange
 	Returns a span of all actions included in the required range. */
@@ -68,10 +65,9 @@ public:
 	const std::vector<Action>& getAll() const;
 
 	/* findAction
-	Finds action given ID. Returns nullptr if not found. */
+	Finds an action given an ID. Might return null if not found. */
 
-	const Action* findAction(ID) const;
-	Action*       findAction(ID id);
+	std::optional<Action> findAction(ID) const;
 
 #if G_DEBUG_MODE
 	void debug() const;
@@ -136,6 +132,12 @@ public:
 
 private:
 	bool exists(ID channelId, Scene, Tick, const MidiEvent&) const;
+
+	/* findActionPtr
+	Finds action pointer given ID. Returns nullptr if not found. */
+
+	const Action* findActionPtr(ID) const;
+	Action*       findActionPtr(ID id);
 
 	/* sort
 	Sorts the internal vector of Actions, tick-wise, ascending. Mandatory each

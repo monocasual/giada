@@ -67,21 +67,30 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-Data makeData_(ID channelId, const m::model::Track& modelTrack, Scene scene)
+Channel makeChannel_(
+    ID                                                   channelId,
+    std::shared_ptr<const m::model::Channel::Parameters> params,
+    const m::model::Track&                               track,
+    Scene                                                scene)
 {
-	const std::size_t channelIndex = modelTrack.getChannelIndex(channelId);
-	const std::size_t trackIndex   = modelTrack.getIndex();
-	return Data(g_engine->getChannelsApi().get(channelId), scene, trackIndex, channelIndex);
+	const std::size_t channelIndex = track.getChannelIndex(channelId);
+	const std::size_t trackIndex   = track.getIndex();
+	const auto        channel      = track.findChannel(channelId);
+	assert(channel != nullptr);
+	return Channel(*channel, params, scene, trackIndex, channelIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Track makeTrack_(const m::model::Track& modelTrack, Scene scene)
+Track makeTrack_(
+    const m::model::Track&  modelTrack,
+    const m::model::Assets& assets,
+    Scene                   scene)
 {
 	Track track{modelTrack.getIndex(), modelTrack.width, {}};
 
-	for (const m::Channel& channel : modelTrack.getChannels().getAll())
-		track.channels.push_back(makeData_(channel.id, modelTrack, scene));
+	for (const m::model::Channel& channel : modelTrack.getChannels().getAll())
+		track.channels.push_back(makeChannel_(channel.id, assets.channelsParameters.find(channel.id), modelTrack, scene));
 
 	return track;
 }
@@ -91,81 +100,151 @@ Track makeTrack_(const m::model::Track& modelTrack, Scene scene)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleData::SampleData(const m::Channel& ch, Scene scene)
-: waveId(ch.sampleChannel->getWaveId(scene))
-, mode(ch.sampleChannel->mode)
-, isLoop(ch.sampleChannel->isAnyLoopMode())
-, pitch(ch.sampleChannel->getPitch(scene))
-, range(ch.sampleChannel->getRange(scene))
-, inputMonitor(ch.sampleChannel->inputMonitor)
-, overdubProtection(ch.sampleChannel->overdubProtection)
-, m_tracker(&ch.shared->tracker)
+SampleChannel::SampleChannel(
+    const m::model::Channel&                             c,
+    std::shared_ptr<const m::model::Channel::Parameters> params,
+    Scene                                                scene)
+: m_params(params)
 {
-}
-
-Frame SampleData::getTracker() const { return m_tracker->load(); }
-
-/* -------------------------------------------------------------------------- */
-
-MidiData::MidiData(const m::Channel& m)
-: isOutputEnabled(m.midiChannel->outputEnabled)
-, filter(m.midiChannel->outputFilter)
-{
+	update(c, scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, Scene scene, std::size_t trackIndex, std::size_t channelIndex)
+void SampleChannel::update(const m::model::Channel& c, Scene scene)
+{
+	waveId            = c.sampleChannel->getWaveId(scene);
+	mode              = c.sampleChannel->mode;
+	isLoop            = c.sampleChannel->isAnyLoopMode();
+	pitch             = c.sampleChannel->getPitch(scene);
+	range             = c.sampleChannel->getRange(scene);
+	inputMonitor      = c.sampleChannel->inputMonitor;
+	overdubProtection = c.sampleChannel->overdubProtection;
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame SampleChannel::getTracker() const
+{
+	return m_params ? m_params->getTracker() : 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+MidiChannel::MidiChannel(const m::model::Channel& c)
+{
+	update(c);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiChannel::update(const m::model::Channel& c)
+{
+	isOutputEnabled = c.midiChannel->outputEnabled;
+	filter          = c.midiChannel->outputFilter;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Channel::Channel(
+    const m::model::Channel&                             c,
+    std::shared_ptr<const m::model::Channel::Parameters> params,
+    Scene                                                scene,
+    std::size_t                                          trackIndex,
+    std::size_t                                          channelIndex)
 : id(c.id)
 , trackIndex(trackIndex)
 , channelIndex(channelIndex)
-, plugins(c.plugins)
 , type(c.type)
-, height(c.height)
-, name(c.getName(scene))
-, volume(c.volume)
-, pan(c.pan.asFloat())
-, key(c.key)
-, hasActions(g_engine->getChannelsApi().hasActions(c.id))
-, sendToMaster(c.sendToMaster)
-, extraOutputsCount(c.extraOutputs.size())
-, m_playStatus(&c.shared->playStatus)
-, m_recStatus(&c.shared->recStatus)
-, m_readActions(&c.shared->readActions)
+, m_params(std::move(params))
 {
-	if (c.type == ChannelType::SAMPLE)
-		sample = std::make_optional<SampleData>(c, scene);
-	else if (c.type == ChannelType::MIDI)
-		midi = std::make_optional<MidiData>(c);
+	if (type == ChannelType::SAMPLE)
+		sampleChannel.emplace(c, m_params, scene);
+	else if (type == ChannelType::MIDI)
+		midiChannel.emplace(c);
+
+	update(c, scene);
 }
 
-ChannelStatus Data::getPlayStatus() const { return m_playStatus->load(); }
-ChannelStatus Data::getRecStatus() const { return m_recStatus->load(); }
-bool          Data::getReadActions() const { return m_readActions->load(); }
-bool          Data::isRecordingInput() const { return g_engine->getMainApi().isRecordingInput(); }
-bool          Data::isRecordingActions() const { return g_engine->getMainApi().isRecordingActions(); }
-bool          Data::isMuted() const { return g_engine->getChannelsApi().get(id).isMuted(); }
-bool          Data::isSoloed() const { return g_engine->getChannelsApi().get(id).isSoloed(); }
-bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).armed; }
-bool          Data::isActive() const { return g_engine->getChannelsApi().get(id).isActive(); }
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data getData(ID channelId)
+void Channel::update(const m::model::Channel& c, Scene scene)
 {
-	const Scene scene = g_engine->getMainApi().getCurrentScene();
-	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId), scene);
+	/* Make sure we are updating the right channel: same Id and type. */
+
+	assert(id == c.id);
+	assert(type == c.type);
+
+	plugins           = c.plugins;
+	height            = c.height;
+	name              = c.getName(scene);
+	volume            = c.volume;
+	pan               = c.pan.asFloat();
+	key               = c.key;
+	mute              = c.isMuted();
+	solo              = c.isSoloed();
+	armed             = c.armed;
+	active            = m_params->isActive();
+	hasActions        = g_engine->getChannelsApi().hasActions(c.id);
+	sendToMaster      = c.sendToMaster;
+	extraOutputsCount = c.extraOutputs.size();
+
+	if (sampleChannel)
+		sampleChannel->update(c, scene);
+	else if (midiChannel)
+		midiChannel->update(c);
 }
 
-std::vector<Track> getTracks()
+/* -------------------------------------------------------------------------- */
+
+ChannelStatus Channel::getPlayStatus() const
 {
-	const Scene        scene = g_engine->getMainApi().getCurrentScene();
+	return m_params ? m_params->getPlayStatus() : ChannelStatus::OFF;
+}
+
+ChannelStatus Channel::getRecStatus() const
+{
+	return m_params ? m_params->getRecStatus() : ChannelStatus::OFF;
+}
+
+bool Channel::getReadActions() const
+{
+	return m_params ? m_params->getReadActions() : false;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+void Track::update(const m::model::Track& track, Scene scene)
+{
+	assert(index == track.getIndex());
+
+	const auto& modelChannels = track.getChannels().getAll();
+	assert(channels.size() == modelChannels.size());
+
+	width = track.width;
+	for (std::size_t i = 0; i < channels.size(); ++i)
+		channels[i].update(modelChannels[i], scene);
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+std::vector<Track> getTracks(
+    const m::model::Document& doc,
+    const m::model::Assets&   assets,
+    Scene                     scene)
+{
 	std::vector<Track> out;
-	for (const m::model::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
+	for (const m::model::Track& modelTrack : doc.tracks.getAll())
 		if (!modelTrack.isInternal())
-			out.push_back(makeTrack_(modelTrack, scene));
+			out.push_back(makeTrack_(modelTrack, assets, scene));
 	return out;
 }
 
@@ -173,6 +252,7 @@ std::vector<Track> getTracks()
 
 RoutingData getRoutingData(ID channelId)
 {
+#if 0
 	const m::Channel&             channel   = g_engine->getChannelsApi().get(channelId);
 	const m::KernelAudio::Device& outDevice = g_engine->getConfigApi().audio_getCurrentOutDevice();
 
@@ -185,6 +265,8 @@ RoutingData getRoutingData(ID channelId)
 	    .outputMaxNumChannels = outDevice.maxOutputChannels,
 	    .extraOutputs         = channel.extraOutputs,
 	    .outputDeviceName     = outDevice.name};
+#endif
+	return {};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -197,8 +279,7 @@ void loadChannel(ID channelId, const std::string& fname)
 	if (res != G_RES_OK)
 		printLoadError_(res);
 
-	if (auto* w = sampleEditor::getWindow(); w != nullptr)
-		w->rebuild();
+	g_ui->rebuildSampleEditorWindow();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -221,8 +302,8 @@ void addAndLoadChannels(std::size_t trackIndex, const std::vector<std::string>& 
 	{
 		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE, trackIndex);
-		const int         res = channelsApi.loadSampleChannel(ch.id, f);
+		const ID  channelId = channelsApi.add(ChannelType::SAMPLE, trackIndex);
+		const int res       = channelsApi.loadSampleChannel(channelId, f);
 		if (res != G_RES_OK)
 			errors = true;
 	}
@@ -297,9 +378,8 @@ void addTrack()
 
 void deleteTrack(std::size_t index)
 {
-	if (g_engine->getChannelsApi().getTracks().getAll().size() == 1) // One track must stay
-		return;
-	g_engine->getChannelsApi().removeTrack(index);
+	if (g_engine->getChannelsApi().canRemoveTrack(index)) // One track must stay
+		g_engine->getChannelsApi().removeTrack(index);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -321,7 +401,7 @@ bool canRemoveTrack(std::size_t trackIndex)
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
 	g_engine->getChannelsApi().setSamplePlayerMode(channelId, mode);
-	g_ui->refreshSubWindow(WID_ACTION_EDITOR);
+	g_ui->refreshActionEditor();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -366,7 +446,7 @@ void clearAllActions(ID channelId, bool allScenes)
 		return;
 
 	g_engine->getChannelsApi().clearAllActions(channelId, allScenes);
-	g_ui->refreshSubWindow(WID_ACTION_EDITOR);
+	g_ui->refreshActionEditor();
 }
 
 /* -------------------------------------------------------------------------- */

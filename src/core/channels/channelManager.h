@@ -28,6 +28,7 @@
 #define G_CHANNEL_MANAGER_H
 
 #include "src/core/midiMapper.h"
+#include "src/core/model/types.h"
 #include "src/core/resampler.h"
 #include "src/core/types.h"
 #include "src/deps/geompp/src/range.hpp"
@@ -38,14 +39,14 @@
 #include <memory>
 #include <unordered_set>
 
-namespace mcl
-{
-class AudioBuffer;
-}
-
 namespace giada::m::model
 {
 class Model;
+}
+
+namespace mcl
+{
+class AudioBuffer;
 }
 
 namespace giada::m
@@ -54,21 +55,13 @@ class Channel;
 struct ChannelShared;
 class Wave;
 class Plugin;
-class MidiEvent;
 class Engine;
-class ActionManager;
-class KernelMidi;
 class ChannelManager final
 {
 public:
 	friend Engine;
 
-	ChannelManager(model::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
-
-	/* getChannel
-	Returns channel object by ID. */
-
-	Channel& getChannel(ID);
+	ChannelManager(model::Model&);
 
 	/* hasInputRecordableChannels
 	Tells whether Mixer has one or more input-recordable channels. */
@@ -90,9 +83,6 @@ public:
 	True if a track contains only one Group Channel. */
 
 	bool canRemoveTrack(std::size_t trackIndex) const;
-
-	float getMasterInVol() const;
-	float getMasterOutVol() const;
 
 	/* reset
 	Brings channels configuration back to the initial state: two I/O master
@@ -122,7 +112,7 @@ public:
 	/* addChannel
 	Adds a new channel to the stack. */
 
-	Channel& addChannel(ChannelType, std::size_t trackIndex, int sampleRate, int bufferSize);
+	ID addChannel(ChannelType, std::size_t trackIndex, int sampleRate, int bufferSize);
 
 	/* loadSampleChannel (1)
 	Creates a new Wave from a file path and loads it inside a Sample Channel. */
@@ -132,7 +122,7 @@ public:
 	/* loadSampleChannel (2)
 	Loads an existing Wave inside a Sample Channel. */
 
-	void loadSampleChannel(ID channelId, Wave&, Scene);
+	void loadSampleChannel(ID channelId, std::shared_ptr<model::Wave>, Scene);
 
 	/* freeChannel
 	Unloads existing Wave from a Sample Channel. Pass an invalid Scene object
@@ -215,7 +205,7 @@ public:
 	be added to each armed channel in order to store recorded audio coming from
 	Mixer. */
 
-	std::function<std::unique_ptr<Wave>(Frame)> onChannelRecorded;
+	std::function<std::shared_ptr<model::Wave>(Frame)> onChannelRecorded;
 
 	/* onChannelPlayStatusChanged
 	Fired when the play status of a Sample channel has changed. */
@@ -223,43 +213,46 @@ public:
 	std::function<void(ID, ChannelStatus)> onChannelPlayStatusChanged;
 
 private:
-	void loadSampleChannel(Channel&, Wave*, Scene) const;
-
 	/* setupChannelCallbacks
 	Prepares the channel with the necessary callbacks. Call this whenever a
 	new channel is created. */
 
 	void setupChannelCallbacks(const Channel&, ChannelShared&) const;
 
-	std::vector<Channel*> getRecordableChannels(Scene);
-	std::vector<Channel*> getOverdubbableChannels(Scene);
+	std::vector<ID> getRecordableChannels(Scene) const;
+	std::vector<ID> getOverdubbableChannels(Scene) const;
 
 	/* setupChannelPostRecording
 	Fnialize the Sample channel after an audio recording session. */
 
-	void setupChannelPostRecording(Channel&, Frame currentFrame);
+	void setupChannelPostRecording(
+	    model::Channel&,
+	    const model::Channel::Parameters&,
+	    Frame currentFrame);
 
 	/* recordChannel
 	Records the current Mixer audio input data into an empty channel. */
 
-	void recordChannel(Channel&, const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame, Scene);
+	void recordChannel(
+	    ID                      channelId,
+	    const mcl::AudioBuffer& mixerRecBuffer,
+	    Frame                   recordedFrames,
+	    Frame                   currentFrame,
+	    Scene);
 
 	/* overdubChannel
 	Records the current Mixer audio input data into a channel with an existing
 	Wave, overdub mode. */
 
-	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame, Scene);
-
-	/* copyChannelToScene
-	Internal method that does not swap model. */
-
-	void copyChannelToScene(Channel&, Scene srcScene, Scene dstScene);
+	void overdubChannel(
+	    ID                      channelId,
+	    const mcl::AudioBuffer& mixerRecBuffer,
+	    Frame                   currentFrame,
+	    Scene);
 
 	void triggerOnChannelsAltered();
 
-	model::Model&           m_model;
-	KernelMidi&             m_kernelMidi;
-	MidiMapper<KernelMidi>& m_midiMapper;
+	model::Model& m_model;
 };
 } // namespace giada::m
 

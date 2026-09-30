@@ -39,7 +39,6 @@
 #include "src/core/channels/channelFactory.h"
 #include "src/core/channels/channelManager.h"
 #include "src/core/eventDispatcher.h"
-#include "src/core/init.h"
 #include "src/core/jackTransport.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/kernelMidi.h"
@@ -48,6 +47,8 @@
 #include "src/core/midiSynchronizer.h"
 #include "src/core/mixer.h"
 #include "src/core/model/model.h"
+#include "src/core/model/modelView.h"
+#include "src/core/model/types.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/recorder.h"
@@ -72,6 +73,11 @@ public:
 	Engine();
 
 	bool isAudioReady() const;
+
+	model::SwapType pollDocumentChanges();
+	model::SwapType pollAssetsChanges();
+
+	model::ModelView readModel() const;
 
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process
@@ -116,14 +122,7 @@ public:
 	std::function<void()>   onMidiSent;
 	std::function<void(ID)> onMidiSentFromChannel;
 
-	/* onModelSwap
-	Callback fired when the model gets swapped. */
-
-	std::function<void(model::SwapType)> onModelSwap;
-
 private:
-	void registerThread(Thread, bool isRealtime) const;
-
 	model::Model           m_model;
 	KernelAudio            m_kernelAudio;
 	KernelMidi             m_kernelMidi;

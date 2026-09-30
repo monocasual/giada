@@ -1,7 +1,7 @@
 #include "../src/core/waveFactory.h"
 #include "../src/core/const.h"
+#include "../src/core/model/wave.h"
 #include "../src/core/resampler.h"
-#include "../src/core/wave.h"
 #include <catch2/catch_test_macros.hpp>
 
 using namespace giada::m;
@@ -27,7 +27,7 @@ TEST_CASE("waveFactory")
 
 	SECTION("test recording")
 	{
-		std::unique_ptr<Wave> wave = waveFactory::createEmpty(BUFFER_SIZE,
+		std::shared_ptr<model::Wave> wave = waveFactory::createEmpty(BUFFER_SIZE,
 		    G_MAX_IO_CHANS, SAMPLE_RATE, "test.wav");
 
 		REQUIRE(wave->getRate() == SAMPLE_RATE);

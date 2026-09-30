@@ -29,7 +29,6 @@
 #include "src/core/channels/channelFactory.h"
 #include "src/core/engine.h"
 #include "src/core/midiSynchronizer.h"
-#include "src/core/model/model.h"
 #include "src/core/patchFactory.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/waveFactory.h"
@@ -74,11 +73,11 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 	Patch patch;
 	uiModel.store(patch);
-	m_model.store(patch, projectPath);
+	// m_model.store(patch, projectPath);
 
 	/* Store current sample rate in Patch. Needed for adjusting sample range points
 	in case project sample rate != current sample rate when loading a project. */
-	
+
 	patch.samplerate = m_kernelAudio.getSampleRate();
 
 	progress(0.6f);
@@ -124,7 +123,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const int                bufferSize  = m_kernelAudio.getBufferSize();
 	const Resampler::Quality rsmpQuality = m_kernelAudio.getResamplerQuality();
-	const model::LoadState   state       = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
+	const model::LoadState   state       = {}; // m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
 
 	progress(0.6f);
 
@@ -143,7 +142,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 	/* Bring everything back online. */
 
 	m_mixer.enable();
-	m_midiSynchronizer.startSendClock(m_model.get().sequencer.getBpm());
+	// m_midiSynchronizer.startSendClock(m_model.get().sequencer.getBpm());
 
 	progress(1.0f);
 

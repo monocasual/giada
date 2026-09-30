@@ -53,11 +53,18 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
+	virtual void rebuild(const c::actionEditor::Data&) = 0;
+
 	Tick pixelToTick(int) const;
 	Tick pixelToTickSnapped(int) const;
 	int  tickToPixel(Tick) const;
 
-	ID channelId;
+	ID    getChannelId() const;
+	Scene getScene() const;
+
+	const c::actionEditor::Data& getData() const;
+
+	void refresh();
 
 	geGridTool* gridTool;
 
@@ -70,7 +77,7 @@ protected:
 	static constexpr float RATIO_STEP   = 1.5f;
 	static constexpr int   LEGEND_WIDTH = 35;
 
-	gdBaseActionEditor(ID channelId, const Model&);
+	gdBaseActionEditor(const c::actionEditor::Data&, const Model&);
 
 	/* getMouseOverContent
 	Returns mouse x-position relative to the viewport content. */
@@ -100,11 +107,9 @@ protected:
 	geSplitScroll*   m_splitScroll;
 	geFlexResizable* m_legends;
 
-	c::actionEditor::Data m_data;
+	std::optional<c::actionEditor::Data> m_data;
 
 private:
-	void refresh() override;
-
 	/* zoomAbout
 	Zooms and centers the viewport around the mouse cursor. Wants a function to
 	apply to the current ratio. */

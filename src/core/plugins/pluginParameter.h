@@ -27,7 +27,6 @@
 #ifndef G_PLUGIN_PARAMETER_H
 #define G_PLUGIN_PARAMETER_H
 
-#include "src/core/midiLearnParam.h"
 #include <string>
 
 namespace juce
@@ -48,9 +47,8 @@ public:
 
 	void setValue(float);
 
-	std::size_t    index = 0;
-	std::string    name;
-	MidiLearnParam learnParam;
+	std::size_t index = 0;
+	std::string name;
 
 private:
 	juce::AudioProcessorParameter* m_ptr = nullptr;

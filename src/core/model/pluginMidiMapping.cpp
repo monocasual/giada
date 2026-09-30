@@ -24,22 +24,42 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/sharedLock.h"
-#include "src/core/model/model.h"
+#include "src/core/model/pluginMidiMapping.h"
+#include "src/core/model/plugin.h"
 
 namespace giada::m::model
 {
-SharedLock::SharedLock(Model& m, SwapType t)
-: m_model(m)
-, m_swapType(t)
+void PluginMidiMapping::init(const Plugin& p)
 {
-	m_model.get().locked = true;
-	m_model.swap(SwapType::NONE);
+	m_parameters[p.id] = std::vector<uint32_t>(p.getParameters().size(), 0x0);
 }
 
-SharedLock::~SharedLock()
+/* -------------------------------------------------------------------------- */
+
+void PluginMidiMapping::remove(ID id) { m_parameters.erase(id); }
+
+/* -------------------------------------------------------------------------- */
+
+void PluginMidiMapping::set(ID id, std::size_t index, uint32_t value)
 {
-	m_model.get().locked = false;
-	m_model.swap(m_swapType);
+	get(id).at(index) = value;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void PluginMidiMapping::clear() { m_parameters.clear(); }
+
+/* -------------------------------------------------------------------------- */
+
+const std::vector<uint32_t>& PluginMidiMapping::get(ID id) const
+{
+	return m_parameters.at(id);
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<uint32_t>& PluginMidiMapping::get(ID id)
+{
+	return m_parameters.at(id);
 }
 } // namespace giada::m::model

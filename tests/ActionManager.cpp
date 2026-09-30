@@ -9,6 +9,7 @@
 
 TEST_CASE("ActionRecorder")
 {
+#if 0
 	using namespace giada;
 	using namespace giada::m;
 
@@ -17,7 +18,6 @@ TEST_CASE("ActionRecorder")
 
 	model::Model model;
 
-	model.registerThread(Thread::MAIN, /*realtime=*/false);
 	model.reset();
 
 	channelFactory::Data channel1 = channelFactory::create(channelID1, ChannelType::SAMPLE, 44100, 1024, Resampler::Quality::LINEAR, false);
@@ -27,7 +27,6 @@ TEST_CASE("ActionRecorder")
 	model.get().tracks.get(0).getChannels().getAll() = {channel1.channel, channel2.channel};
 	model.addChannelShared(std::move(channel1.shared));
 	model.addChannelShared(std::move(channel2.shared));
-	model.swap(model::SwapType::NONE);
 
 	ActionManager ar(model);
 
@@ -81,4 +80,47 @@ TEST_CASE("ActionRecorder")
 			REQUIRE(ar.hasActions(channelID1) == false);
 		}
 	}
+#endif
+}
+
+TEST_CASE("ActionManager uses Model", "[action-manager]")
+{
+	using namespace giada;
+	using namespace giada::m;
+
+	model::Model    model;
+	ActionManager   manager(model);
+	const ID        channelId{1};
+	const Scene     scene{0};
+	const MidiEvent noteOn  = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 60, 100);
+	const MidiEvent noteOff = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 60, 0);
+
+	manager.rec(channelId, scene, TickRange{Tick{10}, Tick{20}}, noteOn, noteOff);
+	model.flush();
+	REQUIRE(manager.hasActions(channelId));
+	REQUIRE(manager.hasActions(scene));
+	REQUIRE(model.pollDocumentChanges() == model::SwapType::HARD);
+	REQUIRE(model.pollAssetsChanges() == model::SwapType::NONE);
+
+	const auto actions = manager.getActionsOnChannel(channelId, scene);
+	REQUIRE(actions.size() == 2);
+	const auto found = manager.findAction(actions[0].id);
+	REQUIRE(found.has_value());
+	REQUIRE(found->nextId == actions[1].id);
+
+	manager.deleteMidiAction(found->id);
+	model.flush();
+	REQUIRE_FALSE(manager.hasActions(channelId));
+	REQUIRE_FALSE(manager.findAction(found->id).has_value());
+	REQUIRE(found->nextId == actions[1].id);
+	REQUIRE(actions[0].event.getNote() == 60);
+	REQUIRE(model.pollDocumentChanges() == model::SwapType::HARD);
+
+	manager.liveRec(channelId, scene, noteOn, Tick{30});
+	manager.liveRec(channelId, scene, noteOff, Tick{40});
+	const auto recorded = manager.consolidate(scene);
+	REQUIRE(recorded.count(channelId) == 1);
+	REQUIRE(manager.getActionsOnChannel(channelId, scene).size() == 2);
+	REQUIRE(model.pollDocumentChanges() == model::SwapType::SOFT);
+	REQUIRE(model.pollAssetsChanges() == model::SwapType::NONE);
 }

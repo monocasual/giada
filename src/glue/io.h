@@ -27,16 +27,25 @@
 #ifndef G_GLUE_IO_H
 #define G_GLUE_IO_H
 
+#include "src/aliases.h"
 #include "src/core/midiEvent.h"
-#include "src/core/model/model.h"
 #include "src/core/types.h"
+#include "src/types.h"
+#include <cstddef>
+#include <string>
+#include <vector>
 
 /* giada::c::io
-Functions to interact with the MIDI I/O. Only the main thread can use these! */
+Functions to interact with the MIDI I/O. */
 
 namespace giada::m
 {
 class Channel;
+}
+
+namespace giada::m::model
+{
+struct MidiIn;
 }
 
 namespace giada::c::io

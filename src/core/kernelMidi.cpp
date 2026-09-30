@@ -27,7 +27,6 @@
 #include "src/core/kernelMidi.h"
 #include "src/core/const.h"
 #include "src/core/midiEvent.h"
-#include "src/core/model/kernelAudio.h"
 #include "src/utils/log.h"
 #include <algorithm>
 #include <cassert>
@@ -224,7 +223,9 @@ bool KernelMidi::init()
 
 	/* Open devices accoring to model::KernelMidi info. */
 
-	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
+	const auto               view       = m_model.read();
+	const model::KernelMidi& kernelMidi = view.getDocument().kernelMidi;
+
 	openDevices(m_midiOuts, kernelMidi.devicesOut);
 	openDevices(m_midiIns, kernelMidi.devicesIn);
 
@@ -233,14 +234,14 @@ bool KernelMidi::init()
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::setAPI(RtMidi::Api api)
+void KernelMidi::setAPI(RtMidi::Api api)
 {
-	m_model.get().kernelMidi.api        = api;
-	m_model.get().kernelMidi.devicesOut = {};
-	m_model.get().kernelMidi.devicesIn  = {};
-	m_model.swap(model::SwapType::NONE);
-
-	return true;
+	m_model.write(model::SwapType::NONE, [api](model::DocumentEdit& e)
+	{
+		e.get().kernelMidi.api        = api;
+		e.get().kernelMidi.devicesOut = {};
+		e.get().kernelMidi.devicesIn  = {};
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -252,8 +253,10 @@ KernelMidi::Result KernelMidi::openOutDevice(std::size_t deviceIndex)
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.devicesOut.insert(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [deviceIndex](model::DocumentEdit& e)
+	{
+		e.get().kernelMidi.devicesOut.insert(deviceIndex);
+	});
 
 	return res;
 }
@@ -265,8 +268,10 @@ KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.devicesIn.insert(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [deviceIndex](model::DocumentEdit& e)
+	{
+		e.get().kernelMidi.devicesIn.insert(deviceIndex);
+	});
 
 	return res;
 }
@@ -278,8 +283,10 @@ void KernelMidi::closeOutDevice(std::size_t deviceIndex)
 	assert(deviceIndex < m_midiOuts.size());
 	m_midiOuts[deviceIndex]->close();
 
-	m_model.get().kernelMidi.devicesOut.erase(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [deviceIndex](model::DocumentEdit& e)
+	{
+		e.get().kernelMidi.devicesOut.erase(deviceIndex);
+	});
 }
 
 void KernelMidi::closeInDevice(std::size_t deviceIndex)
@@ -287,8 +294,10 @@ void KernelMidi::closeInDevice(std::size_t deviceIndex)
 	assert(deviceIndex < m_midiIns.size());
 	m_midiIns[deviceIndex]->close();
 
-	m_model.get().kernelMidi.devicesIn.erase(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [deviceIndex](model::DocumentEdit& e)
+	{
+		e.get().kernelMidi.devicesIn.erase(deviceIndex);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -346,8 +355,8 @@ bool KernelMidi::hasAPI(RtMidi::Api API) const
 
 /* -------------------------------------------------------------------------- */
 
-RtMidi::Api KernelMidi::getAPI() const { return m_model.get().kernelMidi.api; }
-int         KernelMidi::getSyncMode() const { return m_model.get().kernelMidi.sync; }
+RtMidi::Api KernelMidi::getAPI() const { return m_model.read().getDocument().kernelMidi.api; }
+int         KernelMidi::getSyncMode() const { return m_model.read().getDocument().kernelMidi.sync; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -367,12 +376,12 @@ bool KernelMidi::canReceive() const
 
 bool KernelMidi::canSyncMaster() const
 {
-	return canSend() && m_model.get().kernelMidi.sync == G_MIDI_SYNC_CLOCK_MASTER;
+	return canSend() && m_model.read().getDocument().kernelMidi.sync == G_MIDI_SYNC_CLOCK_MASTER;
 }
 
 bool KernelMidi::canSyncSlave() const
 {
-	return canReceive() && m_model.get().kernelMidi.sync == G_MIDI_SYNC_CLOCK_SLAVE;
+	return canReceive() && m_model.read().getDocument().kernelMidi.sync == G_MIDI_SYNC_CLOCK_SLAVE;
 }
 
 /* -------------------------------------------------------------------------- */

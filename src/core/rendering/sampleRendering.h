@@ -27,6 +27,9 @@
 #ifndef G_RENDERING_SAMPLE_RENDERING_H
 #define G_RENDERING_SAMPLE_RENDERING_H
 
+#include "src/core/channels/channel.h"
+#include "src/core/model/channelView.h"
+#include "src/core/rendering/renderInfo.h"
 #include "src/scene.h"
 #include "src/types.h"
 #include <functional>
@@ -38,7 +41,6 @@ class AudioBuffer;
 
 namespace giada::m
 {
-class Channel;
 class Wave;
 class Resampler;
 class Stretcher;
@@ -47,27 +49,6 @@ class PluginHost;
 
 namespace giada::m::rendering
 {
-/* RenderInfo
-    Determines how the render() function should behave.
-    Mode::NORMAL - normal rendering, starting at offset 'offset';
-    Mode::REWIND - two-step rendering, used when the sample must rewind at some
-        point ('offset') in the audio buffer;
-    Mode::STOP - abort rendering. The audio buffer is silenced starting at
-    'offset'. Also triggers onLastFrame(). */
-
-struct RenderInfo
-{
-	enum class Mode
-	{
-		NORMAL,
-		REWIND,
-		STOP
-	};
-
-	Mode  mode   = Mode::NORMAL;
-	Frame offset = 0;
-};
-
 /* ReadResult
 A ReadResult object is returned by the readWave() function below, containing the
 number of frames used and generated from a buffer filling operation. The two
@@ -84,14 +65,20 @@ struct ReadResult
 	bool  finished  = false;
 };
 
-void renderSampleChannel(const Channel&, Scene, bool seqIsRunning);
+void renderSampleChannel(
+    const model::SampleChannelView&,
+    RenderInfo,
+    bool seqIsRunning);
 
 /* renderSampleChannelInput
 Copies input buffer to channel buffer: this enables the input monitoring. */
 
 void renderSampleChannelInput(const Channel&, const mcl::AudioBuffer&);
 
-ReadResult readWave(const Sample&, mcl::AudioBuffer&, Frame start, Frame offset, const Resampler&, Stretcher&);
+ReadResult readWave(
+    const model::SampleChannelView&,
+    Frame start,
+    Frame offset);
 } // namespace giada::m::rendering
 
 #endif

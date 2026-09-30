@@ -36,11 +36,8 @@ constexpr int MAX_PARAMETER_NAME_LENGTH = 64;
 PluginParameter::PluginParameter(juce::AudioProcessorParameter* ptr, std::size_t index)
 : index(index)
 , name(ptr->getName(MAX_PARAMETER_NAME_LENGTH).toStdString())
-, learnParam(0x0, index)
 , m_ptr(ptr)
 {
-	/* MidiInParam is set empty (0x0) initially: it will be filled during MIDI
-	learning process. */
 }
 
 /* -------------------------------------------------------------------------- */

@@ -27,9 +27,14 @@
 #ifndef G_IO_API_H
 #define G_IO_API_H
 
-#include "src/core/model/model.h"
-#include "src/core/types.h"
+#include "src/aliases.h"
 #include <functional>
+
+namespace giada::m::model
+{
+class Model;
+struct MidiIn;
+} // namespace giada::m::model
 
 namespace giada::m
 {
@@ -47,7 +52,7 @@ public:
 	void channel_enableVelocityAsVol(ID channelId, bool v);
 	void channel_setMidiInputFilter(ID channelId, int c);
 	void channel_setMidiOutputFilter(ID channelId, int c);
-	bool channel_setKey(ID channelId, int k);
+	void channel_setKey(ID channelId, int k);
 	void channel_startMidiLearn(int param, ID channelId, std::function<void()> doneCb);
 	void channel_clearMidiLearn(int param, ID channelId, std::function<void()> doneCb);
 

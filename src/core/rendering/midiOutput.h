@@ -27,13 +27,16 @@
 #ifndef G_RENDERING_MIDI_OUTPUT_H
 #define G_RENDERING_MIDI_OUTPUT_H
 
+#include "src/core/channels/channel.h"
 #include "src/core/channels/channelShared.h"
 #include "src/core/midiEvent.h"
 #include "src/core/midiMapper.h"
+#include "src/core/model/action.h"
+#include "src/core/model/channel.h"
+#include "src/core/model/channelView.h"
 
 namespace giada::m
 {
-struct Action;
 class KernelMidi;
 class MidiLightning;
 } // namespace giada::m
@@ -48,18 +51,19 @@ void registerOnSendMidiCb(std::function<void(ID channelId)>);
 /* sendMidiFromActions
 Sends a corresponding MIDI event for each action in the action vector. */
 
-void sendMidiFromAction(const Channel&, Scene, const Action&, Frame delta, KernelMidi&);
+void sendMidiFromAction(const model::ChannelView&, Scene, const model::Action&,
+    Frame delta, KernelMidi&);
 
 /* sendMidiAllNotesOff
 Sends a G_MIDI_ALL_NOTES_OFF event to the outside world and plug-ins. */
 
-void sendMidiAllNotesOff(const Channel&, KernelMidi&);
+void sendMidiAllNotesOff(const model::ChannelView&, KernelMidi&);
 
 /* sendMidiEventToPlugins
 Enqueue MIDI event to to the MIDI queue, so that it will be processed later
 on by the PluginHost. */
 
-void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
+void sendMidiEventToPlugins(const model::Channel::Rendering&, const MidiEvent&);
 
 /* sendMidiToOut
 Sends a MIDI event to the outside world. */
@@ -80,7 +84,7 @@ extern template void sendMidiLightningStatus(ID channelId, const MidiLightning&,
 extern template void sendMidiLightningMute(ID channelId, const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
 extern template void sendMidiLightningSolo(ID channelId, const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
 #ifdef WITH_TESTS
-extern template void sendMidiLightningStatus(ID channelId, const MidiLightning&, giada::ChannelStatus, bool audible, MidiMapper<KernelMidiMock>&);
+extern template void sendMidiLightningStatus(ID channelId, const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidiMock>&);
 extern template void sendMidiLightningMute(ID channelId, const MidiLightning&, bool isMuted, MidiMapper<KernelMidiMock>&);
 extern template void sendMidiLightningSolo(ID channelId, const MidiLightning&, bool isSoloed, MidiMapper<KernelMidiMock>&);
 #endif

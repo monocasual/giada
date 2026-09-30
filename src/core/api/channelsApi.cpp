@@ -30,6 +30,7 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/midiSynchronizer.h"
 #include "src/core/mixer.h"
+#include "src/core/model/model.h"
 #include "src/utils/fs.h"
 
 namespace giada::m
@@ -73,20 +74,6 @@ bool ChannelsApi::hasActions(ID channelId) const
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsApi::get(ID channelId)
-{
-	return m_channelManager.getChannel(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-model::Tracks& ChannelsApi::getTracks()
-{
-	return m_model.get().tracks;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void ChannelsApi::addTrack()
 {
 	const int sampleRate = m_kernelAudio.getSampleRate();
@@ -110,7 +97,7 @@ void ChannelsApi::setTrackWidth(std::size_t trackIndex, int width)
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsApi::add(ChannelType type, std::size_t trackIndex)
+ID ChannelsApi::add(ChannelType type, std::size_t trackIndex)
 {
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
@@ -130,33 +117,19 @@ int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {
 	const Scene              scene       = m_sequencer.getCurrentScene();
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
-	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
+	const Resampler::Quality rsmpQuality = m_kernelAudio.getResamplerQuality();
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality, scene);
-}
-
-void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
-{
-	m_channelManager.loadSampleChannel(channelId, wave, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelsApi::remove(ID channelId)
 {
-	const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
-	const bool                 hasSolos = m_channelManager.hasSolos();
-	std::vector<ID>            pluginIds;
-	for (const Plugin* p : plugins)
-		pluginIds.push_back(p->id);
-
+	const bool hasSolos = m_channelManager.hasSolos();
 	m_actionManager.clearChannel(channelId, {});
+	m_pluginHost.freePlugins(channelId);
 	m_channelManager.deleteChannel(channelId);
 	m_mixer.updateSoloCount(hasSolos);
-
-	/* Plug-in destruction must be done in the main thread, due to JUCE and
-	VST3 internal workings. */
-
-	m_pluginHost.freePlugins(pluginIds);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -174,11 +147,12 @@ void ChannelsApi::clone(ID channelId)
 	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3
 	internal workings. */
 
-	const Channel&             ch            = m_channelManager.getChannel(channelId);
+	// TODO plug-ins
+	// const Channel&             ch            = m_channelManager.getChannel(channelId);
 	const Scene                scene         = m_sequencer.getCurrentScene();
 	const int                  bufferSize    = m_kernelAudio.getBufferSize();
 	const int                  sampleRate    = m_kernelAudio.getSampleRate();
-	const std::vector<Plugin*> plugins       = m_pluginManager.clonePlugins(ch.plugins, sampleRate, bufferSize, m_model);
+	const std::vector<Plugin*> plugins       = {}; // m_pluginManager.clonePlugins(ch.plugins, sampleRate, bufferSize, m_model);
 	const ID                   nextChannelId = channelFactory::getNextId();
 
 	m_channelManager.cloneChannel(channelId, scene, sampleRate, bufferSize, plugins);
@@ -189,11 +163,12 @@ void ChannelsApi::clone(ID channelId)
 
 void ChannelsApi::copyToScene(ID channelId, Scene dstScene)
 {
-	const Channel& ch       = m_channelManager.getChannel(channelId);
-	const Scene    srcScene = m_sequencer.getCurrentScene();
+	const auto            view     = m_model.read();
+	const model::Channel& ch       = view.getDocument().tracks.getChannel(channelId);
+	const Scene           srcScene = m_sequencer.getCurrentScene();
 
 	if (ch.type == ChannelType::GROUP)
-		for (const Channel& child : getTracks().getByChannel(ch.id).getChannels().getAll())
+		for (const model::Channel& child : view.getDocument().tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
 				copyToScene(child.id, dstScene);
 

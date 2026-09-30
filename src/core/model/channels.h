@@ -27,7 +27,7 @@
 #ifndef G_MODEL_CHANNELS_H
 #define G_MODEL_CHANNELS_H
 
-#include "src/core/channels/channel.h"
+#include "src/core/model/channel.h"
 #include "src/core/types.h"
 
 namespace giada::m::model
@@ -40,6 +40,7 @@ public:
 	const std::vector<Channel>& getAll() const;
 	const std::size_t           getIndex(ID) const;
 	const std::vector<ID>       getAllIDs() const;
+	std::vector<ID>             getIf(std::function<bool(const Channel&)> f) const;
 
 	/* anyOf
 	Returns true if any channel satisfies the callback 'f'. */
@@ -54,7 +55,6 @@ public:
 	Channel&              get(ID);
 	Channel&              getLast();
 	std::vector<Channel>& getAll();
-	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
 	void                  add(Channel&&);
 	void                  add(Channel&&, std::size_t position);
 	void                  remove(ID);

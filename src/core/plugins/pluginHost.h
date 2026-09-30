@@ -28,6 +28,8 @@
 #define G_PLUGIN_HOST_H
 
 #include "src/const.h"
+#include "src/core/model/channel.h"
+#include "src/core/model/model.h"
 #include "src/types.h"
 #include <functional>
 /* windows.h, included somewhere, defines 'small' as a macro and it clashes with
@@ -44,15 +46,10 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m
-{
-class Plugin;
-}
-
 namespace giada::m::model
 {
-class Model;
-class Sequencer;
+struct Assets;
+class Plugin;
 } // namespace giada::m::model
 
 namespace giada::m
@@ -73,27 +70,29 @@ public:
 
 	void setBufferSize(int);
 
-	/* addPlugin
-	Loads a new plugin into memory. Returns a reference to the newly created
-	object. */
+	/* processStack. */
 
-	const Plugin& addPlugin(std::unique_ptr<Plugin> p);
-
-	/* processStack
-	Applies the fx list to the buffer. */
-
-	void processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
-	    const juce::MidiBuffer* events = nullptr);
+	void processStack(
+	    const model::Channel::Rendering&,
+	    const std::vector<ID>& pluginIds,
+	    const model::Assets&,
+	    const juce::AudioPlayHead::PositionInfo&,
+	    const juce::MidiBuffer* events);
 
 	/* freePlugin.
 	Unloads plugin from memory. */
 
-	void freePlugin(ID pluginId);
+	void freePlugin(ID pluginId, ID channelId);
 
 	/* freePlugins
 	Unloads multiple plugins. Useful when freeing or deleting a channel. */
 
-	void freePlugins(const std::vector<ID>);
+	void freePlugins(ID channelId);
+
+	/* swapPlugins
+	Swap plug-in 1 with plug-in 2 in the channel's plug-ins stack. */
+
+	void swapPlugins(ID pluginId1, ID pluginId2, ID channelId);
 
 	/* freeAllPlugins
 	Just deletes everything. */
@@ -111,17 +110,9 @@ private:
 
 	void giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf);
 
-	/* juceToGiadaOutBuf
-	Copies the private JUCE buffer to Giada buffer 'outBuf'. */
+	void processPlugin(const model::Plugin&, juce::MidiBuffer& events);
 
-	void juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const;
-
-	void processPlugins(const std::vector<Plugin*>&, const juce::MidiBuffer& events);
-
-	void processPlugin(Plugin*, juce::MidiBuffer& events);
-
-	model::Model& m_model;
-
+	model::Model&            m_model;
 	juce::AudioBuffer<float> m_audioBuffer;
 };
 } // namespace giada::m

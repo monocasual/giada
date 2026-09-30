@@ -38,8 +38,8 @@
 
 namespace giada::c::channel
 {
-struct Track;
-}
+class Track;
+} // namespace giada::c::channel
 
 namespace giada::v
 {
@@ -55,6 +55,8 @@ public:
 
 	int  handle(int e) override;
 	void draw() override;
+
+	void update();
 
 	/* getChannelTrackIndex
 	Given a channel ID, returns the index of the track it belongs to. */
@@ -74,7 +76,7 @@ public:
 	/* rebuild
 	Rebuilds this widget from scratch. Used when the model has changed. */
 
-	void rebuild();
+	void rebuild(const std::vector<c::channel::Track>&);
 
 	/* refresh
 	Refreshes each track's channel, called on each GUI cycle. */

@@ -30,7 +30,6 @@
 #include "src/core/conf.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/kernelMidi.h"
-#include "src/core/model/model.h"
 #include "src/utils/log.h"
 
 namespace giada::m

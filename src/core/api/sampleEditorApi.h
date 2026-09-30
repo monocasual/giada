@@ -27,10 +27,16 @@
 #ifndef G_SAMPLE_EDITOR_API_H
 #define G_SAMPLE_EDITOR_API_H
 
-#include "src/core/model/model.h"
+#include "src/core/model/types.h"
+#include "src/core/model/wave.h"
 #include "src/core/types.h"
 #include "src/core/waveFx.h"
 #include <memory>
+
+namespace giada::m::model
+{
+class Model;
+}
 
 namespace giada::m::rendering
 {
@@ -46,7 +52,7 @@ class Sequencer;
 class SampleEditorApi
 {
 public:
-	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&, rendering::Reactor&, Sequencer&);
+	SampleEditorApi(model::Model&, ChannelManager&, rendering::Reactor&);
 
 	void          loadPreviewChannel(ID sourceChannelId);
 	void          freePreviewChannel();
@@ -56,34 +62,30 @@ public:
 	Frame         getPreviewTracker();
 	ChannelStatus getPreviewStatus();
 
-	void           cut(ID channelId, Frame a, Frame b);
-	void           copy(ID channelId, Frame a, Frame b);
-	void           paste(ID channelId, Frame a);
-	void           silence(ID channelId, Frame a, Frame b);
-	void           fade(ID channelId, Frame a, Frame b, wfx::Fade);
-	void           smoothEdges(ID channelId, Frame a, Frame b);
-	void           reverse(ID channelId, Frame a, Frame b);
-	void           normalize(ID channelId, Frame a, Frame b);
-	void           trim(ID channelId, Frame a, Frame b);
-	void           shift(ID channelId, Frame offset);
-	const Channel& toNewChannel(ID channelId, Frame a, Frame b);
-	void           setRange(ID channelId, FrameRange);
-	void           resetRange(ID channelId);
-	void           reload(ID channelId);
+	void cut(ID channelId, Frame a, Frame b);
+	void copy(ID channelId, Frame a, Frame b);
+	void paste(ID channelId, Frame a);
+	void silence(ID channelId, Frame a, Frame b);
+	void fade(ID channelId, Frame a, Frame b, wfx::Fade);
+	void smoothEdges(ID channelId, Frame a, Frame b);
+	void reverse(ID channelId, Frame a, Frame b);
+	void normalize(ID channelId, Frame a, Frame b);
+	void trim(ID channelId, Frame a, Frame b);
+	void shift(ID channelId, Frame offset);
+	ID   toNewChannel(ID channelId, Frame a, Frame b);
+	void setRange(ID channelId, FrameRange);
+	void resetRange(ID channelId);
+	void reload(ID channelId);
 
 private:
-	Wave& getWave(ID channelId) const;
-
-	KernelAudio&        m_kernelAudio;
 	model::Model&       m_model;
 	ChannelManager&     m_channelManager;
 	rendering::Reactor& m_reactor;
-	Sequencer&          m_sequencer;
 
 	/* waveBuffer
 	A Wave used during cut/copy/paste operations. */
 
-	std::unique_ptr<m::Wave> m_waveBuffer;
+	std::unique_ptr<model::Wave> m_waveBuffer;
 };
 } // namespace giada::m
 

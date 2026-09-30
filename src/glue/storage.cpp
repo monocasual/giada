@@ -31,7 +31,6 @@
 #include "src/core/engine.h"
 #include "src/core/init.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"

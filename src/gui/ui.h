@@ -88,12 +88,23 @@ public:
 	Rebuilds the UI from scratch. Used when the model has changed. */
 
 	void rebuild();
+	void rebuildMainWindow();
+	void rebuildPluginListWindow();
+	void rebuildActionEditorWindow();
+	void rebuildSampleEditorWindow();
+
+	/* update
+	Updates part of the UI. Used when a model property has been modified, e.g.
+	a channel volume knob. */
+
+	void update();
+	void updateMainWindow();
 
 	/* [rebuild|refresh]SubWindow
 	Rebuilds or refreshes subwindow with ID 'wid' if it exists, i.e. if it's open. */
 
-	void rebuildSubWindow(ID wid);
-	void refreshSubWindow(ID wid);
+	void refreshSampleEditor();
+	void refreshActionEditor();
 
 	/* getSubwindow
 	Returns a pointer to an open subwindow, otherwise nullptr. */
@@ -123,6 +134,11 @@ public:
 	std::unique_ptr<gdMainWindow> mainWindow;
 	Dispatcher                    dispatcher;
 	Model                         model;
+
+	/* onUpdate
+	Callback fired on each updater loop. */
+
+	std::function<void()> onUpdate;
 
 private:
 	static constexpr int BLINK_RATE = G_GUI_FPS / 2;

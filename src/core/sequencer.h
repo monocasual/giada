@@ -31,8 +31,8 @@
 #include "src/core/const.h"
 #include "src/core/eventDispatcher.h"
 #include "src/core/metronome.h"
-#include "src/core/quantizer.h"
-#include "src/core/ringBuffer.h"
+#include "src/core/model/sequencer.h"
+#include "src/core/model/types.h"
 #include <vector>
 
 namespace mcl
@@ -42,10 +42,8 @@ class AudioBuffer;
 
 namespace giada::m::model
 {
-class Model;
-class Sequencer;
 class Actions;
-struct Document;
+class Model;
 } // namespace giada::m::model
 
 namespace giada::m
@@ -67,14 +65,14 @@ public:
 
 	struct Event
 	{
-		EventType     type   = EventType::NONE;
-		Frame         global = 0; // Where the event occurs in the whole sequencer [0, framesInLoop)
-		Frame         delta  = 0; // Where the event occurs in the current block [0, blockSize)
-		const Action* action = nullptr;
-		Scene         scene  = {};
+		EventType           type   = EventType::NONE;
+		Frame               global = 0; // Where the event occurs in the whole sequencer [0, framesInLoop)
+		Frame               delta  = 0; // Where the event occurs in the current block [0, blockSize)
+		const model::Action action = {};
+		Scene               scene  = {};
 	};
 
-	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;
+	using EventBuffer = std::vector<Event>;
 
 	Sequencer(model::Model&, MidiSynchronizer&, JackTransport&);
 
@@ -88,15 +86,6 @@ public:
 
 	bool isRunning() const;
 
-	/* isActive
-	Sequencer is enabled, but might be in wait mode, i.e. SeqStatus == RUNNING or
-	SeqStatus == WAITING. */
-
-	bool isActive() const;
-
-	bool isOnBeat() const;
-	bool isOnBar() const;
-	bool isOnFirstBeat() const;
 	bool isMetronomeOn() const;
 
 	float         getBpm() const;
@@ -148,12 +137,16 @@ public:
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
-	const EventBuffer& advance(const model::Sequencer&, Frame bufferSize, const model::Actions&) const;
+	const EventBuffer& advance(
+	    const model::Sequencer&,
+	    const model::Sequencer::Parameters&,
+	    const model::Actions&,
+	    Frame bufferSize) const;
 
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */
 
-	void render(mcl::AudioBuffer& outBuf, const model::Document&) const;
+	void render(mcl::AudioBuffer& outBuf) const;
 
 	void rewindForced();
 	void rewind();
@@ -207,7 +200,6 @@ private:
 	mutable EventBuffer m_eventBuffer;
 
 	Metronome m_metronome;
-	Quantizer m_quantizer;
 
 	/* m_quantizerStep
 	Tells how many frames to wait to perform a quantized action. */

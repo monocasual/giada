@@ -27,9 +27,9 @@
 #ifndef G_ACTION_EDITOR_API_H
 #define G_ACTION_EDITOR_API_H
 
-#include "src/core/model/actions.h"
+#include "src/core/model/action.h"
 #include "src/core/patch.h"
-#include "src/core/types.h"
+#include <optional>
 #include <vector>
 
 namespace giada::m
@@ -42,8 +42,8 @@ class ActionEditorApi
 public:
 	ActionEditorApi(Engine&, Sequencer&, ActionManager&);
 
-	std::vector<const Action*> getActionsOnChannel(ID channelId) const;
-	const Action*              findAction(ID) const;
+	std::vector<model::Action>   getActionsOnChannel(ID channelId) const;
+	std::optional<model::Action> findAction(ID) const;
 
 	void recordMidiAction(ID channelId, int note, float velocity, TickRange);
 	void deleteMidiAction(ID channelId, ID actionId);

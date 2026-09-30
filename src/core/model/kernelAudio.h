@@ -37,19 +37,23 @@ namespace giada::m::model
 {
 class KernelAudio
 {
-	friend class Model;
-	friend class Shared;
-
 public:
+	class Parameters
+	{
+	public:
+		void   setCpuLoad(double) const;
+		double getCpuLoad() const;
+
+	private:
+		mutable WeakAtomic<double> m_cpuLoad = 0.0f;
+	};
+
 	struct Device
 	{
 		int id            = 0;
 		int channelsCount = 0;
 		int channelsStart = 0;
 	};
-
-	void   a_setCpuLoad(double) const;
-	double a_getCpuLoad() const;
 
 	RtAudio::Api       api             = G_DEFAULT_SOUNDSYS;
 	Device             deviceOut       = {G_DEFAULT_SOUNDDEV_OUT, G_MAX_IO_CHANS, 0};
@@ -59,14 +63,6 @@ public:
 	bool               limitOutput     = false;
 	Resampler::Quality rsmpQuality     = Resampler::Quality::LINEAR;
 	float              recTriggerLevel = 0.0f;
-
-private:
-	struct Shared
-	{
-		WeakAtomic<double> cpuLoad = 0.0f;
-	};
-
-	Shared* shared = nullptr;
 };
 } // namespace giada::m::model
 

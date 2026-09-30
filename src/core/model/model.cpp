@@ -25,225 +25,79 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/model/model.h"
-#include "src/core/actions/actionFactory.h"
-#include "src/core/channels/channelFactory.h"
-#include "src/core/model/document.h"
-#include "src/core/plugins/pluginFactory.h"
-#include "src/core/plugins/pluginManager.h"
-#include "src/core/waveFactory.h"
-#include "src/utils/log.h"
-#include "src/utils/string.h"
-#include <cassert>
-#include <memory>
-#if G_DEBUG_MODE
-#include <fmt/core.h>
-#endif
-#include <fmt/ostream.h>
-
-using namespace mcl;
+#include <utility>
 
 namespace giada::m::model
 {
-Model::Model()
-: onSwap(nullptr)
+ModelView Model::read() const
 {
+	return ModelView(m_realtimeModel.getSnapshot());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::init()
+void Model::write(SwapType type, DocumentWriteCallback callback)
 {
-	m_shared.init();
-
-	Document& document          = get();
-	document                    = {};
-	document.kernelAudio.shared = &m_shared.m_kernelAudio;
-	document.sequencer.shared   = &m_shared.m_sequencer;
-	document.mixer.shared       = &m_shared.m_mixer;
-
-	swap(SwapType::NONE);
+	m_realtimeModel.writeDocument(type, [this, callback = std::move(callback)](Document& document)
+	{
+		const auto      assets = m_realtimeModel.getCurrentAssets();
+		const ModelView view(document, *assets, m_realtimeModel.getParameters());
+		DocumentEdit    edit(document, view);
+		callback(edit);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::reset()
+void Model::write(SwapType type, AssetsWriteCallback callback)
 {
-	m_shared.init();
-
-	Document& document          = get();
-	document.kernelAudio.shared = &m_shared.m_kernelAudio;
-	document.sequencer          = {};
-	document.sequencer.shared   = &m_shared.m_sequencer;
-	document.mixer              = {};
-	document.mixer.shared       = &m_shared.m_mixer;
-	document.tracks             = {};
-
-	swap(SwapType::NONE);
+	m_realtimeModel.writeAssets(type, [this, callback = std::move(callback)](Assets& assets)
+	{
+		const auto      document = m_realtimeModel.getCurrentDocument();
+		const ModelView view(*document, assets, m_realtimeModel.getParameters());
+		AssetsEdit      edit(assets, view);
+		callback(edit);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::load(const Conf& conf)
+void Model::write(SwapType type, ModelWriteCallback callback)
 {
-	get().load(conf);
-	swap(model::SwapType::NONE);
+	m_realtimeModel.writeDocumentAndAssets(type, [this, callback = std::move(callback)](Document& document, Assets& assets)
+	{
+		const ModelView view(document, assets, m_realtimeModel.getParameters());
+		ModelEdit       edit(document, assets, view);
+		callback(edit);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int sampleRate, int bufferSize, Resampler::Quality rsmpQuality)
+ModelView Model::readRealtime()
 {
-	const float sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
-
-	/* Lock the shared data. Real-time thread can't read from it until this method
-	goes out of scope. */
-
-	const SharedLock lock  = lockShared(SwapType::NONE);
-	const LoadState  state = m_shared.load(patch, pluginManager, get().sequencer, sampleRate, bufferSize, rsmpQuality);
-	get().load(patch, m_shared, sampleRateRatio);
-
-	return state;
-
-	// Swap is performed when 'lock' goes out of scope
+	const auto lock = m_realtimeModel.read();
+	return ModelView(lock.getDocument(), lock.getAssets(), lock.getParameters());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::store(Conf& conf) const
+void Model::flush()
 {
-	get().store(conf);
+	m_realtimeModel.flush();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::store(Patch& patch, const std::string& projectPath)
+SwapType Model::pollDocumentChanges()
 {
-	get().store(patch);
-
-	/* We used to lock the Document here to prevent the rt-thread from reading Wave
-	objects. Actually, this is not necessary: the only thing that is being written
-	is the Wave's new file path, something that the real-time thread doesn't
-	care about. */
-
-	m_shared.store(patch, projectPath);
+	return m_realtimeModel.documentChanges.take();
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Model::registerThread(Thread t, bool realtime) const
+SwapType Model::pollAssetsChanges()
 {
-	return m_swapper.registerThread(u::string::toString(t), realtime);
+	return m_realtimeModel.assetsChanges.take();
 }
-
-/* -------------------------------------------------------------------------- */
-
-Document&       Model::get() { return m_swapper.get(); }
-const Document& Model::get() const { return m_swapper.get(); }
-DocumentLock    Model::get_RT() const { return DocumentLock(m_swapper); }
-
-/* -------------------------------------------------------------------------- */
-
-void Model::swap(SwapType t)
-{
-	m_swapper.swap();
-	if (onSwap != nullptr)
-		onSwap(t);
-}
-
-/* -------------------------------------------------------------------------- */
-
-SharedLock Model::lockShared(SwapType t)
-{
-	return SharedLock(*this, t);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Model::isRtLocked() const
-{
-	return m_swapper.isRtLocked();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<std::unique_ptr<Wave>>&          Model::getAllWaves() { return m_shared.getAllWaves(); };
-std::vector<std::unique_ptr<Plugin>>&        Model::getAllPlugins() { return m_shared.getAllPlugins(); }
-std::vector<std::unique_ptr<ChannelShared>>& Model::getAllChannelsShared() { return m_shared.getAllChannels(); }
-
-/* -------------------------------------------------------------------------- */
-
-Plugin* Model::findPlugin(ID id) { return m_shared.findPlugin(id); }
-Wave*   Model::findWave(ID id) { return m_shared.findWave(id); }
-
-/* -------------------------------------------------------------------------- */
-
-Wave& Model::addWave(std::unique_ptr<Wave> w)
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	return m_shared.addWave(std::move(w));
-}
-
-Plugin& Model::addPlugin(std::unique_ptr<Plugin> p)
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	return m_shared.addPlugin(std::move(p));
-}
-
-ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs)
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	return m_shared.addChannel(std::move(cs));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::removePlugin(const Plugin& p)
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	m_shared.removePlugin(p);
-}
-
-void Model::removeWave(const Wave& w)
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	m_shared.removeWave(w);
-}
-
-void Model::removeChannelShared(const ChannelShared& c)
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	m_shared.removeChannel(c);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::clearPlugins()
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	m_shared.clearPlugins();
-}
-
-void Model::clearWaves()
-{
-	const SharedLock lock = lockShared(SwapType::NONE);
-	m_shared.clearWaves();
-}
-
-/* -------------------------------------------------------------------------- */
-
-#if G_DEBUG_MODE
-
-void Model::debug()
-{
-	puts("======== SYSTEM STATUS ========");
-
-	puts("-------------------------------");
-	m_swapper.debug();
-	puts("-------------------------------");
-
-	get().debug();
-	m_shared.debug();
-}
-
-#endif // G_DEBUG_MODE
 } // namespace giada::m::model

@@ -1,0 +1,131 @@
+/* -----------------------------------------------------------------------------
+ *
+ * Giada - Your Hardcore Loopmachine
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * Copyright (C) 2010-2026 Giovanni A. Zuliani | Monocasual Laboratories
+ *
+ * This file is part of Giada - Your Hardcore Loopmachine.
+ *
+ * Giada - Your Hardcore Loopmachine is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Giada - Your Hardcore Loopmachine. If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * -------------------------------------------------------------------------- */
+
+#ifndef G_MODEL_DEPR_SEQUENCER_H
+#define G_MODEL_DEPR_SEQUENCER_H
+
+#include "src/core/const.h"
+#include "src/core/types.h"
+#include "src/core/weakAtomic.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/scene.h"
+
+namespace giada::m::model_DEPR_
+{
+class Sequencer
+{
+	friend class Model;
+	friend class Shared;
+
+public:
+	/* isRunning
+	When sequencer is actually moving forward, i.e. SeqStatus == RUNNING. */
+
+	bool isRunning() const;
+
+	/* isActive
+	Sequencer is enabled, but might be in wait mode, i.e. SeqStatus == RUNNING or
+	SeqStatus == WAITING. */
+
+	bool isActive() const;
+
+	/* canQuantize
+	Sequencer can quantize only if it's running and quantizer is enabled. */
+
+	bool canQuantize() const;
+
+	bool a_isOnBar(int sampleRate) const;
+	bool a_isOnBeat(int sampleRate) const;
+	bool a_isOnFirstBeat() const;
+
+	Frame       a_getCurrentFrame() const;
+	Tick        a_getCurrentTick(int sampleRate) const;
+	Frame       a_getCurrentBeat() const;
+	float       a_getCurrentSecond(int sampleRate) const;
+	double      a_getCurrentQuarterNotePosition(int sampleRate) const;
+	Scene       a_getCurrentScene() const;
+	Scene       a_getNextScene() const;
+	SceneStatus a_getSceneStatus() const;
+
+	/* getFramesInLoop
+	Returns the number of frames in the current loop. */
+
+	int getFramesInLoop(int sampleRate) const;
+
+	/* getMaxFramesInLoop
+	Returns how many frames the current loop length might contain at the slowest
+	speed possible (G_MIN_BPM). */
+
+	int getMaxFramesInLoop(int sampleRate) const;
+
+	void a_setCurrentFrame(Frame f, int sampleRate) const;
+	void a_setCurrentBeat(int b, int sampleRate) const;
+	void a_setCurrentScene(Scene) const;
+	void a_setNextScene(Scene) const;
+	void a_setSceneStatus(SceneStatus) const;
+
+	float         getBpm() const;
+	TimeSignature getTimeSignature() const;
+	Tick          getTicksInBeat() const;
+	Tick          getTicksInBar() const;
+	Tick          getTicksInLoop() const;
+	Tick          getTicksInSeq() const;
+
+	/* reset
+	Resets beats, bars, bpm and quantize to default values. */
+
+	void reset();
+
+	void setBpm(float);
+	void setTimeSignature(TimeSignature);
+
+	SeqStatus status    = SeqStatus::STOPPED;
+	int       quantize  = G_DEFAULT_QUANTIZE;
+	bool      metronome = false;
+
+private:
+	struct Shared
+	{
+		WeakAtomic<Frame>       currentFrame      = 0;
+		WeakAtomic<int>         currentBeat       = 0;
+		WeakAtomic<std::size_t> currentSceneIndex = 0;
+		WeakAtomic<std::size_t> nextSceneIndex    = 0;
+
+		/* m_sceneStatus
+		IDLE = current scene selected. CHANGING = a change of scene has been requested
+		and will go back to IDLE at the next first beat. */
+
+		WeakAtomic<SceneStatus> sceneStatus = SceneStatus::IDLE;
+	};
+
+	Shared* shared = nullptr;
+
+	float         m_bpm = G_DEFAULT_BPM;
+	TimeSignature m_timeSignature;
+};
+} // namespace giada::m::model
+
+#endif

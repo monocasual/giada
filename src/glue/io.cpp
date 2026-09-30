@@ -30,7 +30,6 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/midiDispatcher.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
 #include "src/core/recorder.h"
 #include "src/core/wave.h"
 #include "src/glue/channel.h"
@@ -57,8 +56,8 @@ namespace
 {
 void rebuildMidiWindows_()
 {
-	g_ui->rebuildSubWindow(WID_MIDI_INPUT);
-	g_ui->rebuildSubWindow(WID_MIDI_OUTPUT);
+	// g_ui->rebuildSubWindow(WID_MIDI_INPUT);
+	// g_ui->rebuildSubWindow(WID_MIDI_OUTPUT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -97,15 +96,17 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 , pitch(c.midiInput.pitch.getValue())
 , readActions(c.midiInput.readActions.getValue())
 {
+	/*
 	for (const m::Plugin* p : c.plugins)
 	{
-		PluginData pd;
-		pd.id   = p->id;
-		pd.name = p->getName();
-		for (const m::PluginParameter& param : p->getParameters())
-			pd.params.push_back({param.index, param.name, param.learnParam.getValue()});
-		plugins.push_back(pd);
+	    PluginData pd;
+	    pd.id   = p->id;
+	    pd.name = p->getName();
+	    for (const m::PluginParameter& param : p->getParameters())
+	        pd.params.push_back({param.index, param.name, param.learnParam.getValue()});
+	    plugins.push_back(pd);
 	}
+	*/
 }
 
 /* -------------------------------------------------------------------------- */
@@ -153,14 +154,16 @@ Master_InputData::Master_InputData(const m::model::MidiIn& midiIn)
 
 Channel_InputData channel_getInputData(ID channelId)
 {
-	return Channel_InputData(g_engine->getChannelsApi().get(channelId));
+	return {};
+	// return Channel_InputData(g_engine->getChannelsApi().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
 Channel_OutputData channel_getOutputData(ID channelId)
 {
-	return Channel_OutputData(g_engine->getChannelsApi().get(channelId));
+	return {};
+	// return Channel_OutputData(g_engine->getChannelsApi().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */

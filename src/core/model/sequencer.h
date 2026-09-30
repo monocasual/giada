@@ -37,10 +37,41 @@ namespace giada::m::model
 {
 class Sequencer
 {
-	friend class Model;
-	friend class Shared;
-
 public:
+	class Parameters
+	{
+	public:
+		bool        isOnBar(int sampleRate, Tick ticksInBars, SeqStatus, float bpm) const;
+		bool        isOnBeat(int sampleRate, Tick ticksInBeat, float bpm) const;
+		bool        isOnFirstBeat() const;
+		Frame       getCurrentFrame() const;
+		Tick        getCurrentTick(int sampleRate, float bpm) const;
+		Frame       getCurrentBeat() const;
+		float       getCurrentSecond(int sampleRate) const;
+		double      getCurrentQuarterNotePosition(int sampleRate, float bpm) const;
+		Scene       getCurrentScene() const;
+		Scene       getNextScene() const;
+		SceneStatus getSceneStatus() const;
+
+		void setCurrentFrame(Frame f, int sampleRate, float bpm) const;
+		void setCurrentBeat(int b, int sampleRate, float bpm) const;
+		void setCurrentScene(Scene) const;
+		void setNextScene(Scene) const;
+		void setSceneStatus(SceneStatus) const;
+
+	private:
+		mutable WeakAtomic<Frame>       m_currentFrame      = 0;
+		mutable WeakAtomic<int>         m_currentBeat       = 0;
+		mutable WeakAtomic<std::size_t> m_currentSceneIndex = 0;
+		mutable WeakAtomic<std::size_t> m_nextSceneIndex    = 0;
+
+		/* m_sceneStatus
+		IDLE = current scene selected. CHANGING = a change of scene has been requested
+		and will go back to IDLE at the next first beat. */
+
+		mutable WeakAtomic<SceneStatus> m_sceneStatus = SceneStatus::IDLE;
+	};
+
 	/* isRunning
 	When sequencer is actually moving forward, i.e. SeqStatus == RUNNING. */
 
@@ -57,19 +88,6 @@ public:
 
 	bool canQuantize() const;
 
-	bool a_isOnBar(int sampleRate) const;
-	bool a_isOnBeat(int sampleRate) const;
-	bool a_isOnFirstBeat() const;
-
-	Frame       a_getCurrentFrame() const;
-	Tick        a_getCurrentTick(int sampleRate) const;
-	Frame       a_getCurrentBeat() const;
-	float       a_getCurrentSecond(int sampleRate) const;
-	double      a_getCurrentQuarterNotePosition(int sampleRate) const;
-	Scene       a_getCurrentScene() const;
-	Scene       a_getNextScene() const;
-	SceneStatus a_getSceneStatus() const;
-
 	/* getFramesInLoop
 	Returns the number of frames in the current loop. */
 
@@ -80,12 +98,6 @@ public:
 	speed possible (G_MIN_BPM). */
 
 	int getMaxFramesInLoop(int sampleRate) const;
-
-	void a_setCurrentFrame(Frame f, int sampleRate) const;
-	void a_setCurrentBeat(int b, int sampleRate) const;
-	void a_setCurrentScene(Scene) const;
-	void a_setNextScene(Scene) const;
-	void a_setSceneStatus(SceneStatus) const;
 
 	float         getBpm() const;
 	TimeSignature getTimeSignature() const;
@@ -107,22 +119,6 @@ public:
 	bool      metronome = false;
 
 private:
-	struct Shared
-	{
-		WeakAtomic<Frame>       currentFrame      = 0;
-		WeakAtomic<int>         currentBeat       = 0;
-		WeakAtomic<std::size_t> currentSceneIndex = 0;
-		WeakAtomic<std::size_t> nextSceneIndex    = 0;
-
-		/* m_sceneStatus
-		IDLE = current scene selected. CHANGING = a change of scene has been requested
-		and will go back to IDLE at the next first beat. */
-
-		WeakAtomic<SceneStatus> sceneStatus = SceneStatus::IDLE;
-	};
-
-	Shared* shared = nullptr;
-
 	float         m_bpm = G_DEFAULT_BPM;
 	TimeSignature m_timeSignature;
 };

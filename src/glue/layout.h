@@ -43,8 +43,8 @@ class gdWindow;
 
 namespace giada::c::channel
 {
-struct Data;
-}
+class Channel;
+} // namespace giada::c::channel
 
 namespace giada::c::layout
 {
@@ -53,8 +53,8 @@ void openBrowserForProjectSave();
 void openBrowserForSampleLoad(ID channelId);
 void openAboutWindow();
 void openKeyGrabberWindow(int key, std::function<bool(int)>);
-void openBpmWindow(float bpm);
-void openBeatsWindow(TimeSignature);
+void openBpmWindow();
+void openBeatsWindow();
 void openConfigWindow();
 void openMasterMidiInputWindow();
 void openChannelMidiInputWindow(ID channelId);
@@ -64,7 +64,7 @@ void openMidiChannelMidiOutputWindow(ID channelId);
 void openSampleActionEditor(ID channelId);
 void openMidiActionEditor(ID channelId);
 void openSampleEditor(ID channelId);
-void openRenameChannelWindow(const c::channel::Data&, bool allScenes);
+void openRenameChannelWindow(const c::channel::Channel&, bool allScenes);
 void openMissingAssetsWindow(const m::model::LoadState&);
 void openBrowserForPlugins(v::gdWindow& parent);
 void openChannelPluginListWindow(ID channelId);

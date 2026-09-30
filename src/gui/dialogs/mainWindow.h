@@ -27,8 +27,10 @@
 #ifndef GD_MAINWINDOW_H
 #define GD_MAINWINDOW_H
 
+#include "src/glue/main.h"
 #include "src/gui/dialogs/progress.h"
 #include "src/gui/dialogs/window.h"
+#include <optional>
 #include <string>
 
 namespace giada::v
@@ -49,8 +51,9 @@ class gdMainWindow : public gdWindow
 public:
 	gdMainWindow(geompp::Rect<int>, const char* title);
 
-	void refresh() override;
-	void rebuild() override;
+	void refresh();
+	void rebuild(const c::main::Main&);
+	void update();
 
 	/* clearKeyboard
 	Resets Keyboard to initial state, with no tracks. */
@@ -88,6 +91,8 @@ private:
 	};
 
 	void resize(int x, int y, int w, int h) override;
+
+	std::optional<c::main::Main> m_main;
 
 	gdProgress m_progress;
 	geBox*     m_projectTitle;

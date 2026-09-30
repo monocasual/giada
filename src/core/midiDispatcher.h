@@ -76,14 +76,12 @@ private:
 	bool isChannelMidiInAllowed(ID channelId, int c);
 
 	void processTracks(const MidiEvent&);
-	void processChannels(const std::vector<Channel>&, const MidiEvent&);
-	void processChannel(const Channel&, const MidiEvent&);
-	void processMaster(const MidiEvent&);
+	void processChannel(const model::Channel&, const MidiEvent&) const;
+	void processMaster(const MidiEvent&) const;
+	void processPlugins(ID channelId, const std::vector<ID>& plugins, const MidiEvent&) const;
 
 	void learnChannel(MidiEvent, int param, ID channelId, std::function<void()> doneCb);
 	void learnMaster(MidiEvent, int param, std::function<void()> doneCb);
-
-	void processPlugins(ID channelId, const std::vector<Plugin*>& plugins, const MidiEvent&);
 	void learnPlugin(MidiEvent, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb);
 
 	/* cb_midiLearn

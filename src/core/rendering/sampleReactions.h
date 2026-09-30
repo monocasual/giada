@@ -27,6 +27,7 @@
 #ifndef G_RENDERING_SAMPLE_REACTIONS_H
 #define G_RENDERING_SAMPLE_REACTIONS_H
 
+#include "src/core/model/channelView.h"
 #include "src/core/types.h"
 #include "src/scene.h"
 #include "src/types.h"
@@ -42,20 +43,42 @@ namespace giada::m::rendering
 void recordSampleKeyPress(ID channelId, Scene, ChannelShared&, Tick currentTickQuantized, SamplePlayerMode, ActionManager&);
 void recordSampleKeyRelease(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
 void recordSampleKeyKill(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
-void killSampleReadActions(ChannelShared&);
-void toggleSampleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning);
+void killSampleReadActions(const model::Channel::Parameters&);
+
+void toggleSampleReadActions(
+    const model::Channel::Parameters&,
+    bool treatRecsAsLoops,
+    bool seqIsRunning);
 
 /* [...]SampleChannel
 Actions manually performed on a Sample channel. */
 
-void stopSampleChannelBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop);
-void stopSampleChannel(ChannelShared&, Frame localFrame);
-void pressSampleChannel(ID channelId, ChannelShared&, SamplePlayerMode, float velocity, bool canQuantize, bool isLoop, bool velocityAsVol);
-void releaseSampleChannel(ChannelShared&, SamplePlayerMode);
-void killSampleChannel(ChannelShared&, SamplePlayerMode);
-void rewindSampleChannel(ChannelShared&, Frame localFrame);
-void playSampleChannel(ChannelShared&, Frame localFrame);
+void stopSampleChannelBySeq(
+    const model::ChannelView&,
+    bool chansStopOnSeqHalt,
+    bool isLoop);
 
+void stopSampleChannel(const model::ChannelView&, Frame localFrame);
+
+void pressSampleChannel(
+    const model::ChannelView&,
+    SamplePlayerMode,
+    float velocity,
+    bool  canQuantize,
+    bool  isLoop,
+    bool  velocityAsVol);
+
+void releaseSampleChannel(
+    const model::ChannelView&,
+    SamplePlayerMode);
+
+void killSampleChannel(
+    const model::ChannelView&,
+    SamplePlayerMode);
+
+void rewindSampleChannel(const model::ChannelView&, Frame localFrame);
+
+void playSampleChannel(const model::ChannelView&);
 } // namespace giada::m::rendering
 
 #endif

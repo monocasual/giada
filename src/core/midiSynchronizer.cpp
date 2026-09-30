@@ -28,7 +28,6 @@
 #include "src/core/conf.h"
 #include "src/core/kernelMidi.h"
 #include "src/core/midiEvent.h"
-#include "src/core/model/sequencer.h"
 #include "src/utils/log.h"
 #include "src/utils/time.h"
 #include <numeric>
@@ -69,7 +68,7 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 
 	switch (e.getByte1())
 	{
-	case MidiEvent::SYSTEM_CLOCK:
+	case MidiEvent::SYSTEM_MIDI_CLOCK:
 		computeClock(e.getTimestamp());
 		break;
 
@@ -98,7 +97,7 @@ void MidiSynchronizer::startSendClock(float bpm)
 		return;
 
 	setClockBpm(bpm);
-	const MidiEvent clockEvent = MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_CLOCK);
+	const MidiEvent clockEvent = MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_MIDI_CLOCK);
 
 	m_worker.start([this, clockEvent]()
 	{

@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/shared.h"
+#include "src/core/model_DEPR_/shared.h"
 #include "src/core/channels/channelFactory.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/plugins/pluginManager.h"
@@ -37,7 +37,7 @@
 
 namespace utils = mcl::utils;
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 namespace
 {
@@ -109,20 +109,22 @@ LoadState Shared::load(const Patch& patch, PluginManager& pluginManager, const S
 
 	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
+		/*
 		std::unique_ptr<juce::AudioPluginInstance> pi = pluginManager.makeJucePlugin(pplugin.juceId, sampleRate, bufferSize);
 		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), sequencer, sampleRate, bufferSize);
 		if (!p->valid)
 			state.missingPlugins.emplace(pplugin.juceId);
 		getAllPlugins().push_back(std::move(p));
+		*/
 	}
 
 	for (const Patch::Wave& pwave : patch.waves)
 	{
-		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, rsmpQuality);
-		if (w != nullptr)
-			getAllWaves().push_back(std::move(w));
-		else
-			state.missingWaves.push_back(pwave.path);
+		//std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, rsmpQuality);
+		//if (w != nullptr)
+		//	getAllWaves().push_back(std::move(w));
+		//else
+		//	state.missingWaves.push_back(pwave.path);
 	}
 
 	for (const Patch::Channel& pchannel : patch.channels)
@@ -139,18 +141,18 @@ LoadState Shared::load(const Patch& patch, PluginManager& pluginManager, const S
 
 void Shared::store(Patch& patch, const std::string& projectPath)
 {
-	for (const auto& p : getAllPlugins())
-		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
+	//for (const auto& p : getAllPlugins())
+	//	patch.plugins.push_back(pluginFactory::serializePlugin(*p));
 
 	for (auto& w : getAllWaves())
 	{
 		/* Update all existing file paths in Waves, so that they point to the
 		project folder they belong to. */
 
-		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, getAllWaves()));
-		waveFactory::save(*w, w->getPath()); // TODO - error checking
+		//w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, getAllWaves()));
+		//waveFactory::save(*w, w->getPath()); // TODO - error checking
 
-		patch.waves.push_back(waveFactory::serializeWave(*w));
+		//patch.waves.push_back(waveFactory::serializeWave(*w));
 	}
 }
 

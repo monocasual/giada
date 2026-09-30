@@ -28,7 +28,7 @@
 #define G_RENDERING_REACTOR_H
 
 #include "src/core/midiMapper.h"
-#include "src/core/types.h"
+#include "src/core/model/types.h"
 #include "src/scene.h"
 #include "src/types.h"
 

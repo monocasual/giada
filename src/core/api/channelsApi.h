@@ -28,6 +28,7 @@
 #define G_CHANNELS_API_H
 
 #include "src/core/channels/channelFactory.h"
+#include "src/core/model/types.h"
 #include "src/core/patch.h"
 #include "src/core/types.h"
 #include <string>
@@ -36,8 +37,7 @@
 namespace giada::m::model
 {
 class Model;
-class Tracks;
-} // namespace giada::m::model
+}
 
 namespace giada::m::rendering
 {
@@ -72,20 +72,16 @@ public:
 	bool canRemoveTrack(std::size_t trackIndex) const;
 	bool hasActions(ID channelId) const;
 
-	Channel&       get(ID);
-	model::Tracks& getTracks();
-
-	void     addTrack();
-	void     removeTrack(std::size_t trackIndex);
-	void     setTrackWidth(std::size_t trackIndex, int width);
-	Channel& add(ChannelType, std::size_t trackIndex);
-	void     move(ID, std::size_t newTrackIndex, std::size_t newPosition);
-	int      loadSampleChannel(ID channelId, const std::string& filePath);
-	void     loadSampleChannel(ID channelId, Wave&);
-	void     remove(ID);
-	void     freeSampleChannel(ID, bool allScenes);
-	void     clone(ID);
-	void     copyToScene(ID, Scene dst);
+	void addTrack();
+	void removeTrack(std::size_t trackIndex);
+	void setTrackWidth(std::size_t trackIndex, int width);
+	ID   add(ChannelType, std::size_t trackIndex);
+	void move(ID, std::size_t newTrackIndex, std::size_t newPosition);
+	int  loadSampleChannel(ID channelId, const std::string& filePath);
+	void remove(ID);
+	void freeSampleChannel(ID, bool allScenes);
+	void clone(ID);
+	void copyToScene(ID, Scene dst);
 
 	void press(ID, float velocity);
 	void release(ID);

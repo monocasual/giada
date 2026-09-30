@@ -43,6 +43,8 @@ class geTrack : public geFlexResizable
 public:
 	geTrack(int x, int y, int w, int h, std::size_t index, geResizerBar* b);
 
+	void update();
+
 	/* getChannel
 	Returns the channel given the ID. */
 
@@ -68,7 +70,7 @@ public:
 	/* addChannel
 	Adds a new channel in this track. */
 
-	geChannel* addChannel(const c::channel::Data&);
+	geChannel* addChannel(const c::channel::Channel&);
 
 	/* refreshChannels
 	Updates channels' graphical statues. Called on each GUI cycle. */

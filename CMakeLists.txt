@@ -61,6 +61,7 @@ list(APPEND SOURCES
 	src/core/rendering/midiOutput.h
 	src/core/rendering/pluginRendering.cpp
 	src/core/rendering/pluginRendering.h
+	src/core/rendering/renderInfo.h
 	src/core/api/mainApi.cpp
 	src/core/api/mainApi.h
 	src/core/api/channelsApi.cpp
@@ -165,32 +166,63 @@ list(APPEND SOURCES
 	src/core/channels/channelShared.h
 	src/core/channels/channelFactory.cpp
 	src/core/channels/channelFactory.h
+	src/core/model/assets.h
+	src/core/model/assetsEdit.h
+	src/core/model/actions.cpp
+	src/core/model/actions.h
+	src/core/model/action.h
+	src/core/model/behaviors.h
+	src/core/model/channel.cpp
+	src/core/model/channel.h
+	src/core/model/channelView.cpp
+	src/core/model/channelView.h
+	src/core/model/channels.cpp
+	src/core/model/channels.h
 	src/core/model/document.cpp
 	src/core/model/document.h
-	src/core/model/loadState.cpp
-	src/core/model/loadState.h
-	src/core/model/sharedLock.cpp
-	src/core/model/sharedLock.h
-	src/core/model/shared.cpp
-	src/core/model/shared.h
+	src/core/model/documentEdit.h
 	src/core/model/kernelAudio.cpp
 	src/core/model/kernelAudio.h
-	src/core/model/sequencer.cpp
-	src/core/model/sequencer.h
+	src/core/model/midiChannel.cpp
+	src/core/model/midiChannel.h
+	src/core/model/midiIn.cpp
+	src/core/model/midiIn.h
+	src/core/model/midiInput.cpp
+	src/core/model/midiInput.h
+	src/core/model/midiInputParams.cpp
+	src/core/model/midiInputParams.h
+	src/core/model/midiLearnParam.cpp
+	src/core/model/midiLearnParam.h
+	src/core/model/midiLightning.cpp
+	src/core/model/midiLightning.h
+	src/core/model/midiLightningParams.cpp
+	src/core/model/midiLightningParams.h
 	src/core/model/mixer.cpp
 	src/core/model/mixer.h
 	src/core/model/model.cpp
 	src/core/model/model.h
-	src/core/model/channels.cpp
-	src/core/model/channels.h
-	src/core/model/actions.cpp
-	src/core/model/actions.h
-	src/core/model/tracks.cpp
-	src/core/model/tracks.h
+	src/core/model/modelEdit.h
+	src/core/model/modelView.cpp
+	src/core/model/modelView.h
+	src/core/model/parameters.h
+	src/core/model/sampleChannel.cpp
+	src/core/model/sampleChannel.h
+	src/core/model/sequencer.cpp
+	src/core/model/sequencer.h
 	src/core/model/track.cpp
 	src/core/model/track.h
-	src/core/model/midiIn.cpp
-	src/core/model/midiIn.h
+	src/core/model/tracks.cpp
+	src/core/model/tracks.h
+	src/core/model/wave.cpp
+	src/core/model/wave.h
+	src/core/model/plugin.cpp
+	src/core/model/plugin.h
+	src/core/model/pluginParameter.cpp
+	src/core/model/pluginParameter.h
+	src/core/model/pluginMidiMapping.cpp
+	src/core/model/pluginMidiMapping.h
+	src/core/model/loadState.cpp
+	src/core/model/loadState.h
 	src/core/idManager.cpp
 	src/core/idManager.h
 	src/glue/main.cpp
@@ -548,6 +580,10 @@ endif()
 # ------------------------------------------------------------------------------
 # Dependencies
 # ------------------------------------------------------------------------------
+
+# Concurrentqueue used by realtime-model dependency
+
+list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src/deps/concurrentqueue)
 
 # Threads (system)
 

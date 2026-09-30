@@ -67,7 +67,7 @@ public:
 
 	void draw() override;
 
-	void rebuild(c::actionEditor::Data& d) override;
+	void rebuild(const c::actionEditor::Data& d) override;
 
 private:
 	void onAddAction() override;
@@ -87,7 +87,7 @@ private:
 	Pixel snapToY(Pixel p) const;
 	int   yToNote(Pixel y) const;
 	Pixel noteToY(int n) const;
-	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
+	Pixel getPianoItemW(Pixel x, const c::actionEditor::Action& a1, const c::actionEditor::Action& a2) const;
 
 	Fl_Offscreen m_offscreenGrid; // lines, x-repeat
 };

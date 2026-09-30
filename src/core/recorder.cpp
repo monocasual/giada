@@ -28,8 +28,6 @@
 #include "src/core/actions/ActionManager.h"
 #include "src/core/channels/channelManager.h"
 #include "src/core/mixer.h"
-#include "src/core/model/actions.h"
-#include "src/core/model/model.h"
 #include "src/core/sequencer.h"
 #include "src/core/types.h"
 #include "src/utils/log.h"

@@ -110,13 +110,14 @@ bool ConfigApi::audio_openStream(
 
 void ConfigApi::audio_storeData(bool limitOutput, Resampler::Quality rsmpQuality, float recTriggerLevel)
 {
-	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
-
-	kernelAudio.limitOutput     = limitOutput;
-	kernelAudio.rsmpQuality     = rsmpQuality;
-	kernelAudio.recTriggerLevel = recTriggerLevel;
-
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE,
+	    [limitOutput, rsmpQuality, recTriggerLevel](model::DocumentEdit& edit)
+	{
+		model::Document& doc = edit.get();
+		doc.kernelAudio.limitOutput     = limitOutput;
+		doc.kernelAudio.rsmpQuality     = rsmpQuality;
+		doc.kernelAudio.recTriggerLevel = recTriggerLevel;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -161,14 +162,14 @@ const std::vector<std::string>& ConfigApi::midi_getMidiMapFilesFound() const
 
 std::string ConfigApi::midi_getCurrentMidiMapPath() const
 {
-	return m_model.get().kernelMidi.midiMapPath;
+	return m_model.read().getDocument().kernelMidi.midiMapPath;
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool ConfigApi::midi_setAPI(RtMidi::Api api)
+void ConfigApi::midi_setAPI(RtMidi::Api api)
 {
-	return m_kernelMidi.setAPI(api);
+	m_kernelMidi.setAPI(api);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -199,10 +200,14 @@ void ConfigApi::midi_closeInDevice(std::size_t deviceIndex)
 
 void ConfigApi::midi_setSyncMode(int syncMode)
 {
-	const float currentBpm = m_model.get().sequencer.getBpm();
+	m_model.write(model::SwapType::NONE, [syncMode](model::DocumentEdit& edit)
+	{
+		edit.get().kernelMidi.sync = syncMode;
+	});
 
-	m_model.get().kernelMidi.sync = syncMode;
-	m_model.swap(model::SwapType::NONE);
+	m_model.flush();
+
+	const float currentBpm = m_model.read().getDocument().sequencer.getBpm();
 
 	m_midiSynchronizer.stopSendClock();
 	m_midiSynchronizer.startSendClock(currentBpm);
@@ -212,8 +217,10 @@ void ConfigApi::midi_setSyncMode(int syncMode)
 
 void ConfigApi::midi_setMidiMapPath(const std::string& midiMapPath)
 {
-	m_model.get().kernelMidi.midiMapPath = midiMapPath;
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [midiMapPath](model::DocumentEdit& edit)
+	{
+		edit.get().kernelMidi.midiMapPath = midiMapPath;
+	});
 
 	m_midiMapper.read(midiMapPath);
 	m_midiMapper.sendInitMessages();
@@ -221,16 +228,18 @@ void ConfigApi::midi_setMidiMapPath(const std::string& midiMapPath)
 
 /* -------------------------------------------------------------------------- */
 
-const model::Behaviors& ConfigApi::behaviors_getData() const
+model::Behaviors ConfigApi::behaviors_getData() const
 {
-	return m_model.get().behaviors;
+	return m_model.read().getDocument().behaviors;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ConfigApi::behaviors_storeData(const model::Behaviors& data)
+void ConfigApi::behaviors_storeData(const model::Behaviors& behaviors)
 {
-	m_model.get().behaviors = data;
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [behaviors](model::DocumentEdit& edit)
+	{
+		edit.get().behaviors = behaviors;
+	});
 }
 } // namespace giada::m

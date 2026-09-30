@@ -26,6 +26,7 @@
 
 #include "src/core/model/mixer.h"
 #include "src/const.h"
+#include "src/utils/log.h"
 #if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
@@ -40,10 +41,10 @@ audio thread accumulate the maximum peak between UI repaints (i.e. calls to
 getPeak() below), so short peaks aren't lost before the UI reads and resets the
 value. */
 
-void updatePeak_(std::atomic<float>& peak, float value)
+void updatePeak_(WeakAtomic<float>& peak, float value)
 {
-	float old = peak.load(std::memory_order_relaxed);
-	while (old < value && !peak.compare_exchange_weak(old, value, std::memory_order_relaxed))
+	float old = peak.load();
+	while (old < value && !peak.compareExchange(old, value))
 	{
 	}
 }
@@ -53,50 +54,35 @@ void updatePeak_(std::atomic<float>& peak, float value)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Mixer::Shared& Mixer::Shared::operator=(const Mixer::Shared& o)
+bool Mixer::Parameters::isActive() const
 {
-	if (this == &o)
-		return *this;
-	active.store(o.active.load());
-	peakOutL.store(0.0f);
-	peakOutR.store(0.0f);
-	peakInL.store(0.0f);
-	peakInR.store(0.0f);
-	inputTracker.store(0);
-	return *this;
+	return m_active.load() == true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Mixer::a_isActive() const
+Frame Mixer::Parameters::getInputTracker() const
 {
-	return shared->active.load() == true;
+	return m_inputTracker.load();
 }
 
 /* -------------------------------------------------------------------------- */
 
-Frame Mixer::a_getInputTracker() const
+void Mixer::Parameters::setActive(bool isActive) const
 {
-	return shared->inputTracker.load();
+	m_active.store(isActive);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::a_setActive(bool isActive) const
+void Mixer::Parameters::setInputTracker(Frame f) const
 {
-	shared->active.store(isActive);
+	m_inputTracker.store(f);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::a_setInputTracker(Frame f) const
-{
-	shared->inputTracker.store(f);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Peak Mixer::a_getPeakOut() const
+Peak Mixer::Parameters::getPeakOut() const
 {
 	/* Atomically fetch the current L/R peaks and reset them to 0. exchange()
 	does both in one step, so we consume the maximum accumulated since the last
@@ -106,37 +92,93 @@ Peak Mixer::a_getPeakOut() const
 	highest peak seen in that time span, instead of just the most recently written
 	block value. */
 	return {
-	    shared->peakOutL.exchange(0.0f, std::memory_order_relaxed),
-	    shared->peakOutR.exchange(0.0f, std::memory_order_relaxed)};
+	    m_peakOutL.exchange(0.0f),
+	    m_peakOutR.exchange(0.0f)};
 }
 
-Peak Mixer::a_getPeakIn() const
+Peak Mixer::Parameters::getPeakIn() const
 {
 	/* Same as above. */
 	return {
-	    shared->peakInL.exchange(0.0f, std::memory_order_relaxed),
-	    shared->peakInR.exchange(0.0f, std::memory_order_relaxed)};
+	    m_peakInL.exchange(0.0f),
+	    m_peakInR.exchange(0.0f)};
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::a_setPeakOut(Peak p) const
+void Mixer::Parameters::setPeakOut(Peak p) const
 {
-	updatePeak_(shared->peakOutL, p.left);
-	updatePeak_(shared->peakOutR, p.right);
+	updatePeak_(m_peakOutL, p.left);
+	updatePeak_(m_peakOutR, p.right);
 }
 
-void Mixer::a_setPeakIn(Peak p) const
+void Mixer::Parameters::setPeakIn(Peak p) const
 {
-	updatePeak_(shared->peakInL, p.left);
-	updatePeak_(shared->peakInR, p.right);
+	updatePeak_(m_peakInL, p.left);
+	updatePeak_(m_peakInR, p.right);
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Mixer::Rendering::Rendering(int maxFramesInLoop, int framesInBuffer)
+{
+	m_recBuffer.alloc(maxFramesInLoop, G_MAX_IO_CHANS);
+	m_inBuffer.alloc(framesInBuffer, G_MAX_IO_CHANS);
+
+	u::log::print("[Mixer::Rendering::Rendering] Buffers ready - maxFramesInLoop={}, framesInBuffer={}\n",
+	    maxFramesInLoop, framesInBuffer);
 }
 
 /* -------------------------------------------------------------------------- */
 
-mcl::AudioBuffer& Mixer::getRecBuffer() const { return shared->recBuffer; }
-mcl::AudioBuffer& Mixer::getInBuffer() const { return shared->inBuffer; }
+const mcl::AudioBuffer& Mixer::Rendering::getInBuffer() const { return m_inBuffer; }
+const mcl::AudioBuffer& Mixer::Rendering::getRecBuffer() const { return m_recBuffer; }
 
+/* -------------------------------------------------------------------------- */
+
+Frame Mixer::Rendering::getMaximumRecLength() const
+{
+	return m_recBuffer.countFrames();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::Rendering::prepareInputBufferFrom(const mcl::AudioBuffer& src, float gain) const
+{
+	m_inBuffer.clear();
+
+	if (src.isAllocd())
+		m_inBuffer.setAll(src, gain);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::Rendering::sumInputToRecBuffer(Frame offset) const
+{
+	assert(offset >= 0 && offset < m_recBuffer.countFrames());
+
+	m_recBuffer.sumAll(m_inBuffer, m_inBuffer.countFrames(), /*srcOffset=*/0,
+	    /*destOffset=*/offset);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::Rendering::resizeRecBuffer(Frame size) const
+{
+	m_recBuffer.alloc(size, G_MAX_IO_CHANS);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::Rendering::clearRecBuffer() const
+{
+	m_recBuffer.clear();
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 #if G_DEBUG_MODE

@@ -44,8 +44,8 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
-: gdBaseActionEditor(channelId, model)
+gdMidiActionEditor::gdMidiActionEditor(const c::actionEditor::Data& data, const Model& model)
+: gdBaseActionEditor(data, model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -111,7 +111,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 	}
 
 	prepareWindow();
-	rebuild();
+	rebuild(data);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,15 +123,15 @@ gdMidiActionEditor::~gdMidiActionEditor()
 
 /* -------------------------------------------------------------------------- */
 
-void gdMidiActionEditor::rebuild()
+void gdMidiActionEditor::rebuild(const c::actionEditor::Data& data)
 {
-	m_data = c::actionEditor::getData(channelId);
+	m_data.emplace(data);
 
-	computeWidth(m_data.ticksInSeq, m_data.ticksInLoop);
-	updateTitleWithScene(m_data.scene);
+	computeWidth(m_data->ticksInSeq, m_data->ticksInLoop);
+	updateTitleWithScene(m_data->scene);
 
-	m_pianoRoll->rebuild(m_data);
-	m_velocityEditor->rebuild(m_data);
+	m_pianoRoll->rebuild(m_data.value());
+	m_velocityEditor->rebuild(m_data.value());
 	m_splitScroll->initScrollbar();
 }
 } // namespace giada::v

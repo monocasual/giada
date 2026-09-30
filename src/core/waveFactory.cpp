@@ -28,6 +28,7 @@
 #include "audioFileIO.h"
 #include "src/core/const.h"
 #include "src/core/idManager.h"
+#include "src/core/model/wave.h"
 #include "src/core/patch.h"
 #include "src/core/wave.h"
 #include "src/core/waveFx.h"
@@ -49,14 +50,14 @@ IdManager waveId_;
 
 /* -------------------------------------------------------------------------- */
 
-std::string makeWavePath_(const std::string& base, const m::Wave& w, int k)
+std::string makeWavePath_(const std::string& base, const model::Wave& w, int k)
 {
 	return utils::fs::join(base, fmt::format("{}-{}{}", w.getBasename(/*ext=*/false), k, w.getExtension()));
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool isWavePathUnique_(const m::Wave& skip, const std::string& path,
+bool isWavePathUnique_(const model::Wave& skip, const std::string& path,
     const std::vector<std::unique_ptr<Wave>>& waves)
 {
 	for (const auto& w : waves)
@@ -64,13 +65,32 @@ bool isWavePathUnique_(const m::Wave& skip, const std::string& path,
 			return false;
 	return true;
 }
+
+/* -------------------------------------------------------------------------- */
+
+int monoToStereo_(model::Wave& w)
+{
+	if (w.getBuffer().countChannels() >= G_MAX_IO_CHANS)
+		return G_RES_OK;
+
+	mcl::AudioBuffer newData;
+	newData.alloc(w.getBuffer().countFrames(), G_MAX_IO_CHANS);
+
+	for (int i = 0; i < newData.countFrames(); i++)
+		for (int j = 0; j < newData.countChannels(); j++)
+			newData.at(i, j) = w.getBuffer().at(i, 0);
+
+	w.replaceData(std::move(newData));
+
+	return G_RES_OK;
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
+std::string makeUniqueWavePath(const std::string& base, const model::Wave& w,
     const std::vector<std::unique_ptr<Wave>>& waves)
 {
 	std::string path = utils::fs::join(base, w.getBasename(/*ext=*/true));
@@ -108,17 +128,18 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 
 	waveId_.set(id);
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate(id), std::move(buffer),
+	std::shared_ptr<model::Wave> wave = std::make_shared<model::Wave>(
+	    waveId_.generate(id), std::move(buffer),
 	    info.sampleRate, info.format, path);
 
-	if (wave->getBuffer().countChannels() == 1 && !wfx::monoToStereo(*wave))
+	if (wave->getBuffer().countChannels() == 1 && !monoToStereo_(*wave))
 		return {G_RES_ERR_PROCESSING};
 
 	if (wave->getRate() != samplerate)
 	{
 		u::log::print("[waveFactory::create] file sample rate ({}) != project sample rate ({}), conversion needed\n",
 		    wave->getRate(), samplerate);
-		if (resample(*wave.get(), quality, samplerate) != G_RES_OK)
+		if (resample(*wave, quality, samplerate) != G_RES_OK)
 			return {G_RES_ERR_PROCESSING};
 	}
 
@@ -129,10 +150,10 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
+std::shared_ptr<model::Wave> createEmpty(int frames, int channels, int samplerate,
     const std::string& name)
 {
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
+	auto wave = std::make_shared<model::Wave>(waveId_.generate());
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
@@ -144,7 +165,7 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
+std::shared_ptr<model::Wave> createFromWave(const model::Wave& src, int a, int b)
 {
 	a = a == -1 ? 0 : a;
 	b = b == -1 ? src.getBuffer().countFrames() : b;
@@ -152,7 +173,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	const int channels = src.getBuffer().countChannels();
 	const int frames   = b - a;
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
+	std::shared_ptr<model::Wave> wave = std::make_shared<model::Wave>(waveId_.generate());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
 	wave->getBuffer().setAll(src.getBuffer(), frames, 0, 0);
 	wave->setLogical(true);
@@ -164,19 +185,19 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality quality)
+std::shared_ptr<model::Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality quality)
 {
 	return createFromFile(w.path, w.id, samplerate, quality).wave;
 }
 
-const Patch::Wave serializeWave(const Wave& w)
+const Patch::Wave serializeWave(const model::Wave& w)
 {
 	return {w.id, utils::fs::basename(w.getPath())};
 }
 
 /* -------------------------------------------------------------------------- */
 
-int resample(Wave& w, Resampler::Quality quality, int samplerate)
+int resample(model::Wave& w, Resampler::Quality quality, int samplerate)
 {
 	float ratio         = samplerate / (float)w.getRate();
 	int   newSizeFrames = static_cast<int>(ceil(w.getBuffer().countFrames() * ratio));
@@ -208,7 +229,7 @@ int resample(Wave& w, Resampler::Quality quality, int samplerate)
 
 /* -------------------------------------------------------------------------- */
 
-int save(const Wave& w, const std::string& path)
+int save(const model::Wave& w, const std::string& path)
 {
 	return audioFileIO::write(path, w.getBuffer(), w.getRate());
 }

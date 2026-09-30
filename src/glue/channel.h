@@ -27,6 +27,7 @@
 #ifndef G_GLUE_CHANNEL_H
 #define G_GLUE_CHANNEL_H
 
+#include "src/core/model/channel.h"
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
 #include "src/deps/geompp/src/line.hpp"
@@ -44,22 +45,29 @@ Functions to interact with channels. */
 
 namespace giada::m
 {
-class Plugin;
-class Channel;
 class MidiEvent;
 } // namespace giada::m
 
-namespace giada::v
+namespace giada::m::model
 {
-class Dispatcher;
-}
+class Track;
+struct Document;
+struct Parameters;
+struct Assets;
+} // namespace giada::m::model
 
 namespace giada::c::channel
 {
-struct SampleData
+class SampleChannel
 {
-	SampleData() = delete;
-	SampleData(const m::Channel&, Scene);
+public:
+	SampleChannel() = delete;
+	SampleChannel(
+	    const m::model::Channel&,
+	    std::shared_ptr<const m::model::Channel::Parameters>,
+	    Scene);
+
+	void update(const m::model::Channel&, Scene);
 
 	Frame getTracker() const;
 
@@ -72,60 +80,70 @@ struct SampleData
 	bool             overdubProtection;
 
 private:
-	WeakAtomic<Frame>* m_tracker;
+	std::shared_ptr<const m::model::Channel::Parameters> m_params;
 };
 
-struct MidiData
+class MidiChannel
 {
-	MidiData() = delete;
-	MidiData(const m::Channel&);
+public:
+	MidiChannel() = delete;
+	MidiChannel(const m::model::Channel&);
+
+	void update(const m::model::Channel&);
 
 	bool isOutputEnabled;
 	int  filter;
 };
 
-struct Data
+class Channel
 {
-	Data(const m::Channel&, Scene, std::size_t trackIndex, std::size_t channelIndex);
+public:
+	Channel(
+	    const m::model::Channel&,
+	    std::shared_ptr<const m::model::Channel::Parameters>,
+	    Scene,
+	    std::size_t trackIndex,
+	    std::size_t channelIndex);
+
+	void update(const m::model::Channel&, Scene);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
 	bool          getReadActions() const;
-	bool          isRecordingInput() const;
-	bool          isRecordingActions() const;
-	bool          isMuted() const;
-	bool          isSoloed() const;
-	bool          isArmed() const;
-	bool          isActive() const;
 
-	ID                      id;
-	std::size_t             trackIndex;
-	std::size_t             channelIndex;
-	std::vector<m::Plugin*> plugins;
-	ChannelType             type;
-	int                     height;
-	std::string             name;
-	float                   volume;
-	float                   pan;
-	int                     key;
-	bool                    hasActions;
-	bool                    sendToMaster;
-	std::size_t             extraOutputsCount;
+	ID              id;
+	std::size_t     trackIndex;
+	std::size_t     channelIndex;
+	std::vector<ID> plugins;
+	ChannelType     type;
+	int             height;
+	std::string     name;
+	float           volume;
+	float           pan;
+	int             key;
+	bool            mute;
+	bool            solo;
+	bool            armed;
+	bool            active;
+	bool            hasActions;
+	bool            sendToMaster;
+	std::size_t     extraOutputsCount;
 
-	std::optional<SampleData> sample;
-	std::optional<MidiData>   midi;
+	std::optional<SampleChannel> sampleChannel;
+	std::optional<MidiChannel>   midiChannel;
 
 private:
-	WeakAtomic<ChannelStatus>* m_playStatus;
-	WeakAtomic<ChannelStatus>* m_recStatus;
-	WeakAtomic<bool>*          m_readActions;
+	std::shared_ptr<const m::model::Channel::Parameters> m_params;
 };
 
-struct Track
+class Track
 {
-	std::size_t       index;
-	int               width;
-	std::vector<Data> channels;
+public:
+	void update(const m::model::Track&, Scene);
+
+	std::size_t          index;
+	int                  width;
+	std::vector<Channel> channels;
 };
 
 struct RoutingData
@@ -140,16 +158,11 @@ struct RoutingData
 	std::string      outputDeviceName;
 };
 
-/* getChannels
-Returns a single viewModel object filled with data from a channel. */
-
-Data getData(ID channelId);
-
 /* getTracks
 Returns a vector of Track's filled with Data objects, which reflects the layout
 described by m::model::Tracks. */
 
-std::vector<Track> getTracks();
+std::vector<Track> getTracks(const m::model::Document&, const m::model::Assets&, Scene);
 
 /* getRoutingData
 Returns a single viewModel object for the 'Routing' window. */
@@ -233,8 +246,7 @@ delete only actions in the current scene. */
 
 void clearAllActions(ID channelId, bool allScenes);
 
-void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
-
+void  setSamplePlayerMode(ID channelId, SamplePlayerMode m);
 void  pressChannel(ID channelId, float velocity, Thread t);
 void  releaseChannel(ID channelId, Thread t);
 void  killChannel(ID channelId, Thread t);

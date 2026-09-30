@@ -30,6 +30,11 @@
 #include "src/glue/channel.h"
 #include "src/gui/elems/basics/flex.h"
 
+namespace giada::c::channel
+{
+class Channel;
+}
+
 namespace giada::v
 {
 class geDial;
@@ -40,7 +45,7 @@ class geMidiActivity;
 class geChannel : public geFlex
 {
 public:
-	geChannel(int x, int y, int w, int h, c::channel::Data d);
+	geChannel(int x, int y, int w, int h, const c::channel::Channel&);
 
 	void draw() override;
 
@@ -48,6 +53,11 @@ public:
 	Updates graphics. */
 
 	virtual void refresh();
+
+	/* update
+	Update widgets state, without hard rebuild. */
+
+	void update();
 
 	/* getTrackIndex
 	Returns the index of the track this channel resides in. */
@@ -68,7 +78,7 @@ public:
 	/* getData
 	Returns a reference to the internal data. Read-only. */
 
-	const c::channel::Data& getData() const;
+	const c::channel::Channel& getData() const;
 
 	geImageButton*     playButton;
 	geImageButton*     arm;
@@ -93,9 +103,9 @@ protected:
 	void        cb_changeVol();
 
 	/* m_channel
-	Channel's data. */
+	Channel data is owned by the main window's view model. */
 
-	c::channel::Data m_channel;
+	const c::channel::Channel& m_channel;
 };
 } // namespace giada::v
 

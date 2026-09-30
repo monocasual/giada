@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/pluginManager.h"
-#include "src/core/model/model.h"
+#include "src/core/model/plugin.h"
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginFactory.h"
@@ -33,8 +33,6 @@
 #include "src/deps/mcl-utils/src/string.hpp"
 #include "src/utils/fs.h"
 #include "src/utils/log.h"
-#include <cassert>
-#include <cstddef>
 #include <memory>
 
 namespace utils = mcl::utils;
@@ -124,19 +122,19 @@ bool PluginManager::loadList(const std::string& filepath)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& juceId,
-    int sampleRate, int bufferSize, const model::Sequencer& sequencer, ID id)
+std::shared_ptr<model::Plugin> PluginManager::makePlugin(const std::string& juceId,
+    int sampleRate, int bufferSize, ID id)
 {
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(juceId, sampleRate, bufferSize);
-	return pluginFactory::create(id, juceId, std::move(pi), sequencer, sampleRate, bufferSize);
+	return pluginFactory::create(id, juceId, std::move(pi), sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
-    int bufferSize, const model::Sequencer& sequencer)
+std::shared_ptr<model::Plugin> PluginManager::makePlugin(const model::Plugin& src, int sampleRate,
+    int bufferSize)
 {
-	std::unique_ptr<Plugin> p = makePlugin(src.getJuceId(), sampleRate, bufferSize, sequencer);
+	std::shared_ptr<model::Plugin> p = makePlugin(src.getJuceId(), sampleRate, bufferSize);
 	if (src.getState().getSize() != 0)
 		p->setState(src.getState());
 	return p;
@@ -144,12 +142,13 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleR
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& source,
-    int sampleRate, int bufferSize, model::Model& model)
+std::vector<ID> PluginManager::clonePlugins(const std::vector<ID>& source,
+    int sampleRate, int bufferSize)
 {
-	std::vector<Plugin*> clones;
-	for (const Plugin* plugin : source)
-		clones.push_back(&model.addPlugin(makePlugin(*plugin, sampleRate, bufferSize, model.get().sequencer)));
+	std::vector<ID> clones;
+	// TODO
+	// for (const Plugin* plugin : source)
+	//	clones.push_back(&model.addPlugin(makePlugin(*plugin, sampleRate, bufferSize)));
 
 	return clones;
 }

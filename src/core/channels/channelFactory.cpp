@@ -27,7 +27,6 @@
 #include "src/core/channels/channelFactory.h"
 #include "src/core/channels/channel.h"
 #include "src/core/conf.h"
-#include "src/core/model/model.h"
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"
@@ -46,20 +45,15 @@ IdManager channelId_;
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<ChannelShared> makeShared_(ChannelType type, ID channelId, int sampleRate,
-    int bufferSize, Resampler::Quality quality)
+std::tuple<
+    std::shared_ptr<model::Channel::Parameters>,
+    std::shared_ptr<model::Channel::Rendering>>
+makeShared_(ChannelType type, int sampleRate, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(channelId, bufferSize);
+	auto parameters = std::make_shared<model::Channel::Parameters>();
+	auto rendering  = std::make_shared<model::Channel::Rendering>(type, sampleRate, bufferSize, quality);
 
-	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
-	{
-		shared->quantizer.emplace();
-		shared->renderQueue.emplace(/*size=*/2, 0, /*num_threads=*/2);
-		shared->resampler.emplace(quality);
-		shared->stretcher.emplace(sampleRate);
-	}
-
-	return shared;
+	return {parameters, rendering};
 }
 } // namespace
 
@@ -86,26 +80,25 @@ Data create(ID channelId, ChannelType type, int sampleRate, int bufferSize,
 {
 	channelId = channelId_.generate(channelId);
 
-	std::unique_ptr<ChannelShared> shared = makeShared_(type, channelId, sampleRate, bufferSize, quality);
-	Channel                        ch     = Channel(type, channelId, *shared.get());
+	auto [parameters, rendering] = makeShared_(type, sampleRate, bufferSize, quality);
+	model::Channel ch            = model::Channel(type, channelId);
 
 	if (ch.sampleChannel)
 		ch.sampleChannel->overdubProtection = overdubProtection;
 
-	return {ch, std::move(shared)};
+	return {ch, parameters, rendering};
 }
 
 /* -------------------------------------------------------------------------- */
 
-Data create(const Channel& o, int sampleRate, int bufferSize, Resampler::Quality quality)
+Data create(const model::Channel& o, int sampleRate, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared_(o.type, o.id, sampleRate, bufferSize, quality);
-	Channel                        ch     = Channel(o);
+	auto [parameters, rendering] = makeShared_(o.type, sampleRate, bufferSize, quality);
+	model::Channel ch            = model::Channel(o);
 
-	ch.id     = channelId_.generate();
-	ch.shared = shared.get();
+	ch.id = channelId_.generate();
 
-	return {ch, std::move(shared)};
+	return {ch, parameters, rendering};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -122,7 +115,8 @@ Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, flo
 std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel& pch, int sampleRate,
     int bufferSize, Resampler::Quality quality)
 {
-	return makeShared_(pch.type, pch.id, sampleRate, bufferSize, quality);
+	return nullptr;
+	// return makeShared_DEPR_(pch.type, pch.id, sampleRate, bufferSize, quality);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -169,7 +163,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 		{
 			const Sample& sample = c.sampleChannel->getSample(Scene{i});
 			pc.samples[i]        = {
-			           .waveId       = sample.wave != nullptr ? sample.wave->id : utils::Id{0},
+			           .waveId       = sample.waveId,
 			           .range        = sample.range,
 			           .shift        = sample.shift,
 			           .pitch        = sample.pitch,

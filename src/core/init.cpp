@@ -41,6 +41,7 @@
 #include "tests/channelFactory.cpp"
 #include "tests/midiEvent.cpp"
 #include "tests/midiLightning.cpp"
+#include "tests/model.cpp"
 #include "tests/patch.cpp"
 #include "tests/sampleRendering.cpp"
 #include "tests/version.cpp"
@@ -113,6 +114,22 @@ void startup()
 		g_engine->getMainApi().startActionRecOnCallback();
 	};
 
+	g_ui->onUpdate = []()
+	{
+		const auto documentSwapType = g_engine->pollDocumentChanges();
+		const auto assetsSwapType   = g_engine->pollAssetsChanges();
+
+		const bool isHardSwap = documentSwapType == model::SwapType::HARD || assetsSwapType == model::SwapType::HARD;
+		const bool isSoftSwap = documentSwapType == model::SwapType::SOFT || assetsSwapType == model::SwapType::SOFT;
+
+		if (isHardSwap)
+			g_ui->rebuild();
+		else if (isSoftSwap)
+			g_ui->update();
+
+		g_ui->refresh();
+	};
+
 	g_engine->onMidiReceived = []()
 	{
 		g_ui->pumpEvent([]
@@ -129,17 +146,6 @@ void startup()
 	{
 		g_ui->pumpEvent([channelId]()
 		{ g_ui->mainWindow->keyboard->notifyMidiOut(channelId); });
-	};
-
-	g_engine->onModelSwap = [](model::SwapType type)
-	{
-		/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
-		callback might be performed by a non-main thread, which must talk to the
-		UI (main thread) through the UI queue by pumping an event in it. */
-		if (type == model::SwapType::NONE)
-			return;
-		g_ui->pumpEvent([type]()
-		{ type == model::SwapType::HARD ? g_ui->rebuild() : g_ui->refresh(); });
 	};
 
 	Conf conf = confFactory::deserialize();

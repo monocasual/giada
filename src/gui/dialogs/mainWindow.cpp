@@ -189,7 +189,6 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 	setTitle(G_APP_NAME);
-	refresh();
 	show();
 }
 
@@ -197,25 +196,50 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 void gdMainWindow::refresh()
 {
-	mainTimer->refresh();
 	cpuLoad->refresh();
-	mainTransport->refresh();
-	sequencer->refresh();
 	keyboard->refresh();
-	mainInput->refresh();
-	mainOutput->refresh();
-	scenes->refresh();
+
+	if (!m_main)
+		return;
+
+	scenes->refresh(m_main->scenes);
+	sequencer->refresh(m_main->sequencer);
+	mainTimer->refresh(m_main->timer);
+	mainInput->refresh(m_main->io);
+	mainOutput->refresh(m_main->io);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gdMainWindow::rebuild()
+void gdMainWindow::rebuild(const c::main::Main& main)
 {
-	keyboard->rebuild();
-	mainTimer->rebuild();
-	mainInput->rebuild();
-	mainOutput->rebuild();
-	scenes->rebuild();
+	/* Destroy keyboard widgets before replacing the channel data they reference.
+	This is necessary to avoid dangling references. */
+
+	keyboard->init();
+
+	m_main.emplace(main);
+
+	keyboard->rebuild(m_main->tracks);
+	keyboard->update();
+
+	mainTimer->rebuild(m_main->timer);
+	mainInput->rebuild(m_main->io);
+	mainOutput->rebuild(m_main->io);
+
+	mainTransport->update(m_main->transport);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdMainWindow::update()
+{
+	assert(m_main);
+
+	c::main::updateMain(*m_main);
+
+	keyboard->update();
+	mainTransport->update(m_main->transport);
 }
 
 /* -------------------------------------------------------------------------- */

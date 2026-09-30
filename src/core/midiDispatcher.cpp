@@ -27,11 +27,11 @@
 #include "src/core/midiDispatcher.h"
 #include "src/core/conf.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/recorder.h"
 #include "src/core/types.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/glue/channel.h"
 #include "src/glue/main.h"
 #include "src/glue/plugin.h"
@@ -39,6 +39,8 @@
 #include <cassert>
 #include <cstddef>
 #include <vector>
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -140,8 +142,8 @@ void MidiDispatcher::process(const MidiEvent& e)
 
 bool MidiDispatcher::isMasterMidiInAllowed(int c)
 {
-	int  filter  = m_model.get().midiIn.filter;
-	bool enabled = m_model.get().midiIn.enabled;
+	int  filter  = m_model.read().getDocument().midiIn.filter;
+	bool enabled = m_model.read().getDocument().midiIn.enabled;
 	return enabled && (filter == -1 || filter == c);
 }
 
@@ -149,26 +151,30 @@ bool MidiDispatcher::isMasterMidiInAllowed(int c)
 
 bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 {
-	return m_model.get().tracks.getChannel(channelId).midiInput.isAllowed(c);
+	return m_model.read().getDocument().tracks.getChannel(channelId).midiInput.isAllowed(c);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
-    const MidiEvent& midiEvent)
+void MidiDispatcher::processPlugins(ID channelId, const std::vector<ID>& plugins,
+    const MidiEvent& midiEvent) const
 {
-	const uint32_t pure      = midiEvent.getRawNoVelocity();
-	const float    velocityF = midiEvent.getVelocityFloat();
+	const uint32_t         pure      = midiEvent.getRawNoVelocity();
+	const float            velocityF = midiEvent.getVelocityFloat();
+	const model::ModelView view      = m_model.read();
+	const auto&            mapping   = view.getDocument().pluginMidiMapping;
 
-	for (Plugin* p : plugins)
+	for (const ID id : plugins)
 	{
-		for (const PluginParameter& param : p->getParameters())
+		const std::vector<uint32_t>& params = mapping.get(id);
+
+		for (std::size_t i = 0; i < params.size(); i++)
 		{
-			if (pure != param.learnParam.getValue())
+			if (pure != params[i])
 				continue;
-			c::plugin::setParameter(channelId, p->id, param.learnParam.getIndex(), velocityF, Thread::MIDI);
+			c::plugin::setParameter(channelId, id, i, velocityF, Thread::MIDI);
 			G_DEBUG("   [pluginId={} paramIndex={}] (pure=0x{:0X}, value={}, float={})",
-			    p->id.getValue(), param.learnParam.getIndex(), pure, midiEvent.getVelocity(), velocityF);
+			    id.getValue(), i, pure, midiEvent.getVelocity(), velocityF);
 		}
 	}
 }
@@ -177,21 +183,14 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 
 void MidiDispatcher::processTracks(const MidiEvent& midiEvent)
 {
-	for (const model::Track& track : m_model.get().tracks.getAll())
-		processChannels(track.getChannels().getAll(), midiEvent);
+	for (const model::Track& track : m_model.read().getDocument().tracks.getAll())
+		for (const model::Channel& ch : track.getChannels().getAll())
+			processChannel(ch, midiEvent);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiDispatcher::processChannels(const std::vector<Channel>& channels, const MidiEvent& midiEvent)
-{
-	for (const Channel& ch : channels)
-		processChannel(ch, midiEvent);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void MidiDispatcher::processChannel(const Channel& c, const MidiEvent& midiEvent)
+void MidiDispatcher::processChannel(const model::Channel& c, const MidiEvent& midiEvent) const
 {
 	/* Do nothing on this channel if MIDI in is disabled or filtered out for
 	the current MIDI channel. */
@@ -257,10 +256,10 @@ void MidiDispatcher::processChannel(const Channel& c, const MidiEvent& midiEvent
 
 /* -------------------------------------------------------------------------- */
 
-void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
+void MidiDispatcher::processMaster(const MidiEvent& midiEvent) const
 {
 	const uint32_t       pure   = midiEvent.getRawNoVelocity();
-	const model::MidiIn& midiIn = m_model.get().midiIn;
+	const model::MidiIn& midiIn = m_model.read().getDocument().midiIn;
 
 	if (pure == midiIn.rewind)
 	{
@@ -323,49 +322,52 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 
 	const uint32_t raw = e.getRawNoVelocity();
 
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
-
-	switch (param)
+	m_model.write(model::SwapType::SOFT, [channelId, param, raw](model::DocumentEdit& e)
 	{
-	case G_MIDI_IN_KEYPRESS:
-		ch.midiInput.keyPress.setValue(raw);
-		break;
-	case G_MIDI_IN_KEYREL:
-		ch.midiInput.keyRelease.setValue(raw);
-		break;
-	case G_MIDI_IN_KILL:
-		ch.midiInput.kill.setValue(raw);
-		break;
-	case G_MIDI_IN_ARM:
-		ch.midiInput.arm.setValue(raw);
-		break;
-	case G_MIDI_IN_MUTE:
-		ch.midiInput.mute.setValue(raw);
-		break;
-	case G_MIDI_IN_SOLO:
-		ch.midiInput.solo.setValue(raw);
-		break;
-	case G_MIDI_IN_VOLUME:
-		ch.midiInput.volume.setValue(raw);
-		break;
-	case G_MIDI_IN_PITCH:
-		ch.midiInput.pitch.setValue(raw);
-		break;
-	case G_MIDI_IN_READ_ACTIONS:
-		ch.midiInput.readActions.setValue(raw);
-		break;
-	case G_MIDI_OUT_L_PLAYING:
-		ch.midiLightning.playing.setValue(raw);
-		break;
-	case G_MIDI_OUT_L_MUTE:
-		ch.midiLightning.mute.setValue(raw);
-		break;
-	case G_MIDI_OUT_L_SOLO:
-		ch.midiLightning.solo.setValue(raw);
-		break;
-	}
+		model::Channel& ch = e.get().tracks.getChannel(channelId);
 
-	m_model.swap(model::SwapType::SOFT);
+		switch (param)
+		{
+		case G_MIDI_IN_KEYPRESS:
+			ch.midiInput.keyPress.setValue(raw);
+			break;
+		case G_MIDI_IN_KEYREL:
+			ch.midiInput.keyRelease.setValue(raw);
+			break;
+		case G_MIDI_IN_KILL:
+			ch.midiInput.kill.setValue(raw);
+			break;
+		case G_MIDI_IN_ARM:
+			ch.midiInput.arm.setValue(raw);
+			break;
+		case G_MIDI_IN_MUTE:
+			ch.midiInput.mute.setValue(raw);
+			break;
+		case G_MIDI_IN_SOLO:
+			ch.midiInput.solo.setValue(raw);
+			break;
+		case G_MIDI_IN_VOLUME:
+			ch.midiInput.volume.setValue(raw);
+			break;
+		case G_MIDI_IN_PITCH:
+			ch.midiInput.pitch.setValue(raw);
+			break;
+		case G_MIDI_IN_READ_ACTIONS:
+			ch.midiInput.readActions.setValue(raw);
+			break;
+		case G_MIDI_OUT_L_PLAYING:
+			ch.midiLightning.playing.setValue(raw);
+			break;
+		case G_MIDI_OUT_L_MUTE:
+			ch.midiLightning.mute.setValue(raw);
+			break;
+		case G_MIDI_OUT_L_SOLO:
+			ch.midiLightning.solo.setValue(raw);
+			break;
+		}
+	});
+
+	m_model.flush();
 
 	stopLearn();
 	doneCb();
@@ -378,31 +380,35 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 	if (!isMasterMidiInAllowed(e.getChannel()))
 		return;
 
-	const uint32_t raw    = e.getRawNoVelocity();
-	model::MidiIn& midiIn = m_model.get().midiIn;
+	const uint32_t raw = e.getRawNoVelocity();
 
-	if (param == G_MIDI_IN_REWIND)
-		midiIn.rewind = raw;
-	else if (param == G_MIDI_IN_START_STOP)
-		midiIn.startStop = raw;
-	else if (param == G_MIDI_IN_ACTION_REC)
-		midiIn.actionRec = raw;
-	else if (param == G_MIDI_IN_INPUT_REC)
-		midiIn.inputRec = raw;
-	else if (param == G_MIDI_IN_METRONOME)
-		midiIn.metronome = raw;
-	else if (param == G_MIDI_IN_VOLUME_IN)
-		midiIn.volumeIn = raw;
-	else if (param == G_MIDI_IN_VOLUME_OUT)
-		midiIn.volumeOut = raw;
-	else if (param == G_MIDI_IN_BEAT_DOUBLE)
-		midiIn.beatDouble = raw;
-	else if (param == G_MIDI_IN_BEAT_HALF)
-		midiIn.beatHalf = raw;
-	else if (utils::container::has(G_MIDI_IN_SCENES, param))
-		midiIn.setScene(Scene{utils::container::indexOf(G_MIDI_IN_SCENES, param)}, raw);
+	m_model.write(model::SwapType::SOFT, [param, raw](model::DocumentEdit& e)
+	{
+		model::MidiIn& midiIn = e.get().midiIn;
 
-	m_model.swap(model::SwapType::SOFT);
+		if (param == G_MIDI_IN_REWIND)
+			midiIn.rewind = raw;
+		else if (param == G_MIDI_IN_START_STOP)
+			midiIn.startStop = raw;
+		else if (param == G_MIDI_IN_ACTION_REC)
+			midiIn.actionRec = raw;
+		else if (param == G_MIDI_IN_INPUT_REC)
+			midiIn.inputRec = raw;
+		else if (param == G_MIDI_IN_METRONOME)
+			midiIn.metronome = raw;
+		else if (param == G_MIDI_IN_VOLUME_IN)
+			midiIn.volumeIn = raw;
+		else if (param == G_MIDI_IN_VOLUME_OUT)
+			midiIn.volumeOut = raw;
+		else if (param == G_MIDI_IN_BEAT_DOUBLE)
+			midiIn.beatDouble = raw;
+		else if (param == G_MIDI_IN_BEAT_HALF)
+			midiIn.beatHalf = raw;
+		else if (utils::container::has(G_MIDI_IN_SCENES, param))
+			midiIn.setScene(Scene{utils::container::indexOf(G_MIDI_IN_SCENES, param)}, raw);
+	});
+
+	m_model.flush();
 
 	stopLearn();
 	doneCb();
@@ -412,13 +418,19 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 
 void MidiDispatcher::learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb)
 {
-	model::SharedLock lock   = m_model.lockShared(model::SwapType::NONE);
-	Plugin*           plugin = m_model.findPlugin(pluginId);
+	const uint32_t raw = e.getRawNoVelocity();
 
-	assert(plugin != nullptr);
-	assert(paramIndex < plugin->getParameters().size());
+	m_model.write(model::SwapType::SOFT, [pluginId, paramIndex, raw](model::DocumentEdit& e)
+	{
+		auto& mapping = e.get().pluginMidiMapping;
 
-	plugin->getParameters()[paramIndex].learnParam.setValue(e.getRawNoVelocity());
+		assert(mapping.get(pluginId).size() == e.view().getPlugin(pluginId)->getParameters().size());
+		assert(paramIndex < mapping.get(pluginId).size());
+
+		mapping.set(pluginId, paramIndex, raw);
+	});
+
+	m_model.flush();
 
 	stopLearn();
 	doneCb();

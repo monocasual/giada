@@ -37,9 +37,9 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
+gdPluginList::gdPluginList(const c::plugin::Plugins& plugins, geompp::Rect<int> bounds)
 : gdWindow(u::gui::getCenterWinBounds(bounds), "", WID_FX_LIST)
-, m_channelId(channelId)
+, m_channelId(plugins.channelId)
 {
 	end();
 
@@ -51,7 +51,7 @@ gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
 	resizable(list);
 
 	set_non_modal();
-	rebuild();
+	rebuild(plugins);
 	show();
 }
 
@@ -64,13 +64,11 @@ gdPluginList::~gdPluginList()
 
 /* -------------------------------------------------------------------------- */
 
-void gdPluginList::rebuild()
+void gdPluginList::rebuild(const c::plugin::Plugins& plugins)
 {
-	m_plugins = c::plugin::getPlugins(m_channelId);
-
-	if (m_plugins.channelId == MASTER_OUT_CHANNEL_ID)
+	if (plugins.channelId == MASTER_OUT_CHANNEL_ID)
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTEROUT));
-	else if (m_plugins.channelId == MASTER_IN_CHANNEL_ID)
+	else if (plugins.channelId == MASTER_IN_CHANNEL_ID)
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTERIN));
 	else
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_CHANNEL));
@@ -80,18 +78,22 @@ void gdPluginList::rebuild()
 	list->removeAllChildren();
 	list->scroll_to(0, 0);
 
-	for (const c::plugin::Plugin& plugin : m_plugins.plugins)
+	for (const c::plugin::Plugin& plugin : plugins.plugins)
 		list->addWidget(new gePluginElement(0, 0, w(), G_GUI_UNIT, plugin));
 
 	addPlugin = new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui->getI18Text(LangMap::PLUGINLIST_ADDPLUGIN));
 
-	addPlugin->onClick = [this]()
+	addPlugin->onClick = [channelId = plugins.channelId]()
 	{
-		c::layout::openPluginChooser(m_plugins.channelId);
+		c::layout::openPluginChooser(channelId);
 	};
 
 	list->addWidget(addPlugin);
 }
+
+/* -------------------------------------------------------------------------- */
+
+ID gdPluginList::getChannelId() const { return m_channelId; }
 
 /* -------------------------------------------------------------------------- */
 

@@ -27,29 +27,24 @@
 #ifndef G_MAIN_H
 #define G_MAIN_H
 
+#include "src/core/model/mixer.h"
+#include "src/core/model/modelView.h"
+#include "src/core/model/parameters.h"
+#include "src/core/model/sequencer.h"
 #include "src/core/types.h"
+#include "src/glue/channel.h"
 #include "src/scene.h"
 #include "src/types.h"
 
 /* giada::c::main
 Functions to interact with the tools in the main window. */
 
-namespace giada::m
-{
-class Channel;
-}
-
-namespace giada::m::model
-{
-class Sequencer;
-class Mixer;
-} // namespace giada::m::model
-
 namespace giada::c::main
 {
-struct Timer
+class Timer
 {
-	Timer();
+public:
+	Timer(const m::model::ModelView&);
 
 	float         bpm;
 	TimeSignature timeSignature;
@@ -58,10 +53,10 @@ struct Timer
 	bool          isRecordingInput;
 };
 
-struct IO
+class IO
 {
-	IO() = default;
-	IO(const m::Channel& out, const m::Channel& in);
+public:
+	IO(const m::model::ModelView&);
 
 	float masterOutVol;
 	float masterInVol;
@@ -69,54 +64,95 @@ struct IO
 	bool  masterInHasPlugins;
 	bool  inToOut;
 
-	Peak getMasterOutPeak();
-	Peak getMasterInPeak();
-	bool isKernelReady();
+	Peak getMasterOutPeak() const;
+	Peak getMasterInPeak() const;
+	bool isKernelReady() const;
+
+private:
+	const m::model::Mixer::Parameters& m_params;
 };
 
-struct Sequencer
+class Sequencer
 {
+public:
+	Sequencer(const m::model::ModelView&);
+
 	bool          isFreeModeInputRec;
-	bool          shouldBlink;
 	TimeSignature timeSignature;
-	int           currentBeat;
-	Frame         recPosition;
 	Frame         recMaxLength;
+
+	void update(const m::model::ModelView&);
+
+	bool  shouldBlink() const;
+	int   getCurrentBeat() const;
+	Frame getRecPosition() const;
+
+private:
+	bool                        m_isWaiting;
+	const m::model::Parameters& m_params;
 };
 
-struct Transport
+class Transport
 {
+public:
+	Transport(const m::model::ModelView&);
+
 	bool           isRunning;
-	bool           isRecordingAction;
+	bool           isRecordingActions;
 	bool           isRecordingInput;
 	bool           isMetronomeOn;
 	RecTriggerMode recTriggerMode;
 	InputRecMode   inputRecMode;
 
+	void update(const m::model::ModelView&);
+
 	bool canRecordInput() const;
 	bool canEnableFreeInputRec() const;
 	bool canEnableRecOnSignal() const;
+
+private:
+	std::optional<m::model::ModelView> m_view;
 };
 
-struct Scenes
+class Scenes
 {
-	Scenes();
+public:
+	Scenes(const m::model::ModelView&);
 
 	SceneArray<bool> activeScenes;
 
 	Scene       getCurrentScene() const;
 	Scene       getNextScene() const;
 	SceneStatus getStatus() const;
+
+private:
+	const m::model::Sequencer::Parameters& m_params;
 };
 
-/* get*
-Returns viewModel objects filled with data. */
+class Main
+{
+public:
+	Main(const m::model::ModelView&);
 
-Timer     getTimer();
-IO        getIO();
-Sequencer getSequencer();
-Transport getTransport();
-Scenes    getScenes();
+	std::vector<channel::Track> tracks;
+	Timer                       timer;
+	IO                          io;
+	Transport                   transport;
+	Sequencer                   sequencer;
+	Scenes                      scenes;
+
+	void update(const m::model::ModelView&);
+};
+
+/* getMain
+Returns a new Main object filled with model data. */
+
+Main getMain();
+
+/* updateMain
+Updates an existing Main object with model data. */
+
+void updateMain(Main&);
 
 void setTimeSignature(TimeSignature);
 void quantize(int val);

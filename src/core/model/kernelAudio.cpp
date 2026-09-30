@@ -28,13 +28,13 @@
 
 namespace giada::m::model
 {
-void KernelAudio::a_setCpuLoad(double v) const
+void KernelAudio::Parameters::setCpuLoad(double v) const
 {
-	shared->cpuLoad.store(v);
+	m_cpuLoad.store(v);
 }
 
-double KernelAudio::a_getCpuLoad() const
+double KernelAudio::Parameters::getCpuLoad() const
 {
-	return shared->cpuLoad.load();
+	return m_cpuLoad.load();
 }
 } // namespace giada::m::model

@@ -38,7 +38,7 @@ public:
 
 	void draw() override;
 
-	void rebuild(c::actionEditor::Data& d) override;
+	void rebuild(const c::actionEditor::Data& d) override;
 
 private:
 	void onMoveAction() override;

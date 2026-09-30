@@ -60,10 +60,10 @@ geMainTimer::geMainTimer()
 	m_multiplier->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_MULTIPLIER));
 	m_divider->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_DIVIDER));
 
-	m_bpm->onClick = [&timer = m_timer]()
-	{ c::layout::openBpmWindow(timer.bpm); };
-	m_timeSignature->onClick = [&timer = m_timer]()
-	{ c::layout::openBeatsWindow(timer.timeSignature); };
+	m_bpm->onClick = []()
+	{ c::layout::openBpmWindow(); };
+	m_timeSignature->onClick = []()
+	{ c::layout::openBeatsWindow(); };
 	m_multiplier->onClick = []()
 	{ c::main::multiplyBeats(); };
 	m_divider->onClick = []()
@@ -83,11 +83,9 @@ geMainTimer::geMainTimer()
 
 /* -------------------------------------------------------------------------- */
 
-void geMainTimer::refresh()
+void geMainTimer::refresh(const c::main::Timer& timer)
 {
-	m_timer = c::main::getTimer();
-
-	if (m_timer.isRecordingInput)
+	if (timer.isRecordingInput)
 	{
 		m_bpm->deactivate();
 		m_timeSignature->deactivate();
@@ -105,13 +103,11 @@ void geMainTimer::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-void geMainTimer::rebuild()
+void geMainTimer::rebuild(const c::main::Timer& timer)
 {
-	m_timer = c::main::getTimer();
-
-	setBpm(m_timer.bpm);
-	setTimeSignature(m_timer.timeSignature);
-	setQuantizer(m_timer.quantize);
+	setBpm(timer.bpm);
+	setTimeSignature(timer.timeSignature);
+	setQuantizer(timer.quantize);
 }
 
 /* -------------------------------------------------------------------------- */

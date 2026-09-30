@@ -30,8 +30,10 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/metronome.h"
 #include "src/core/midiSynchronizer.h"
+#include "src/core/model/actions.h"
 #include "src/core/model/model.h"
-#include "src/core/quantizer.h"
+#include "src/core/model/sequencer.h"
+#include "src/core/model/types.h"
 #include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/log.h"
 #include "src/utils/time.h"
@@ -40,10 +42,6 @@ namespace giada::m
 {
 namespace
 {
-constexpr int Q_ACTION_REWIND = 0;
-
-/* -------------------------------------------------------------------------- */
-
 /* AudioBlock
 A pair of ranges that describe the current audio block to render from the Sequencer
 perspective, taking the wraparound at first beat into account. Head is always
@@ -91,15 +89,15 @@ entire block, contiguously. */
 
 struct ActionsBlock
 {
-	std::span<const Action> head;
-	std::span<const Action> tail;
+	std::span<const model::Action> head;
+	std::span<const model::Action> tail;
 
 	template <typename F>
 	void onEachAction(F&& fn) const
 	{
-		for (const Action& a : head)
+		for (const model::Action& a : head)
 			fn(a);
-		for (const Action& a : tail)
+		for (const model::Action& a : tail)
 			fn(a);
 	}
 };
@@ -119,40 +117,35 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 , m_quantizerStep(1)
 , m_currentSampleRate(0)
 {
-	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta)
-	{ rawRewind(delta); });
+	m_eventBuffer.reserve(G_MAX_SEQUENCER_EVENTS);
 }
 /* -------------------------------------------------------------------------- */
 
-bool          Sequencer::canQuantize() const { return m_model.get().sequencer.canQuantize(); }
-bool          Sequencer::isRunning() const { return m_model.get().sequencer.isRunning(); }
-bool          Sequencer::isActive() const { return m_model.get().sequencer.isActive(); }
-bool          Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(m_currentSampleRate); }
-bool          Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(m_currentSampleRate); }
-bool          Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
-float         Sequencer::getBpm() const { return m_model.get().sequencer.getBpm(); }
-TimeSignature Sequencer::getTimeSignature() const { return m_model.get().sequencer.getTimeSignature(); }
-int           Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
-Frame         Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
-Frame         Sequencer::getFramesInBar() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInBar(), m_currentSampleRate, getBpm()); }
-Frame         Sequencer::getFramesInBeat() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInBeat(), m_currentSampleRate, getBpm()); }
-Frame         Sequencer::getFramesInLoop() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInLoop(), m_currentSampleRate, getBpm()); }
-Frame         Sequencer::getFramesInSeq() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInSeq(), m_currentSampleRate, getBpm()); }
-Tick          Sequencer::getTicksInBar() const { return m_model.get().sequencer.getTicksInBar(); }
-Tick          Sequencer::getTicksInBeat() const { return m_model.get().sequencer.getTicksInBeat(); }
-Tick          Sequencer::getTicksInLoop() const { return m_model.get().sequencer.getTicksInLoop(); }
-Tick          Sequencer::getTicksInSeq() const { return m_model.get().sequencer.getTicksInSeq(); }
-int           Sequencer::getQuantizerValue() const { return m_model.get().sequencer.quantize; }
+bool          Sequencer::canQuantize() const { return m_model.read().getDocument().sequencer.canQuantize(); }
+bool          Sequencer::isRunning() const { return m_model.read().getDocument().sequencer.isRunning(); }
+float         Sequencer::getBpm() const { return m_model.read().getDocument().sequencer.getBpm(); }
+TimeSignature Sequencer::getTimeSignature() const { return m_model.read().getDocument().sequencer.getTimeSignature(); }
+int           Sequencer::getCurrentBeat() const { return m_model.read().getParameters().sequencer.getCurrentBeat(); }
+Frame         Sequencer::getCurrentFrame() const { return m_model.read().getParameters().sequencer.getCurrentFrame(); }
+Frame         Sequencer::getFramesInBar() const { return u::time::tickToFrame(m_model.read().getDocument().sequencer.getTicksInBar(), m_currentSampleRate, getBpm()); }
+Frame         Sequencer::getFramesInBeat() const { return u::time::tickToFrame(m_model.read().getDocument().sequencer.getTicksInBeat(), m_currentSampleRate, getBpm()); }
+Frame         Sequencer::getFramesInLoop() const { return u::time::tickToFrame(m_model.read().getDocument().sequencer.getTicksInLoop(), m_currentSampleRate, getBpm()); }
+Frame         Sequencer::getFramesInSeq() const { return u::time::tickToFrame(m_model.read().getDocument().sequencer.getTicksInSeq(), m_currentSampleRate, getBpm()); }
+Tick          Sequencer::getTicksInBar() const { return m_model.read().getDocument().sequencer.getTicksInBar(); }
+Tick          Sequencer::getTicksInBeat() const { return m_model.read().getDocument().sequencer.getTicksInBeat(); }
+Tick          Sequencer::getTicksInLoop() const { return m_model.read().getDocument().sequencer.getTicksInLoop(); }
+Tick          Sequencer::getTicksInSeq() const { return m_model.read().getDocument().sequencer.getTicksInSeq(); }
+int           Sequencer::getQuantizerValue() const { return m_model.read().getDocument().sequencer.quantize; }
 int           Sequencer::getQuantizerStep() const { return m_quantizerStep; }
-SeqStatus     Sequencer::getStatus() const { return m_model.get().sequencer.status; }
-int           Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
-Scene         Sequencer::getCurrentScene() const { return m_model.get().sequencer.a_getCurrentScene(); }
-Scene         Sequencer::getNextScene() const { return m_model.get().sequencer.a_getNextScene(); }
-SceneStatus   Sequencer::getSceneStatus() const { return m_model.get().sequencer.a_getSceneStatus(); }
+SeqStatus     Sequencer::getStatus() const { return m_model.read().getDocument().sequencer.status; }
+int           Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.read().getDocument().sequencer.getMaxFramesInLoop(sampleRate); }
+Scene         Sequencer::getCurrentScene() const { return m_model.read().getParameters().sequencer.getCurrentScene(); }
+Scene         Sequencer::getNextScene() const { return m_model.read().getParameters().sequencer.getNextScene(); }
+SceneStatus   Sequencer::getSceneStatus() const { return m_model.read().getParameters().sequencer.getSceneStatus(); }
 
 /* -------------------------------------------------------------------------- */
 
-Tick Sequencer::getCurrentTick() const { return m_model.get().sequencer.a_getCurrentTick(m_currentSampleRate); }
+Tick Sequencer::getCurrentTick() const { return m_model.read().getParameters().sequencer.getCurrentTick(m_currentSampleRate, getBpm()); }
 Tick Sequencer::getCurrentTickQuantized() const { return quantize(getCurrentTick()); }
 
 /* -------------------------------------------------------------------------- */
@@ -178,8 +171,14 @@ Tick Sequencer::quantize(Tick t) const
 void Sequencer::reset(int sampleRate)
 {
 	m_currentSampleRate = sampleRate;
-	m_model.get().sequencer.reset();
-	m_model.swap(model::SwapType::NONE);
+
+	m_model.write(model::SwapType::SOFT, [](model::DocumentEdit& edit)
+	{
+		edit.get().sequencer.reset();
+	});
+
+	m_model.flush();
+
 	rewind();
 }
 
@@ -192,20 +191,23 @@ void Sequencer::setSampleRate(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequencer,
-    Frame bufferSize, const model::Actions& actions) const
+const Sequencer::EventBuffer& Sequencer::advance(
+    const model::Sequencer&             sequencer,
+    const model::Sequencer::Parameters& params,
+    const model::Actions&               actions,
+    Frame                               bufferSize) const
 {
 	m_eventBuffer.clear();
 
-	const Frame start        = sequencer.a_getCurrentFrame();
+	const Frame start        = params.getCurrentFrame();
 	const Frame end          = start + bufferSize;
 	const float bpm          = sequencer.getBpm();
 	const Frame framesInLoop = u::time::tickToFrame(sequencer.getTicksInLoop(), m_currentSampleRate, bpm);
 	const Frame framesInBar  = u::time::tickToFrame(sequencer.getTicksInBar(), m_currentSampleRate, bpm);
 	const Frame framesInBeat = u::time::tickToFrame(sequencer.getTicksInBeat(), m_currentSampleRate, bpm);
 
-	const Scene currentScene = sequencer.a_getCurrentScene();
-	const Scene nextScene    = sequencer.a_getNextScene();
+	const Scene currentScene = params.getCurrentScene();
+	const Scene nextScene    = params.getNextScene();
 	bool        sceneChanged = false;
 
 	/* Process events in the current block. */
@@ -224,8 +226,8 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 			if (currentScene != nextScene)
 			{
 				assert(onSceneChanged != nullptr);
-				sequencer.a_setCurrentScene(nextScene);
-				sequencer.a_setSceneStatus(SceneStatus::IDLE);
+				params.setCurrentScene(nextScene);
+				params.setSceneStatus(SceneStatus::IDLE);
 				sceneChanged = true;
 				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
 			}
@@ -245,7 +247,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	needed if the scene has changed in this block: we need to process actions
 	that belong to the next scene, not the current one (which is the old one). */
 
-	actionsBlock.onEachAction([&](const Action& action)
+	actionsBlock.onEachAction([&](const model::Action& action)
 	{
 		/* An action may fall just outside the current block because the frame-to-tick
 		conversion above (AudioBlock -> ActionsBlock) is conservative. Double-check
@@ -263,23 +265,21 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		const Frame offset = inTail ? audioBlock.head.getLength() : -audioBlock.head.getA();
 		const Frame local  = frame + offset;
 
-		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, &action, sceneChanged ? nextScene : currentScene});
+		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, action, sceneChanged ? nextScene : currentScene});
 	});
 
-	/* Advance this and quantizer after the event parsing. */
+	/* Advance after the event parsing. */
 
-	sequencer.a_setCurrentFrame(audioBlock.nextFrame, m_currentSampleRate);
-	m_quantizer.advance({start, end}, getQuantizerStep()); // TODO - this is wrong, pass block instead raw {start, end} range
+	params.setCurrentFrame(audioBlock.nextFrame, m_currentSampleRate, bpm);
 
 	return m_eventBuffer;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::render(mcl::AudioBuffer& outBuf, const model::Document& document_RT) const
+void Sequencer::render(mcl::AudioBuffer& outBuf) const
 {
-	if (document_RT.sequencer.metronome)
-		m_metronome.render(outBuf);
+	m_metronome.render(outBuf);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -327,7 +327,8 @@ void Sequencer::rawRewind(Frame delta)
 
 void Sequencer::rewindForced()
 {
-	m_model.get().sequencer.a_setCurrentFrame(0, /*sampleRate=*/0); // No need for sampleRate, it's just 0
+	// No need for sampleRate and bpm values, everything it's just 0
+	m_model.read().getParameters().sequencer.setCurrentFrame(0, /*sampleRate=*/0, /*bpm=*/0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -335,7 +336,10 @@ void Sequencer::rewindForced()
 void Sequencer::rewind()
 {
 	if (canQuantize())
-		m_quantizer.trigger(Q_ACTION_REWIND);
+	{
+		// TODO: Restore quantized rewind when the quantizer is reworked.
+		return;
+	}
 	else if (!m_jackTransport.setPosition(0))
 		rawRewind(0);
 }
@@ -355,24 +359,28 @@ void Sequencer::stop()
 	if (!m_jackTransport.stop())
 		rawStop();
 
-	const auto& sequencer = m_model.get().sequencer;
-	if (sequencer.a_getSceneStatus() == SceneStatus::CHANGING)
+	const auto  view   = m_model.read();
+	const auto& params = view.getParameters().sequencer;
+
+	if (params.getSceneStatus() == SceneStatus::CHANGING)
 	{
-		sequencer.a_setSceneStatus(SceneStatus::IDLE);
-		sequencer.a_setNextScene(sequencer.a_getCurrentScene());
+		params.setSceneStatus(SceneStatus::IDLE);
+		params.setNextScene(params.getCurrentScene());
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Sequencer::isMetronomeOn() const { return m_model.get().sequencer.metronome; }
+bool Sequencer::isMetronomeOn() const { return m_model.read().getDocument().sequencer.metronome; }
 
 void Sequencer::toggleMetronome() { setMetronome(!isMetronomeOn()); }
 
 void Sequencer::setMetronome(bool v)
 {
-	m_model.get().sequencer.metronome = v;
-	m_model.swap(model::SwapType::SOFT);
+	m_model.write(model::SwapType::SOFT, [v](model::DocumentEdit& edit)
+	{
+		edit.get().sequencer.metronome = v;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -390,8 +398,10 @@ void Sequencer::setBpm(float b)
 
 void Sequencer::rawSetBpm(float v)
 {
-	m_model.get().sequencer.setBpm(v);
-	m_model.swap(model::SwapType::HARD);
+	m_model.write(model::SwapType::HARD, [v](model::DocumentEdit& edit)
+	{
+		edit.get().sequencer.setBpm(v);
+	});
 
 	u::log::print("[sequencer::rawSetBpm] Bpm changed to {}\n", v);
 }
@@ -400,32 +410,37 @@ void Sequencer::rawSetBpm(float v)
 
 void Sequencer::setTimeSignature(TimeSignature t)
 {
-	m_model.get().sequencer.setTimeSignature(t);
-	m_model.swap(model::SwapType::HARD);
+	m_model.write(model::SwapType::HARD, [t](model::DocumentEdit& edit)
+	{
+		edit.get().sequencer.setTimeSignature(t);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Sequencer::rawGoToBeat(int beat, int sampleRate)
 {
-	m_model.get().sequencer.a_setCurrentBeat(beat, sampleRate);
-	m_model.swap(model::SwapType::NONE);
+	m_model.read().getParameters().sequencer.setCurrentBeat(beat, sampleRate, getBpm());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Sequencer::setQuantize(int q)
 {
-	m_model.get().sequencer.quantize = q;
-	m_model.swap(model::SwapType::HARD);
+	m_model.write(model::SwapType::HARD, [q](model::DocumentEdit& edit)
+	{
+		edit.get().sequencer.quantize = q;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Sequencer::setStatus(SeqStatus s)
 {
-	m_model.get().sequencer.status = s;
-	m_model.swap(model::SwapType::SOFT);
+	m_model.write(model::SwapType::SOFT, [s](model::DocumentEdit& edit)
+	{
+		edit.get().sequencer.status = s;
+	});
 
 	/* Additional things to do when the status changes. */
 
@@ -450,7 +465,7 @@ void Sequencer::setStatus(SeqStatus s)
 
 void Sequencer::goToBeat(int beat, int sampleRate)
 {
-	const float bpm   = m_model.get().sequencer.getBpm();
+	const float bpm   = getBpm();
 	const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
 	if (!m_jackTransport.setPosition(frame))
 		rawGoToBeat(beat, sampleRate);
@@ -462,27 +477,34 @@ void Sequencer::setScene(Scene scene, bool forced)
 {
 	assert(scene.isValid());
 
-	const auto& sequencer    = m_model.get().sequencer;
-	const Scene currentScene = sequencer.a_getCurrentScene();
-	const bool  sameScene    = scene == currentScene;
+	// TODO - we HARD swap only to refresh the whole UI on scene change. Maybe
+	// there is a better way.
 
-	if (sameScene)
+	m_model.write(model::SwapType::HARD, [scene, forced](model::DocumentEdit& edit)
 	{
-		if (!isRunning())
+		const model::Document& doc    = edit.get();
+		const auto&            params = edit.view().getParameters().sequencer;
+
+		const Scene currentScene = params.getCurrentScene();
+		const bool  sameScene    = scene == currentScene;
+
+		if (sameScene)
+		{
+			if (!doc.sequencer.isRunning())
+				return;
+			params.setNextScene(scene);
+			params.setSceneStatus(SceneStatus::IDLE);
 			return;
-		sequencer.a_setNextScene(scene);
-		sequencer.a_setSceneStatus(SceneStatus::IDLE);
-		return;
-	}
-	if (!isRunning() || forced)
-	{
-		sequencer.a_setCurrentScene(scene);
-		sequencer.a_setSceneStatus(SceneStatus::IDLE);
-	}
-	else
-		sequencer.a_setSceneStatus(SceneStatus::CHANGING);
-	sequencer.a_setNextScene(scene);
-	m_model.swap(model::SwapType::HARD);
+		}
+		if (!doc.sequencer.isRunning() || forced)
+		{
+			params.setCurrentScene(scene);
+			params.setSceneStatus(SceneStatus::IDLE);
+		}
+		else
+			params.setSceneStatus(SceneStatus::CHANGING);
+		params.setNextScene(scene);
+	});
 }
 
 /* -------------------------------------------------------------------------- */

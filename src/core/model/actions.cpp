@@ -92,7 +92,7 @@ void Actions::deleteAction(ID currId, ID nextId)
 
 void Actions::updateEvent(ID id, MidiEvent e)
 {
-	Action* a = findAction(id);
+	Action* a = findActionPtr(id);
 	assert(a != nullptr);
 	a->event = e;
 }
@@ -121,7 +121,17 @@ const std::vector<Action>& Actions::getAll() const { return m_actions; }
 
 /* -------------------------------------------------------------------------- */
 
-const Action* Actions::findAction(ID id) const
+std::optional<Action> Actions::findAction(ID id) const
+{
+	const Action* action = findActionPtr(id);
+	if (action != nullptr)
+		return *action;
+	return {};
+}
+
+/* -------------------------------------------------------------------------- */
+
+const Action* Actions::findActionPtr(ID id) const
 {
 	if (!id.isValid())
 		return nullptr;
@@ -208,20 +218,20 @@ const std::span<const Action> Actions::getActionsInTickRange(TickRange r) const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<const Action*> Actions::getActionsOnChannel(ID channelId, Scene scene) const
+std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) const
 {
-	std::vector<const Action*> out;
+	std::vector<Action> out;
 	for (const Action& a : m_actions)
 		if (a.channelId == channelId && a.scene == scene)
-			out.push_back(&a);
+			out.push_back(a);
 	return out;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Action* Actions::findAction(ID id)
+Action* Actions::findActionPtr(ID id)
 {
-	return const_cast<Action*>(std::as_const(*this).findAction(id));
+	return const_cast<Action*>(std::as_const(*this).findActionPtr(id));
 }
 
 /* -------------------------------------------------------------------------- */

@@ -27,8 +27,8 @@
 #ifndef G_MIXER_H
 #define G_MIXER_H
 
-#include "src/core/midiEvent.h"
-#include "src/core/ringBuffer.h"
+#include "src/core/model/modelView.h"
+#include "src/core/model/types.h"
 #include "src/core/sequencer.h"
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
@@ -39,13 +39,6 @@ namespace mcl
 {
 class AudioBuffer;
 }
-
-namespace giada::m::model
-{
-class Mixer;
-class Channels;
-struct Document;
-} // namespace giada::m::model
 
 namespace giada::m
 {
@@ -80,11 +73,6 @@ public:
 	RecTriggerMode getRecTriggerMode() const;
 	InputRecMode   getInputRecMode() const;
 
-	/* render
-	Core rendering function. */
-
-	void render(const mcl::AudioBuffer& in, const model::Document&, int maxFramesToRec) const;
-
 	/* reset
 	Brings everything back to the initial state. Must be called only when mixer
 	is disabled.*/
@@ -97,10 +85,16 @@ public:
 	void enable();
 	void disable();
 
+	/* handleAudioInput
+	Prepares the input for the current audio block, checks the recording signal
+	threshold, and records the input when recording is active. */
+
+	void handleAudioInput(const mcl::AudioBuffer& input, const model::ModelView&) const;
+
 	/* allocRecBuffer
 	Allocates new memory for the virtual input channel. */
 
-	void allocRecBuffer(int frames);
+	void allocRecBuffer(Frame size);
 
 	/* clearRecBuffer
 	Clears internal virtual channel. */
@@ -111,7 +105,7 @@ public:
 	Returns a read-only reference to the internal virtual channel. Use this to
 	merge data into channel after an input recording session. */
 
-	const mcl::AudioBuffer& getRecBuffer();
+	const mcl::AudioBuffer& getRecBuffer() const;
 
 	/* startInputRec, stopInputRec
 	Starts/stops input recording on frame 'from'. The latter returns the frame
@@ -137,13 +131,19 @@ public:
 	Last touches after the output has been rendered: apply inToOut if any, apply
 	output volume. */
 
-	void finalizeOutput(const model::Mixer&, mcl::AudioBuffer&, bool inToOut,
-	    bool limit, float vol) const;
+	void finalizeOutput(
+	    const mcl::AudioBuffer& mixerIn,
+	    mcl::AudioBuffer&       hardwareOut,
+	    bool                    inToOut,
+	    bool                    limit,
+	    float                   vol) const;
 
 	/* updateOutputPeak
 	Reads the maximum peak in the given buffer and updates the value in model::Mixer. */
 
-	void updateOutputPeak(const model::Mixer&, const mcl::AudioBuffer&) const;
+	void updateOutputPeak(
+	    const model::Mixer::Parameters&,
+	    const mcl::AudioBuffer&) const;
 
 	void setRecTriggerMode(RecTriggerMode);
 	void setInputRecMode(InputRecMode);
@@ -160,6 +160,35 @@ public:
 	std::function<void()> onEndOfRecording;
 
 private:
+	/* prepareAudioInput
+	Copies the audio input for the current block into the mixer's input buffer,
+	applies the Master Input channel volume, and updates the input peak.
+	Does not process plug-ins or record input. */
+
+	Peak prepareAudioInput(
+	    const mcl::AudioBuffer& input,
+	    const model::Mixer::Rendering&,
+	    const model::Mixer::Parameters&,
+	    float masterInputGain) const;
+
+	/* checkInputSignal
+	Checks this block's input peak against the recording threshold and fires the
+	signal callback once the threshold is reached. */
+
+	void checkInputSignal(Peak peak, float threshold, bool sequencerIsActive) const;
+
+	/* recordAudioInput
+	Adds the prepared input block to the recording buffer and advances the input
+	tracker. Fires the end-of-recording callback when recording reaches its limit
+	and overdubbing is disabled. */
+
+	void recordAudioInput(
+	    const model::Mixer::Rendering&,
+	    const model::Mixer::Parameters&,
+	    int  inputFrames,
+	    int  maxFrames,
+	    bool allowsOverdub) const;
+
 	/* thresholdReached
 	Returns true if left or right channel's peak has reached a certain
 	threshold. */
@@ -171,21 +200,6 @@ private:
 	account. */
 
 	Peak makePeak(const mcl::AudioBuffer& b) const;
-
-	/* lineInRec
-	Records from line in. 'maxFrames' determines how many frames to record
-	before the internal tracker loops over. The value changes whether you are
-	recording in RIGID or FREE mode. Returns the number of recorded frames. */
-
-	int lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf,
-	    Frame inputTracker, int maxFrames, float inVol, bool allowsOverdub) const;
-
-	/* processLineIn
-	Computes line in peaks and prepares the internal working buffer for input
-	recording. */
-
-	void processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
-	    float inVol, float recTriggerLevel, bool isSeqActive) const;
 
 	/* limit
 	Applies a very dumb hard limiter. */

@@ -27,7 +27,10 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
+#include "src/core/model/channelView.h"
+#include "src/core/model/types.h"
 #include "src/core/sequencer.h"
+#include <juce_audio_basics/juce_audio_basics.h>
 #include <vector>
 
 namespace mcl
@@ -52,8 +55,7 @@ class JackTransport;
 namespace giada::m::model
 {
 class Model;
-class Channels;
-class Tracks;
+class ModelView;
 } // namespace giada::m::model
 
 namespace giada::m::rendering
@@ -67,37 +69,76 @@ public:
 	Renderer(Sequencer&, Mixer&, PluginHost&, KernelMidi&);
 #endif
 
-	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
+	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::Model&) const;
 
 private:
 	/* advanceTracks
 	Processes Channels' static events (e.g. pre-recorded actions or sequencer
 	events) in the current audio block. Called when the sequencer is running. */
 
-	void advanceTracks(const Sequencer::EventBuffer&, const model::Tracks&,
-	    FrameRange, int quantizerStep) const;
+	void advanceTracks(
+	    const Sequencer::EventBuffer&,
+	    const model::ModelView&,
+	    FrameRange range,
+	    Frame      quantizerStep,
+	    RenderCommands&) const;
 
-	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, FrameRange, Frame quantizerStep) const;
+	RenderInfo advanceChannel(
+	    const model::ChannelView&,
+	    const Sequencer::EventBuffer&,
+	    FrameRange,
+	    Frame quantizerStep) const;
 
-	void renderTracks(const model::Tracks&, mcl::AudioBuffer& masterOut,
-	    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene,
-	    bool hasSolos, bool seqIsRunning) const;
-	void renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in, Scene, bool seqIsRunning) const;
-	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
-	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, int channelOffset) const;
-	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
-	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, Scene, bool seqIsRunning) const;
-	void renderMidiChannel(const Channel&) const;
+	void renderTracks(
+	    const model::ModelView&,
+	    const juce::AudioPlayHead::PositionInfo&,
+	    const model::ChannelView& masterOut,
+	    mcl::AudioBuffer&         hardwareOut) const;
+
+	void renderNormalChannel(
+	    const model::ChannelView&,
+	    const model::ModelView&,
+	    RenderInfo,
+	    const juce::AudioPlayHead::PositionInfo&,
+	    const mcl::AudioBuffer& in,
+	    Scene,
+	    bool seqIsRunning) const;
+
+	void renderMasterOut(
+	    const model::ChannelView&,
+	    const model::Assets&,
+	    const juce::AudioPlayHead::PositionInfo&,
+	    mcl::AudioBuffer& out,
+	    int               channelOffset) const;
+
+	void renderMasterIn(
+	    const model::ChannelView&,
+	    const model::Assets&,
+	    const juce::AudioPlayHead::PositionInfo&,
+	    const mcl::AudioBuffer& input) const;
+
+	void renderPreview(const model::SampleChannelView&, mcl::AudioBuffer& out) const;
+
+	void renderSampleChannel(
+	    const model::SampleChannelView&,
+	    RenderInfo,
+	    const mcl::AudioBuffer& in,
+	    bool                    seqIsRunning) const;
 
 	/* mergeChannel
-	Merges the Channel's audio buffer with 'out'. */
+	Merges the 'dest' audio buffer with 'src'. */
 
-	void mergeChannel(const Channel&, mcl::AudioBuffer& out) const;
+	void mergeChannel(
+	    const model::ChannelView& src,
+	    const model::ChannelView& dest) const;
 
 	/* mergeChannel (2)
 	Same as above, with a channel offset for the destination buffer 'out'. */
 
-	void mergeChannel(const Channel&, mcl::AudioBuffer& out, int destChannelOffset) const;
+	void mergeChannel(
+	    const model::ChannelView& channelView,
+	    mcl::AudioBuffer&         out,
+	    int                       destChannelOffset) const;
 
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;
@@ -107,6 +148,13 @@ private:
 	JackSynchronizer& m_jackSynchronizer;
 	JackTransport&    m_jackTransport;
 #endif
+
+	/* m_renderCommands
+	Holds what each channel has to do in the current audio block. Filled by
+	advanceTracks(), read by renderTracks(), and emptied when the sequencer is
+	stopped. Mutable because render() is const. */
+
+	mutable RenderCommands m_renderCommands;
 };
 } // namespace giada::m::rendering
 

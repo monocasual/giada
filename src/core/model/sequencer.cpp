@@ -30,6 +30,125 @@
 
 namespace giada::m::model
 {
+bool Sequencer::Parameters::isOnBar(int sampleRate, Tick ticksInBar, SeqStatus status, float bpm) const
+{
+	const Tick currentTick = getCurrentTick(sampleRate, bpm);
+	if (status == SeqStatus::WAITING || currentTick == Tick{0})
+		return false;
+	return currentTick % ticksInBar == Tick{0};
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Sequencer::Parameters::isOnBeat(int sampleRate, Tick ticksInBeat, float bpm) const
+{
+	return getCurrentTick(sampleRate, bpm) % ticksInBeat == Tick{0};
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Sequencer::Parameters::isOnFirstBeat() const
+{
+	return m_currentFrame.load() == 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame Sequencer::Parameters::getCurrentFrame() const
+{
+	return m_currentFrame.load();
+}
+
+/* -------------------------------------------------------------------------- */
+
+Tick Sequencer::Parameters::getCurrentTick(int sampleRate, float bpm) const
+{
+	return u::time::frameToTickFloor(getCurrentFrame(), sampleRate, bpm);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame Sequencer::Parameters::getCurrentBeat() const
+{
+	return m_currentBeat.load();
+}
+
+/* -------------------------------------------------------------------------- */
+
+float Sequencer::Parameters::getCurrentSecond(int sampleRate) const
+{
+	return getCurrentFrame() / static_cast<float>(sampleRate);
+}
+
+/* -------------------------------------------------------------------------- */
+
+double Sequencer::Parameters::getCurrentQuarterNotePosition(int sampleRate, float bpm) const
+{
+	return u::time::frameToQuarterNotes(getCurrentFrame(), sampleRate, bpm);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Scene Sequencer::Parameters::getCurrentScene() const
+{
+	return Scene{m_currentSceneIndex.load()};
+}
+
+/* -------------------------------------------------------------------------- */
+
+Scene Sequencer::Parameters::getNextScene() const
+{
+	return Scene{m_nextSceneIndex.load()};
+}
+
+/* -------------------------------------------------------------------------- */
+
+SceneStatus Sequencer::Parameters::getSceneStatus() const
+{
+	return m_sceneStatus.load();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::Parameters::setCurrentFrame(Frame f, int sampleRate, float bpm) const
+{
+	m_currentFrame.store(f);
+	m_currentBeat.store(f == 0 ? 0 : u::time::frameToBeat(f, sampleRate, bpm));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::Parameters::setCurrentBeat(int b, int sampleRate, float bpm) const
+{
+	m_currentFrame.store(u::time::beatToFrame(b, sampleRate, bpm));
+	m_currentBeat.store(b);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::Parameters::setCurrentScene(Scene scene) const
+{
+	m_currentSceneIndex.store(scene.getIndex());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::Parameters::setNextScene(Scene scene) const
+{
+	m_nextSceneIndex.store(scene.getIndex());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::Parameters::setSceneStatus(SceneStatus s) const
+{
+	m_sceneStatus.store(s);
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 bool Sequencer::isActive() const
 {
 	return status == SeqStatus::RUNNING || status == SeqStatus::WAITING;
@@ -51,75 +170,6 @@ bool Sequencer::isRunning() const
 
 /* -------------------------------------------------------------------------- */
 
-bool Sequencer::a_isOnBar(int sampleRate) const
-{
-	const Tick currentTick = a_getCurrentTick(sampleRate);
-	if (status == SeqStatus::WAITING || currentTick == Tick{0})
-		return false;
-	return currentTick % getTicksInBar() == Tick{0};
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Sequencer::a_isOnBeat(int sampleRate) const
-{
-	return a_getCurrentTick(sampleRate) % getTicksInBeat() == Tick{0};
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Sequencer::a_isOnFirstBeat() const
-{
-	return shared->currentFrame.load() == 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Frame Sequencer::a_getCurrentFrame() const { return shared->currentFrame.load(); }
-Frame Sequencer::a_getCurrentBeat() const { return shared->currentBeat.load(); }
-
-/* -------------------------------------------------------------------------- */
-
-Tick Sequencer::a_getCurrentTick(int sampleRate) const
-{
-	return u::time::frameToTickFloor(a_getCurrentFrame(), sampleRate, getBpm());
-}
-
-/* -------------------------------------------------------------------------- */
-
-float Sequencer::a_getCurrentSecond(int sampleRate) const
-{
-	return a_getCurrentFrame() / static_cast<float>(sampleRate);
-}
-
-/* -------------------------------------------------------------------------- */
-
-double Sequencer::a_getCurrentQuarterNotePosition(int sampleRate) const
-{
-	return u::time::frameToQuarterNotes(a_getCurrentFrame(), sampleRate, getBpm());
-}
-
-/* -------------------------------------------------------------------------- */
-
-Scene Sequencer::a_getCurrentScene() const
-{
-	return Scene{shared->currentSceneIndex.load()};
-}
-
-Scene Sequencer::a_getNextScene() const
-{
-	return Scene{shared->nextSceneIndex.load()};
-}
-
-/* -------------------------------------------------------------------------- */
-
-SceneStatus Sequencer::a_getSceneStatus() const
-{
-	return shared->sceneStatus.load();
-}
-
-/* -------------------------------------------------------------------------- */
-
 int Sequencer::getFramesInLoop(int sampleRate) const
 {
 	return u::time::tickToFrame(getTicksInLoop(), sampleRate, m_bpm);
@@ -130,41 +180,6 @@ int Sequencer::getFramesInLoop(int sampleRate) const
 int Sequencer::getMaxFramesInLoop(int sampleRate) const
 {
 	return (sampleRate * (60.0f / G_MIN_BPM)) * m_timeSignature.beats;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Sequencer::a_setCurrentFrame(Frame f, int sampleRate) const
-{
-	shared->currentFrame.store(f);
-	shared->currentBeat.store(f == 0 ? 0 : u::time::frameToBeat(f, sampleRate, m_bpm));
-}
-
-void Sequencer::a_setCurrentBeat(int b, int sampleRate) const
-{
-	const Frame currentFrame = u::time::beatToFrame(b, sampleRate, m_bpm);
-
-	shared->currentFrame.store(currentFrame);
-	shared->currentBeat.store(b);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Sequencer::a_setCurrentScene(Scene scene) const
-{
-	shared->currentSceneIndex.store(scene.getIndex());
-}
-
-void Sequencer::a_setNextScene(Scene scene) const
-{
-	shared->nextSceneIndex.store(scene.getIndex());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Sequencer::a_setSceneStatus(SceneStatus s) const
-{
-	shared->sceneStatus.store(s);
 }
 
 /* -------------------------------------------------------------------------- */

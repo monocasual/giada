@@ -60,130 +60,184 @@ Mixer::Mixer(model::Model& m)
 
 void Mixer::reset(int maxFramesInLoop, int framesInBuffer)
 {
-	/* Allocate working buffers. rec buffer has variable size: it depends on how
-	many frames there are in the current loop. */
+	m_model.write(model::SwapType::SOFT, [maxFramesInLoop, framesInBuffer](model::AssetsEdit& edit)
+	{
+		edit.get().mixerRendering = std::make_shared<model::Mixer::Rendering>(maxFramesInLoop, framesInBuffer);
+	});
 
-	m_model.get().mixer.getRecBuffer().alloc(maxFramesInLoop, G_MAX_IO_CHANS);
-	m_model.get().mixer.getInBuffer().alloc(framesInBuffer, G_MAX_IO_CHANS);
-
-	u::log::print("[mixer::reset] buffers ready - maxFramesInLoop={}, framesInBuffer={}\n",
-	    maxFramesInLoop, framesInBuffer);
+	m_model.flush();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::enable()
 {
-	m_model.get().mixer.a_setActive(true);
+	m_model.read().getParameters().mixer.setActive(true);
 	u::log::print("[mixer::enable] enabled\n");
 }
 
 void Mixer::disable()
 {
-	m_model.get().mixer.a_setActive(false);
-	while (m_model.isRtLocked())
-		;
+	m_model.read().getParameters().mixer.setActive(false);
 	u::log::print("[mixer::disable] disabled\n");
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::allocRecBuffer(int frames)
+void Mixer::handleAudioInput(const mcl::AudioBuffer& input, const model::ModelView& view) const
 {
-	m_model.get().mixer.getRecBuffer().alloc(frames, G_MAX_IO_CHANS);
+	const model::Document& doc       = view.getDocument();
+	const auto&            rendering = *view.getAssets().mixerRendering;
+	const model::Channel&  masterIn  = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
+
+	const auto& params = view.getParameters().mixer;
+	const Peak  peak   = prepareAudioInput(input, rendering, params, masterIn.volume);
+
+	if (!input.isAllocd())
+		return;
+
+	const bool sequencerIsActive = doc.sequencer.isActive();
+	checkInputSignal(peak, doc.kernelAudio.recTriggerLevel, sequencerIsActive);
+
+	if (sequencerIsActive && doc.mixer.isRecordingInput)
+	{
+		const bool allowsOverdub = doc.mixer.inputRecMode == InputRecMode::RIGID;
+		const int  sampleRate    = doc.kernelAudio.samplerate;
+		const int  maxFrames     = doc.mixer.inputRecMode == InputRecMode::FREE
+		                               ? doc.sequencer.getMaxFramesInLoop(sampleRate)
+		                               : doc.sequencer.getFramesInLoop(sampleRate);
+
+		recordAudioInput(rendering, params, input.countFrames(), maxFrames, allowsOverdub);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+Peak Mixer::prepareAudioInput(
+    const mcl::AudioBuffer&        hardwareInput,
+    const model::Mixer::Rendering& rendering,
+    const model::Mixer::Parameters& params,
+    float                          masterInputGain) const
+{
+	rendering.prepareInputBufferFrom(hardwareInput, masterInputGain);
+
+	const Peak peak = makePeak(rendering.getInBuffer());
+	params.setPeakIn(peak);
+	return peak;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::checkInputSignal(Peak peak, float threshold, bool sequencerIsActive) const
+{
+	if (sequencerIsActive && !m_signalCbFired && thresholdReached(peak, threshold))
+	{
+		m_signalCbFired = true;
+		onSignalTresholdReached();
+		G_DEBUG("Signal > threshold!", );
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::recordAudioInput(
+    const model::Mixer::Rendering& rendering,
+    const model::Mixer::Parameters& params,
+    int                            inputFrames,
+    int                            maxFrames,
+    bool                           allowsOverdub) const
+{
+	const Frame tracker = params.getInputTracker();
+
+	assert(maxFrames > 0 && maxFrames <= rendering.getRecBuffer().countFrames());
+	assert(onEndOfRecording != nullptr);
+
+	if (tracker >= maxFrames && !allowsOverdub && !m_endOfRecCbFired)
+	{
+		onEndOfRecording();
+		m_endOfRecCbFired = true;
+		params.setInputTracker(0);
+		return;
+	}
+
+	rendering.sumInputToRecBuffer(tracker % maxFrames);
+	params.setInputTracker(tracker + inputFrames);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::allocRecBuffer(Frame size)
+{
+	m_model.read().getAssets().mixerRendering->resizeRecBuffer(size);
 }
 
 void Mixer::clearRecBuffer()
 {
-	m_model.get().mixer.getRecBuffer().clear();
+	return m_model.read().getAssets().mixerRendering->clearRecBuffer();
 }
 
-const mcl::AudioBuffer& Mixer::getRecBuffer()
+const mcl::AudioBuffer& Mixer::getRecBuffer() const
 {
-	return m_model.get().mixer.getRecBuffer();
+	return m_model.read().getAssets().mixerRendering->getRecBuffer();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::updateSoloCount(bool hasSolos)
 {
-	m_model.get().mixer.hasSolos = hasSolos;
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [hasSolos](model::DocumentEdit& edit)
+	{
+		edit.get().mixer.hasSolos = hasSolos;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::setInToOut(bool v)
 {
-	m_model.get().mixer.inToOut = v;
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [v](model::DocumentEdit& edit)
+	{
+		edit.get().mixer.inToOut = v;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::setRecTriggerMode(RecTriggerMode m)
 {
-	m_model.get().mixer.recTriggerMode = m;
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::SOFT, [m](model::DocumentEdit& edit)
+	{
+		edit.get().mixer.recTriggerMode = m;
+	});
 }
 
 void Mixer::setInputRecMode(InputRecMode m)
 {
-	m_model.get().mixer.inputRecMode = m;
-	m_model.swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Mixer::render(const mcl::AudioBuffer& in, const model::Document& document_RT, int maxFramesToRec) const
-{
-	const model::Mixer&       mixer       = document_RT.mixer;
-	const model::Sequencer&   sequencer   = document_RT.sequencer;
-	const model::Tracks&      tracks      = document_RT.tracks;
-	const model::KernelAudio& kernelAudio = document_RT.kernelAudio;
-
-	const Channel& masterInCh = tracks.getChannel(MASTER_IN_CHANNEL_ID);
-
-	const bool  hasInput        = in.isAllocd();
-	const bool  seqIsActive     = sequencer.isActive();
-	const bool  shouldLineInRec = seqIsActive && mixer.isRecordingInput && hasInput;
-	const float recTriggerLevel = kernelAudio.recTriggerLevel;
-	const bool  allowsOverdub   = mixer.inputRecMode == InputRecMode::RIGID;
-
-	mixer.getInBuffer().clear();
-
-	/* Reset peak computation. */
-
-	mixer.a_setPeakOut({0.0f, 0.0f});
-	mixer.a_setPeakIn({0.0f, 0.0f});
-
-	if (hasInput)
-		processLineIn(mixer, in, masterInCh.volume, recTriggerLevel, seqIsActive);
-
-	if (shouldLineInRec)
+	m_model.write(model::SwapType::SOFT, [m](model::DocumentEdit& edit)
 	{
-		const Frame newTrackerPos = lineInRec(in, mixer.getRecBuffer(),
-		    mixer.a_getInputTracker(), maxFramesToRec, masterInCh.volume,
-		    allowsOverdub);
-		mixer.a_setInputTracker(newTrackerPos);
-	}
+		edit.get().mixer.inputRecMode = m;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::startInputRec(Frame from)
 {
-	m_model.get().mixer.a_setInputTracker(from);
-	m_model.get().mixer.isRecordingInput = true;
-	m_model.swap(model::SwapType::NONE);
+	m_model.read().getParameters().mixer.setInputTracker(from);
+	m_model.write(model::SwapType::SOFT, [](model::DocumentEdit& edit)
+	{
+		edit.get().mixer.isRecordingInput = true;
+	});
 }
 
 Frame Mixer::stopInputRec()
 {
-	const Frame ret = m_model.get().mixer.a_getInputTracker();
-	m_model.get().mixer.a_setInputTracker(0);
-	m_model.get().mixer.isRecordingInput = false;
-	m_model.swap(model::SwapType::NONE);
+	const Frame ret = m_model.read().getParameters().mixer.getInputTracker();
+	m_model.read().getParameters().mixer.setInputTracker(0);
+	m_model.write(model::SwapType::SOFT, [](model::DocumentEdit& edit)
+	{
+		edit.get().mixer.isRecordingInput = false;
+	});
 	m_signalCbFired   = false;
 	m_endOfRecCbFired = false;
 	return ret;
@@ -193,56 +247,60 @@ Frame Mixer::stopInputRec()
 
 void Mixer::startActionRec()
 {
-	m_model.get().mixer.isRecordingActions = true;
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [](model::DocumentEdit& edit)
+	{
+		edit.get().mixer.isRecordingActions = true;
+	});
 }
 
 void Mixer::stopActionRec()
 {
-	m_model.get().mixer.isRecordingActions = false;
-	m_model.swap(model::SwapType::NONE);
+	m_model.write(model::SwapType::NONE, [](model::DocumentEdit& edit)
+	{
+		edit.get().mixer.isRecordingActions = false;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-Peak Mixer::getPeakOut() const { return m_model.get().mixer.a_getPeakOut(); }
-Peak Mixer::getPeakIn() const { return m_model.get().mixer.a_getPeakIn(); }
+Peak Mixer::getPeakOut() const { return m_model.read().getParameters().mixer.getPeakOut(); }
+Peak Mixer::getPeakIn() const { return m_model.read().getParameters().mixer.getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
-bool Mixer::getInToOut() const { return m_model.get().mixer.inToOut; }
+bool Mixer::getInToOut() const { return m_model.read().getDocument().mixer.inToOut; }
 
 /* -------------------------------------------------------------------------- */
 
 Mixer::RecordInfo Mixer::getRecordInfo() const
 {
 	return {
-	    m_model.get().mixer.a_getInputTracker(),
-	    m_model.get().mixer.getRecBuffer().countFrames()};
+	    m_model.read().getParameters().mixer.getInputTracker(),
+	    m_model.read().getAssets().mixerRendering->getRecBuffer().countFrames()};
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Mixer::isRecordingActions() const
 {
-	return m_model.get().mixer.isRecordingActions;
+	return m_model.read().getDocument().mixer.isRecordingActions;
 }
 
 bool Mixer::isRecordingInput() const
 {
-	return m_model.get().mixer.isRecordingInput;
+	return m_model.read().getDocument().mixer.isRecordingInput;
 }
 
 /* -------------------------------------------------------------------------- */
 
 RecTriggerMode Mixer::getRecTriggerMode() const
 {
-	return m_model.get().mixer.recTriggerMode;
+	return m_model.read().getDocument().mixer.recTriggerMode;
 }
 
 InputRecMode Mixer::getInputRecMode() const
 {
-	return m_model.get().mixer.inputRecMode;
+	return m_model.read().getDocument().mixer.inputRecMode;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -264,54 +322,6 @@ Peak Mixer::makePeak(const mcl::AudioBuffer& b) const
 
 /* -------------------------------------------------------------------------- */
 
-int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Frame inputTracker,
-    int maxFrames, float inVol, bool allowsOverdub) const
-{
-	assert(maxFrames > 0 && maxFrames <= recBuf.countFrames());
-	assert(onEndOfRecording != nullptr);
-
-	if (inputTracker >= maxFrames && !allowsOverdub && !m_endOfRecCbFired)
-	{
-		onEndOfRecording();
-		m_endOfRecCbFired = true;
-		return 0;
-	}
-
-	const int   framesToCopy = -1; // copy everything
-	const Frame srcOffset    = 0;
-	const Frame destOffset   = inputTracker % maxFrames; // loop over at maxFrames
-
-	recBuf.sumAll(inBuf, framesToCopy, srcOffset, destOffset, inVol);
-
-	return inputTracker + inBuf.countFrames();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
-    float inVol, float recTriggerLevel, bool isSeqActive) const
-{
-	/* Prepare the working buffer for input stream, which will be processed
-	later on by the Master Input Channel with plug-ins. */
-
-	assert(inBuf.countChannels() <= mixer.getInBuffer().countChannels());
-
-	mixer.getInBuffer().setAll(inBuf, inVol);
-
-	const Peak peak = makePeak(mixer.getInBuffer());
-
-	if (thresholdReached(peak, recTriggerLevel) && !m_signalCbFired && isSeqActive)
-	{
-		m_signalCbFired = true;
-		onSignalTresholdReached();
-		G_DEBUG("Signal > threshold!", );
-	}
-
-	mixer.a_setPeakIn(peak);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Mixer::limit(mcl::AudioBuffer& outBuf) const
 {
 	for (int i = 0; i < outBuf.countFrames(); i++)
@@ -321,22 +331,28 @@ void Mixer::limit(mcl::AudioBuffer& outBuf) const
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::finalizeOutput(const model::Mixer& mixer, mcl::AudioBuffer& buf,
-    bool inToOut, bool shouldLimit, float vol) const
+void Mixer::finalizeOutput(
+    const mcl::AudioBuffer& mixerIn,
+    mcl::AudioBuffer&       hardwareOut,
+    bool                    inToOut,
+    bool                    shouldLimit,
+    float                   vol) const
 {
 	if (inToOut)
-		buf.sumAll(mixer.getInBuffer(), vol);
+		hardwareOut.sumAll(mixerIn, vol);
 	else
-		buf.applyGain(vol);
+		hardwareOut.applyGain(vol);
 
 	if (shouldLimit)
-		limit(buf);
+		limit(hardwareOut);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::updateOutputPeak(const model::Mixer& mixer, const mcl::AudioBuffer& buf) const
+void Mixer::updateOutputPeak(
+    const model::Mixer::Parameters& params,
+    const mcl::AudioBuffer&         buf) const
 {
-	mixer.a_setPeakOut({buf.getPeak(CH_LEFT), buf.getPeak(CH_RIGHT)});
+	params.setPeakOut({buf.getPeak(CH_LEFT), buf.getPeak(CH_RIGHT)});
 }
 } // namespace giada::m

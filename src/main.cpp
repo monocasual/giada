@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/engine.h"
+#include "src/core/init.h"
 #include "src/gui/ui.h"
 
 giada::m::Engine* g_engine = nullptr;

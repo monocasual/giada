@@ -44,11 +44,6 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m::model
-{
-class KernelAudio;
-}
-
 namespace giada::m
 {
 class KernelAudio final

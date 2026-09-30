@@ -39,18 +39,18 @@ class Updater final
 public:
 	using Event = std::function<void()>;
 
-	Updater(Ui& ui);
+	Updater();
 
 	void start();
 	void stop();
 	void run();
 	bool pumpEvent(const Event&);
 
+	std::function<void()> onUpdate;
+
 private:
 	static void update(void*);
 	void        update();
-
-	Ui& m_ui;
 
 	moodycamel::ConcurrentQueue<Event> m_eventQueue;
 };

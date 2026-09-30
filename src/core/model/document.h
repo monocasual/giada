@@ -29,28 +29,28 @@
 
 #include "src/core/model/actions.h"
 #include "src/core/model/behaviors.h"
-#include "src/core/model/channels.h"
 #include "src/core/model/kernelAudio.h"
 #include "src/core/model/kernelMidi.h"
 #include "src/core/model/midiIn.h"
 #include "src/core/model/mixer.h"
+#include "src/core/model/pluginMidiMapping.h"
 #include "src/core/model/sequencer.h"
 #include "src/core/model/tracks.h"
 
 namespace giada::m
 {
 struct Conf;
-}
+struct Patch;
+} // namespace giada::m
 
 namespace giada::m::model
 {
-class Shared;
 struct Document
 {
 	/* load (1)
 	Loads data from a Patch object. */
 
-	void load(const Patch&, Shared&, float sampleRateRatio);
+	void load(const Patch&, float sampleRateRatio);
 
 	/* load (2)
 	Loads data from a Conf object. */
@@ -71,20 +71,15 @@ struct Document
 	void debug() const;
 #endif
 
-	/* locked
-	If locked, Mixer won't process channels. This is used to allow editing the
-	shared data (e.g. Plugins, Waves) by the rendering engine without data races. */
-
-	bool locked = false;
-
-	KernelAudio kernelAudio;
-	KernelMidi  kernelMidi;
-	Sequencer   sequencer;
-	Mixer       mixer;
-	MidiIn      midiIn;
-	Tracks      tracks;
-	Actions     actions;
-	Behaviors   behaviors;
+	Behaviors         behaviors;
+	Actions           actions;
+	KernelAudio       kernelAudio;
+	KernelMidi        kernelMidi;
+	MidiIn            midiIn;
+	Mixer             mixer;
+	Sequencer         sequencer;
+	Tracks            tracks;
+	PluginMidiMapping pluginMidiMapping;
 };
 } // namespace giada::m::model
 

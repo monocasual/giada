@@ -24,141 +24,53 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_H
-#define G_MODEL_H
+#ifndef G_MODEL_MODEL_H
+#define G_MODEL_MODEL_H
 
-#include "src/core/channels/channel.h"
-#include "src/core/conf.h"
-#include "src/core/model/actions.h"
-#include "src/core/model/behaviors.h"
-#include "src/core/model/channels.h"
-#include "src/core/model/kernelAudio.h"
-#include "src/core/model/kernelMidi.h"
-#include "src/core/model/loadState.h"
-#include "src/core/model/midiIn.h"
-#include "src/core/model/mixer.h"
-#include "src/core/model/sequencer.h"
-#include "src/core/model/shared.h"
-#include "src/core/model/sharedLock.h"
-#include "src/core/model/types.h"
-#include "src/core/plugins/plugin.h"
-#include "src/core/wave.h"
-#include "src/deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
-#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "src/utils/vector.h"
-#include <memory>
+#include "src/core/model/assetsEdit.h"
+#include "src/core/model/documentEdit.h"
+#include "src/core/model/modelEdit.h"
+#include "src/core/model/modelView.h"
+#include <functional>
 
 namespace giada::m::model
 {
-struct Document;
-class Model
+class Model final
 {
 public:
-	Model();
+	using DocumentWriteCallback = std::function<void(DocumentEdit&)>;
+	using AssetsWriteCallback   = std::function<void(AssetsEdit&)>;
+	using ModelWriteCallback    = std::function<void(ModelEdit&)>;
 
-	/* isRtLocked
-	Returns true if the realtime thread has its own copy of data locked down,
-	as it's reading it. */
+	/* Returns a view of the current model. Use it only while this Model exists.
+	Do not call from the audio thread. */
 
-	bool isRtLocked() const;
+	[[nodiscard]] ModelView read() const;
 
-	/* lockShared
-	Returns a scoped locker SharedLock object. Use this when you want to lock
-	the shared data: it won't be processed by Mixer. */
+	/* Queues an edit on the writer thread. Use the edit and references obtained
+	from it only during the callback. Do not call from the audio thread. */
 
-	[[nodiscard]] SharedLock lockShared(SwapType t = SwapType::HARD);
+	void write(SwapType, DocumentWriteCallback callback);
+	void write(SwapType, AssetsWriteCallback callback);
+	void write(SwapType, ModelWriteCallback callback);
 
-	/* init
-	Initializes the internal Document. All values go back to default. */
+	/* Audio thread only. Use the view and references obtained from it only
+	during this audio callback, before the next realtime read. */
 
-	void init();
+	[[nodiscard]] ModelView readRealtime();
 
-	/* reset
-	Resets the internal Document to default. Configuration data (e.g. KernelAudio)
-	are left untouched.  */
+	/* Waits for earlier writes to finish. Never call from the audio thread or
+	from inside a write callback. */
 
-	void reset();
+	void flush();
 
-	/* load (1)
-	Loads data from a Conf object. */
+	/* Call only from the GUI thread. */
 
-	void load(const Conf&);
-
-	/* load (2)
-	Loads data from a Patch object. */
-
-	LoadState load(const Patch&, PluginManager&, int sampleRate, int bufferSize, Resampler::Quality);
-
-	/* store
-	Stores data into a Conf object. */
-
-	void store(Conf&) const;
-
-	/* store
-	Stores data into a Patch object. */
-
-	void store(Patch&, const std::string& projectPath);
-
-	bool registerThread(Thread, bool realtime) const;
-
-	/* get_RT
-	Returns a DocumentLock object for REALTIME processing. Access Document by
-	calling DocumentLock::get() method (returns ready-only Document). */
-
-	DocumentLock get_RT() const;
-
-	/* get
-	Returns a reference to the NON-REALTIME Document structure. */
-
-	Document&       get();
-	const Document& get() const;
-
-	/* swap
-	Swap non-rt Document with the rt one. See 'SwapType' notes above. */
-
-	void swap(SwapType t);
-
-	/* getAll[*] */
-
-	std::vector<std::unique_ptr<Wave>>&          getAllWaves();
-	std::vector<std::unique_ptr<Plugin>>&        getAllPlugins();
-	std::vector<std::unique_ptr<ChannelShared>>& getAllChannelsShared();
-
-	/* find[*]
-	Finds something in the shared data given an ID. Returns nullptr if the
-	object is not found. */
-
-	Plugin* findPlugin(ID);
-	Wave*   findWave(ID);
-
-	/* add[*]
-	Adds some shared data (by moving it). Returns a reference to the last added
-	shared item. */
-
-	Wave&          addWave(std::unique_ptr<Wave>);
-	Plugin&        addPlugin(std::unique_ptr<Plugin>);
-	ChannelShared& addChannelShared(std::unique_ptr<ChannelShared>);
-
-	void removePlugin(const Plugin&);
-	void removeWave(const Wave&);
-	void removeChannelShared(const ChannelShared&);
-
-	void clearPlugins();
-	void clearWaves();
-
-#if G_DEBUG_MODE
-	void debug();
-#endif
-
-	/* onSwap
-	Callbacks fired when the Document has been swapped. Useful for listening to
-	model changes. */
-
-	std::function<void(SwapType)> onSwap;
+	SwapType pollDocumentChanges();
+	SwapType pollAssetsChanges();
 
 private:
-	AtomicSwapper m_swapper;
-	Shared        m_shared;
+	RealtimeModel m_realtimeModel;
 };
 } // namespace giada::m::model
 

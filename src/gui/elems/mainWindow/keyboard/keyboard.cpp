@@ -131,7 +131,6 @@ void geKeyboard::ChannelDragger::end()
 	{
 		m_channelId = {};
 		m_xoffset   = 0;
-		m_keyboard.rebuild(); // Just cleanup the UI
 		return;
 	}
 
@@ -178,7 +177,6 @@ geKeyboard::geKeyboard()
 	autoscroll = true;
 
 	init();
-	rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -221,11 +219,11 @@ void geKeyboard::init()
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::rebuild()
+void geKeyboard::rebuild(const std::vector<c::channel::Track>& modelTracks)
 {
 	deleteAllTracks();
-	for (const c::channel::Track& c : c::channel::getTracks())
-		addTrack(c);
+	for (const c::channel::Track& modelTrack : modelTracks)
+		addTrack(modelTrack);
 	redraw();
 }
 
@@ -360,6 +358,14 @@ void geKeyboard::draw()
 
 /* -------------------------------------------------------------------------- */
 
+void geKeyboard::update()
+{
+	for (geTrack* track : m_tracks)
+		track->update();
+}
+
+/* -------------------------------------------------------------------------- */
+
 geompp::Rect<int> geKeyboard::getTrackBackround(const geTrack& c) const
 {
 	const geompp::Rect  trackBounds(c.x(), c.y(), c.w(), c.h() - c.endMargin);
@@ -419,7 +425,7 @@ geTrack& geKeyboard::addTrack(const c::channel::Track& trackModel)
 
 	/* Fill track with channels. */
 
-	for (const c::channel::Data& ch : trackModel.channels)
+	for (const c::channel::Channel& ch : trackModel.channels)
 		track->addChannel(ch);
 
 	redraw();

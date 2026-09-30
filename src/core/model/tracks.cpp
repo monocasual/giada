@@ -65,11 +65,42 @@ void Tracks::remove(std::size_t index)
 
 /* -------------------------------------------------------------------------- */
 
+const Track& Tracks::get(std::size_t index) const
+{
+	assert(index < m_tracks.size());
+
+	return m_tracks[index];
+}
+
 Track& Tracks::get(std::size_t index)
 {
 	assert(index < m_tracks.size());
 
 	return m_tracks[index];
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Tracks::hasSampleChannelsWithWaves(Scene scene) const
+{
+	return anyChannelOf([scene](const Channel& ch)
+	{ return ch.sampleChannel && ch.sampleChannel->hasWave(scene); });
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Tracks::hasInputRecordableChannels(Scene scene) const
+{
+	return anyChannelOf([scene](const Channel& ch)
+	{ return ch.canInputRec(scene); });
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Tracks::hasSoloedChannels() const
+{
+	return anyChannelOf([](const Channel& ch)
+	{ return ch.isSoloed(); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -104,12 +135,12 @@ void Tracks::forEachChannel(std::function<bool(Channel&)> f)
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Channel*> Tracks::getChannelsIf(std::function<bool(const Channel&)> f)
+std::vector<ID> Tracks::getChannelsIf(std::function<bool(const Channel&)> f) const
 {
-	std::vector<Channel*> out;
-	for (Track& track : m_tracks)
+	std::vector<ID> out;
+	for (const Track& track : m_tracks)
 	{
-		const std::vector<Channel*> tmp = track.getChannels().getIf(f);
+		const std::vector<ID> tmp = track.getChannels().getIf(f);
 		out.insert(out.end(), tmp.begin(), tmp.end());
 	}
 	return out;
@@ -150,9 +181,9 @@ void Tracks::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-Track& Tracks::getByChannel(ID channelId)
+const Track& Tracks::getByChannel(ID channelId) const
 {
-	const auto p = [channelId](Track& track)
+	const auto p = [channelId](const Track& track)
 	{
 		return utils::container::hasIf(track.getChannels().getAll(), [channelId](const Channel& ch)
 		{ return channelId == ch.id; });
@@ -160,6 +191,11 @@ Track& Tracks::getByChannel(ID channelId)
 	auto it = utils::container::findIf(m_tracks, p);
 	assert(it != m_tracks.end());
 	return *it;
+}
+
+Track& Tracks::getByChannel(ID channelId)
+{
+	return const_cast<Track&>(std::as_const(*this).getByChannel(channelId));
 }
 
 /* -------------------------------------------------------------------------- */

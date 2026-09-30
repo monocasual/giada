@@ -29,6 +29,8 @@
 #include "src/core/init.h"
 #include "src/core/kernelMidi.h"
 #include "src/core/mixer.h"
+#include "src/core/model/modelView.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/keyboard/sampleChannel.h"
@@ -42,14 +44,16 @@
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
 
+namespace utils = mcl::utils;
+
 namespace giada::c::main
 {
-Timer::Timer()
-: bpm(g_engine->getMainApi().getBpm())
-, timeSignature(g_engine->getMainApi().getTimeSignature())
-, quantize(g_engine->getMainApi().getQuantizerValue())
-, isUsingJack(g_engine->getConfigApi().audio_getAPI() == RtAudio::Api::UNIX_JACK)
-, isRecordingInput(g_engine->getMainApi().isRecordingInput())
+Timer::Timer(const m::model::ModelView& view)
+: bpm(view.getDocument().sequencer.getBpm())
+, timeSignature(view.getDocument().sequencer.getTimeSignature())
+, quantize(view.getDocument().sequencer.quantize)
+, isUsingJack(view.getDocument().kernelAudio.api == RtAudio::Api::UNIX_JACK)
+, isRecordingInput(view.getDocument().mixer.isRecordingInput)
 {
 }
 
@@ -57,140 +61,185 @@ Timer::Timer()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-IO::IO(const m::Channel& out, const m::Channel& in)
-: masterOutVol(out.volume)
-, masterInVol(in.volume)
-, masterOutHasPlugins(out.plugins.size() > 0)
-, masterInHasPlugins(in.plugins.size() > 0)
-, inToOut(g_engine->getMainApi().getInToOut())
+IO::IO(const m::model::ModelView& view)
+: m_params(view.getParameters().mixer)
 {
+	const m::model::Channel& masterOut = view.getDocument().tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const m::model::Channel& masterIn  = view.getDocument().tracks.getChannel(MASTER_IN_CHANNEL_ID);
+
+	masterOutVol        = masterOut.volume;
+	masterOutHasPlugins = !masterOut.plugins.empty();
+	masterInVol         = masterIn.volume;
+	masterInHasPlugins  = !masterIn.plugins.empty();
+	inToOut             = view.getDocument().mixer.inToOut;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Peak IO::getMasterOutPeak()
-{
-	return g_engine->getMainApi().getPeakOut();
-}
-
-Peak IO::getMasterInPeak()
-{
-	return g_engine->getMainApi().getPeakIn();
-}
+Peak IO::getMasterOutPeak() const { return m_params.getPeakOut(); }
+Peak IO::getMasterInPeak() const { return m_params.getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
-bool IO::isKernelReady()
-{
-	return g_engine->isAudioReady();
-}
+bool IO::isKernelReady() const { return g_engine->isAudioReady(); }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Scenes::Scenes()
+Scenes::Scenes(const m::model::ModelView& view)
+: m_params(view.getParameters().sequencer)
 {
+	const m::model::Document& document = view.getDocument();
+
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
-		activeScenes[sceneIndex] = g_engine->getMainApi().isSceneActive(Scene{sceneIndex});
+	{
+		const Scene scene{sceneIndex};
+		activeScenes[sceneIndex] = document.actions.hasActions(scene) || document.tracks.hasSampleChannelsWithWaves(scene);
+	}
 }
 
-Scene Scenes::getCurrentScene() const
+Scene Scenes::getCurrentScene() const { return m_params.getCurrentScene(); }
+
+/* -------------------------------------------------------------------------- */
+
+Scene Scenes::getNextScene() const { return m_params.getNextScene(); }
+
+/* -------------------------------------------------------------------------- */
+
+SceneStatus Scenes::getStatus() const { return m_params.getSceneStatus(); }
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Main::Main(const m::model::ModelView& view)
+: tracks(channel::getTracks(view.getDocument(), view.getAssets(), view.getParameters().sequencer.getCurrentScene()))
+, timer(view)
+, io(view)
+, transport(view)
+, sequencer(view)
+, scenes(view)
 {
-	return g_engine->getMainApi().getCurrentScene();
 }
 
 /* -------------------------------------------------------------------------- */
 
-Scene Scenes::getNextScene() const
+void Main::update(const m::model::ModelView& view)
 {
-	return g_engine->getMainApi().getNextScene();
+	const Scene scene = view.getParameters().sequencer.getCurrentScene();
+
+	transport.update(view);
+	sequencer.update(view);
+
+	for (channel::Track& track : tracks)
+		track.update(view.getDocument().tracks.get(track.index), scene);
 }
 
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
-SceneStatus Scenes::getStatus() const
+Sequencer::Sequencer(const m::model::ModelView& view)
+: m_params(view.getParameters())
 {
-	return g_engine->getMainApi().getSceneStatus();
+	update(view);
 }
 
 /* -------------------------------------------------------------------------- */
+
+void Sequencer::update(const m::model::ModelView& view)
+{
+	const auto& document = view.getDocument();
+	const auto& assets   = view.getAssets();
+
+	isFreeModeInputRec = document.mixer.isRecordingInput && document.mixer.inputRecMode == InputRecMode::FREE;
+	timeSignature      = document.sequencer.getTimeSignature();
+	recMaxLength       = assets.mixerRendering->getMaximumRecLength();
+	m_isWaiting        = document.sequencer.status == SeqStatus::WAITING;
+}
+
 /* -------------------------------------------------------------------------- */
+
+bool Sequencer::shouldBlink() const
+{
+	return g_ui->shouldBlink() && (m_isWaiting || isFreeModeInputRec);
+}
+
+/* -------------------------------------------------------------------------- */
+
+int   Sequencer::getCurrentBeat() const { return m_params.sequencer.getCurrentBeat(); }
+Frame Sequencer::getRecPosition() const { return m_params.mixer.getInputTracker(); }
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Transport::Transport(const m::model::ModelView& view)
+{
+	update(view);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Transport::update(const m::model::ModelView& view)
+{
+	m_view.emplace(view);
+
+	const auto& document = m_view->getDocument();
+	isRunning            = document.sequencer.isRunning();
+	isRecordingActions   = document.mixer.isRecordingActions;
+	isRecordingInput     = document.mixer.isRecordingInput;
+	isMetronomeOn        = document.sequencer.metronome;
+	recTriggerMode       = document.mixer.recTriggerMode;
+	inputRecMode         = document.mixer.inputRecMode;
+}
+
 /* -------------------------------------------------------------------------- */
 
 bool Transport::canRecordInput() const
 {
-	return g_engine->getMainApi().canRecordInput();
+	const auto&               view     = m_view.value();
+	const m::model::Document& document = view.getDocument();
+	const Scene               scene    = view.getParameters().sequencer.getCurrentScene();
+
+	return document.kernelAudio.deviceIn.id != 0 && document.tracks.hasInputRecordableChannels(scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Transport::canEnableFreeInputRec() const
 {
-	return g_engine->getMainApi().canEnableFreeInputRec();
+	const auto& view  = m_view.value();
+	const Scene scene = view.getParameters().sequencer.getCurrentScene();
+
+	return !view.getDocument().tracks.hasSampleChannelsWithWaves(scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Transport::canEnableRecOnSignal() const
 {
-	return g_engine->getMainApi().canEnableRecOnSignal();
+	const auto& view = m_view.value();
+	return !view.getDocument().sequencer.isRunning();
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Timer getTimer()
+Main getMain()
 {
-	return Timer();
+	const auto view = g_engine->readModel();
+	return Main(view);
 }
 
 /* -------------------------------------------------------------------------- */
 
-IO getIO()
+void updateMain(Main& main)
 {
-	return IO(g_engine->getChannelsApi().get(MASTER_OUT_CHANNEL_ID),
-	    g_engine->getChannelsApi().get(MASTER_IN_CHANNEL_ID));
-}
-
-/* -------------------------------------------------------------------------- */
-
-Sequencer getSequencer()
-{
-	Sequencer out;
-
-	const m::Mixer::RecordInfo recInfo = g_engine->getMainApi().getRecordInfo();
-
-	out.isFreeModeInputRec = g_engine->getMainApi().isRecordingInput() && g_engine->getMainApi().getInputRecMode() == InputRecMode::FREE;
-	out.shouldBlink        = g_ui->shouldBlink() && (g_engine->getMainApi().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
-	out.timeSignature      = g_engine->getMainApi().getTimeSignature();
-	out.currentBeat        = g_engine->getMainApi().getCurrentBeat();
-	out.recPosition        = recInfo.position;
-	out.recMaxLength       = recInfo.maxLength;
-
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Transport getTransport()
-{
-	Transport transport;
-	transport.isRunning         = g_engine->getMainApi().isSequencerRunning();
-	transport.isRecordingAction = g_engine->getMainApi().isRecordingActions();
-	transport.isRecordingInput  = g_engine->getMainApi().isRecordingInput();
-	transport.isMetronomeOn     = g_engine->getMainApi().isMetronomeOn();
-	transport.recTriggerMode    = g_engine->getMainApi().getRecTriggerMode();
-	transport.inputRecMode      = g_engine->getMainApi().getInputRecMode();
-	return transport;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Scenes getScenes()
-{
-	return Scenes();
+	const auto view = g_engine->readModel();
+	main.update(view);
 }
 
 /* -------------------------------------------------------------------------- */

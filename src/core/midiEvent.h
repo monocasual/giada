@@ -29,10 +29,6 @@
 
 #include <cstdint>
 
-#if G_OS_MAC
-#undef SYSTEM_CLOCK
-#endif
-
 namespace giada::m
 {
 class MidiEvent
@@ -56,10 +52,10 @@ public:
 	/* SYSTEM_*
 	List of common status bytes for System type. */
 
-	static constexpr int SYSTEM_SPP   = 0xF2; // Song Position Pointer
-	static constexpr int SYSTEM_CLOCK = 0xF8;
-	static constexpr int SYSTEM_START = 0xFA;
-	static constexpr int SYSTEM_STOP  = 0xFC;
+	static constexpr int SYSTEM_SPP        = 0xF2; // Song Position Pointer
+	static constexpr int SYSTEM_MIDI_CLOCK = 0xF8;
+	static constexpr int SYSTEM_START      = 0xFA;
+	static constexpr int SYSTEM_STOP       = 0xFC;
 
 	/* makeFromRaw (named ctor)
 	Makes a new MidiEvent from a raw MIDI message. */

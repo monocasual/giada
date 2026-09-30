@@ -28,8 +28,6 @@
 
 #include "src/core/kernelAudio.h"
 #include "src/core/const.h"
-#include "src/core/model/kernelAudio.h"
-#include "src/core/model/model.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/utils/log.h"
 #include "src/utils/string.h"
@@ -41,9 +39,6 @@ namespace giada::m
 {
 namespace
 {
-using Now      = std::chrono::time_point<std::chrono::high_resolution_clock>;
-using Duration = std::chrono::duration<double, std::micro>;
-
 /* RTAUDIO_MAX_PRIORITY
 The maximum priority level when instructing RtAudio to work in real-time mode
 (with RTAUDIO_SCHEDULE_REALTIME flag). This is actually the maximum value allowed
@@ -51,20 +46,6 @@ on Unix, however RtAudio has some magic hardcoded values when it comes to Window
 implementation, so we can safely pass this value below in the options struct.*/
 
 constexpr int RTAUDIO_MAX_PRIORITY = 99;
-
-/* -------------------------------------------------------------------------- */
-
-double computeCpuLoad(const Now& startTime, unsigned int sampleRate, int bufferSize)
-{
-	const Now      endTime        = std::chrono::high_resolution_clock::now();
-	const Duration processingTime = endTime - startTime;
-
-	const double callbackDuration = (static_cast<double>(bufferSize) / sampleRate) * 1e6; // in microseconds
-	const double load             = std::min((processingTime.count() / callbackDuration) * 100.0, 100.0);
-
-	return load;
-}
-
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -84,9 +65,17 @@ KernelAudio::KernelAudio(model::Model& model)
 
 bool KernelAudio::init()
 {
-	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const auto                view        = m_model.read();
+	const model::KernelAudio& kernelAudio = view.getDocument().kernelAudio;
 
-	kernelAudio.api = setAPI_(kernelAudio.api);
+	const RtAudio::Api api = setAPI_(kernelAudio.api);
+
+	m_model.write(model::SwapType::NONE, [api](model::DocumentEdit& e)
+	{
+		e.get().kernelAudio.api = api;
+	});
+
+	m_model.flush();
 
 	OpenStreamResult result = openStream_(
 	    kernelAudio.deviceOut,
@@ -96,13 +85,15 @@ bool KernelAudio::init()
 
 	if (result.success)
 	{
-		kernelAudio.deviceOut  = result.deviceOut;
-		kernelAudio.deviceIn   = result.deviceIn;
-		kernelAudio.samplerate = result.actualSampleRate;
-		kernelAudio.buffersize = result.actualBufferSize;
+		m_model.write(model::SwapType::NONE, [result](model::DocumentEdit& e)
+		{
+			e.get().kernelAudio.deviceOut  = result.deviceOut;
+			e.get().kernelAudio.deviceIn   = result.deviceIn;
+			e.get().kernelAudio.samplerate = result.actualSampleRate;
+			e.get().kernelAudio.buffersize = result.actualBufferSize;
+		});
+		m_model.flush();
 	}
-
-	m_model.swap(model::SwapType::NONE);
 
 	return result.success;
 }
@@ -111,9 +102,15 @@ bool KernelAudio::init()
 
 void KernelAudio::setAPI(RtAudio::Api desiredApi)
 {
-	m_model.get().kernelAudio     = {}; // Set API = reset everything
-	m_model.get().kernelAudio.api = setAPI_(desiredApi);
-	m_model.swap(model::SwapType::NONE);
+	const RtAudio::Api api = setAPI_(desiredApi);
+
+	m_model.write(model::SwapType::NONE, [api](model::DocumentEdit& e)
+	{
+		e.get().kernelAudio     = {}; // Set API = reset everything
+		e.get().kernelAudio.api = api;
+	});
+
+	m_model.flush();
 
 	printDevices(getAvailableDevices());
 }
@@ -135,13 +132,15 @@ bool KernelAudio::openStream(
 	if (!result.success)
 		return false;
 
-	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	m_model.write(model::SwapType::NONE, [result](model::DocumentEdit& e)
+	{
+		e.get().kernelAudio.deviceOut  = result.deviceOut;
+		e.get().kernelAudio.deviceIn   = result.deviceIn;
+		e.get().kernelAudio.samplerate = result.actualSampleRate;
+		e.get().kernelAudio.buffersize = result.actualBufferSize;
+	});
 
-	kernelAudio.deviceOut  = result.deviceOut;
-	kernelAudio.deviceIn   = result.deviceIn;
-	kernelAudio.samplerate = result.actualSampleRate;
-	kernelAudio.buffersize = result.actualBufferSize;
-	m_model.swap(model::SwapType::NONE);
+	m_model.flush();
 
 	onStreamOpened();
 
@@ -192,14 +191,14 @@ bool KernelAudio::isReady() const
 
 /* -------------------------------------------------------------------------- */
 
-unsigned int       KernelAudio::getBufferSize() const { return m_model.get().kernelAudio.buffersize; }
-int                KernelAudio::getSampleRate() const { return m_model.get().kernelAudio.samplerate; }
-int                KernelAudio::getChannelsOutCount() const { return m_model.get().kernelAudio.deviceOut.channelsCount; }
-int                KernelAudio::getChannelsInCount() const { return m_model.get().kernelAudio.deviceIn.channelsCount; }
-bool               KernelAudio::isInputEnabled() const { return m_model.get().kernelAudio.deviceIn.id != 0; }
-bool               KernelAudio::isLimitOutput() const { return m_model.get().kernelAudio.limitOutput; }
-float              KernelAudio::getRecTriggerLevel() const { return m_model.get().kernelAudio.recTriggerLevel; }
-Resampler::Quality KernelAudio::getResamplerQuality() const { return m_model.get().kernelAudio.rsmpQuality; }
+unsigned int       KernelAudio::getBufferSize() const { return m_model.read().getDocument().kernelAudio.buffersize; }
+int                KernelAudio::getSampleRate() const { return m_model.read().getDocument().kernelAudio.samplerate; }
+int                KernelAudio::getChannelsOutCount() const { return m_model.read().getDocument().kernelAudio.deviceOut.channelsCount; }
+int                KernelAudio::getChannelsInCount() const { return m_model.read().getDocument().kernelAudio.deviceIn.channelsCount; }
+bool               KernelAudio::isInputEnabled() const { return m_model.read().getDocument().kernelAudio.deviceIn.id != 0; }
+bool               KernelAudio::isLimitOutput() const { return m_model.read().getDocument().kernelAudio.limitOutput; }
+float              KernelAudio::getRecTriggerLevel() const { return m_model.read().getDocument().kernelAudio.recTriggerLevel; }
+Resampler::Quality KernelAudio::getResamplerQuality() const { return m_model.read().getDocument().kernelAudio.rsmpQuality; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -217,7 +216,8 @@ KernelAudio::Device KernelAudio::getCurrentOutDevice() const
 {
 	assert(m_rtAudio != nullptr);
 
-	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const auto                view        = m_model.read();
+	const model::KernelAudio& kernelAudio = view.getDocument().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceOut.id : m_rtAudio->getDefaultOutputDevice());
 	d.channelsStart = kernelAudio.deviceOut.channelsStart;
@@ -231,7 +231,8 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 {
 	assert(m_rtAudio != nullptr);
 
-	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const auto                view        = m_model.read();
+	const model::KernelAudio& kernelAudio = view.getDocument().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceIn.id : m_rtAudio->getDefaultInputDevice());
 	d.channelsStart = kernelAudio.deviceIn.channelsStart;
@@ -243,7 +244,7 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 
 double KernelAudio::getCpuLoad() const
 {
-	return m_model.get().kernelAudio.a_getCpuLoad();
+	return m_model.read().getParameters().kernelAudio.getCpuLoad();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -267,7 +268,7 @@ bool KernelAudio::hasAPI(int API) const
 	return false;
 }
 
-RtAudio::Api KernelAudio::getAPI() const { return m_model.get().kernelAudio.api; }
+RtAudio::Api KernelAudio::getAPI() const { return m_model.read().getDocument().kernelAudio.api; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -361,7 +362,7 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	u::log::print("     SampleRate={}\n", sampleRate);
 	u::log::print("     BufferSize={}\n", bufferSize);
 
-	const RtAudio::Api api = m_model.get().kernelAudio.api;
+	const RtAudio::Api api = m_model.read().getDocument().kernelAudio.api;
 
 	/* Abort here if devices found are zero, both devices are disabled or
 	current API is dummy. */
@@ -466,8 +467,6 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
     double /*streamTime*/, RtAudioStreamStatus /*status*/, void*   data)
 {
-	const Now startTime = std::chrono::high_resolution_clock::now();
-
 	const CallbackInfo& info = *static_cast<CallbackInfo*>(data);
 
 	mcl::AudioBuffer out(static_cast<float*>(outBuf), bufferSize, info.channelsOutCount);
@@ -475,16 +474,6 @@ int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
 	if (info.channelsInCount > 0)
 		in = mcl::AudioBuffer(static_cast<float*>(inBuf), bufferSize, info.channelsInCount);
 
-	const int ret = info.kernelAudio->onAudioCallback(out, in);
-
-	/* CPU load computation. */
-
-	const model::DocumentLock documentLock = info.kernelAudio->m_model.get_RT();
-	const model::Document&    document_RT  = documentLock.get();
-	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
-
-	kernelAudio.a_setCpuLoad(computeCpuLoad(startTime, kernelAudio.samplerate, bufferSize));
-
-	return ret;
+	return info.kernelAudio->onAudioCallback(out, in);
 }
 } // namespace giada::m

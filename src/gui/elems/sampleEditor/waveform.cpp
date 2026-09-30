@@ -79,15 +79,17 @@ int geWaveform::alloc(int datasize, bool force)
 	if (!m_data.isValid())
 		return 0;
 
-	const m::Wave& wave = *m_data.getSample().wave;
+	const m::model::Wave* wave = m_data.getWave();
 
-	m_ratio = wave.getBuffer().countFrames() / (float)datasize;
+	assert(wave != nullptr);
+
+	m_ratio = wave->getBuffer().countFrames() / (float)datasize;
 
 	/* Limit 1:1 drawing (to avoid sub-frame drawing) by keeping m_ratio >= 1. */
 
 	if (m_ratio < 1)
 	{
-		datasize = wave.getBuffer().countFrames();
+		datasize = wave->getBuffer().countFrames();
 		m_ratio  = 1;
 	}
 
@@ -108,7 +110,7 @@ int geWaveform::alloc(int datasize, bool force)
 	/* Frid frequency: store a grid point every 'gridFreq' frame (if grid is
 	enabled). TODO - this will cause round off errors, since gridFreq is integer. */
 
-	int gridFreq = m_grid.level != 0 ? wave.getBuffer().countFrames() / m_grid.level : 0;
+	int gridFreq = m_grid.level != 0 ? wave->getBuffer().countFrames() / m_grid.level : 0;
 
 	/* Resampling the waveform, hardcore way. Many thanks to
 	http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html */
@@ -127,15 +129,15 @@ int geWaveform::alloc(int datasize, bool force)
 		for (int k = pc; k < pn; k++)
 		{ // TODO - int until we switch to uint32_t for Wave size...
 
-			if (k >= wave.getBuffer().countFrames())
+			if (k >= wave->getBuffer().countFrames())
 				continue;
 
 			/* Compute average of stereo signal. */
 
 			float avg = 0.0f;
-			for (int j = 0; j < wave.getBuffer().countChannels(); j++)
-				avg += wave.getBuffer().getChannelView(j).data()[k];
-			avg /= wave.getBuffer().countChannels();
+			for (int j = 0; j < wave->getBuffer().countChannels(); j++)
+				avg += wave->getBuffer().getChannelView(j).data()[k];
+			avg /= wave->getBuffer().countChannels();
 
 			/* Find peaks (greater and lower). */
 
@@ -273,7 +275,7 @@ void geWaveform::drawStartEndPoints()
 
 void geWaveform::drawPlayHead()
 {
-	int p = frameToPixel(m_data.a_getPreviewTracker()) + x();
+	int p = frameToPixel(m_data.getPreviewTracker()) + x();
 	fl_color(G_COLOR_LIGHT_2);
 	fl_line(p, y() + 1, p, y() + h() - 2);
 }
@@ -320,7 +322,9 @@ int geWaveform::handle(int e)
 	if (!m_data.isValid())
 		return 0;
 
-	const m::Wave& wave = *m_data.getSample().wave;
+	const m::model::Wave* wave = m_data.getWave();
+
+	assert(wave != nullptr);
 
 	m_mouseX = pixelToFrame(Fl::event_x() - x());
 	m_mouseY = pixelToFrame(Fl::event_y() - y());
@@ -460,8 +464,8 @@ int geWaveform::handle(int e)
 
 			m_chanEnd = snap(m_mouseX);
 
-			if (m_chanEnd > wave.getBuffer().countFrames())
-				m_chanEnd = wave.getBuffer().countFrames();
+			if (m_chanEnd > wave->getBuffer().countFrames())
+				m_chanEnd = wave->getBuffer().countFrames();
 			else if (m_chanEnd <= m_chanStart)
 				m_chanEnd = m_chanStart + 2;
 

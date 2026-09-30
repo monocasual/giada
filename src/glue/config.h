@@ -29,7 +29,6 @@
 
 #include "src/core/kernelAudio.h"
 #include "src/core/kernelMidi.h"
-#include "src/core/types.h"
 #include <RtMidi.h>
 #include <map>
 #include <string>

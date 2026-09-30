@@ -27,20 +27,15 @@
 #include "src/core/engine.h"
 #include "src/core/conf.h"
 #include "src/core/confFactory.h"
-#include "src/core/model/model.h"
 #include "src/core/rendering/midiOutput.h"
-#include "src/utils/fs.h"
 #include "src/utils/log.h"
 #include "src/utils/string.h"
-#include <fmt/core.h>
-#include <memory>
 
 namespace giada::m
 {
 Engine::Engine()
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
-, onModelSwap(nullptr)
 , m_kernelAudio(m_model)
 , m_kernelMidi(m_model)
 , m_midiMapper(m_kernelMidi)
@@ -49,7 +44,7 @@ Engine::Engine()
 , m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
 , m_mixer(m_model)
 , m_actionManager(m_model)
-, m_channelManager(m_model, m_midiMapper, m_kernelMidi)
+, m_channelManager(m_model)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionManager)
 , m_midiDispatcher(m_model)
 #ifdef WITH_AUDIO_JACK
@@ -60,8 +55,8 @@ Engine::Engine()
 , m_reactor(m_model, m_midiMapper, m_actionManager, m_kernelMidi)
 , m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder, m_actionManager, m_reactor)
 , m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionManager, m_pluginHost, m_pluginManager, m_reactor)
-, m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model)
-, m_sampleEditorApi(m_kernelAudio, m_model, m_channelManager, m_reactor, m_sequencer)
+, m_pluginsApi(m_model, m_pluginManager, m_pluginHost)
+, m_sampleEditorApi(m_model, m_channelManager, m_reactor)
 , m_actionEditorApi(*this, m_sequencer, m_actionManager)
 , m_ioApi(m_model, m_midiDispatcher)
 , m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer)
@@ -69,7 +64,6 @@ Engine::Engine()
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
 	{
-		registerThread(Thread::AUDIO, /*realtime=*/true);
 		m_renderer.render(out, in, m_model);
 		return 0;
 	};
@@ -96,7 +90,6 @@ Engine::Engine()
 	{
 		assert(onMidiReceived != nullptr);
 
-		registerThread(Thread::MIDI, /*realtime=*/false);
 		m_midiDispatcher.dispatch(e);
 		m_midiSynchronizer.receive(e, m_sequencer.getTimeSignature().beats);
 		onMidiReceived();
@@ -140,7 +133,6 @@ Engine::Engine()
 	{
 		m_eventDispatcher.pumpEvent([this]()
 		{
-			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_rewind();
 		});
 	};
@@ -148,7 +140,6 @@ Engine::Engine()
 	{
 		m_eventDispatcher.pumpEvent([this, bpm]()
 		{
-			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_setBpm(bpm);
 		});
 	};
@@ -156,7 +147,6 @@ Engine::Engine()
 	{
 		m_eventDispatcher.pumpEvent([this]()
 		{
-			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_start();
 		});
 	};
@@ -164,7 +154,6 @@ Engine::Engine()
 	{
 		m_eventDispatcher.pumpEvent([this]()
 		{
-			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_stop();
 		});
 	};
@@ -174,28 +163,25 @@ Engine::Engine()
 	{
 		m_eventDispatcher.pumpEvent([this]()
 		{
-			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_recorder.startInputRecOnCallback();
 		});
 	};
 	m_mixer.onEndOfRecording = [this]()
 	{
-		if (m_mixer.isRecordingInput())
-			m_eventDispatcher.pumpEvent([this]()
-			{
-				registerThread(Thread::EVENTS, /*realtime=*/false);
+		m_eventDispatcher.pumpEvent([this]()
+		{
+			if (m_mixer.isRecordingInput())
 				m_recorder.stopInputRec();
-			});
+		});
 	};
 
 	m_channelManager.onChannelPlayStatusChanged = [this](ID channelId, ChannelStatus status)
 	{
 		m_eventDispatcher.pumpEvent([this, channelId, status]()
 		{
-			registerThread(Thread::EVENTS, /*realtime=*/false);
-			const Channel& ch = m_model.get().tracks.getChannel(channelId);
-			if (ch.midiLightning.enabled)
-				rendering::sendMidiLightningStatus(ch.id, ch.midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
+			const model::Channel& ch = m_model.read().getDocument().tracks.getChannel(channelId);
+			// if (ch.midiLightning.enabled)
+			//	rendering::sendMidiLightningStatus(ch.id, ch.midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
 		});
 	};
 
@@ -214,7 +200,7 @@ Engine::Engine()
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
 			m_recorder.stopActionRec();
-		m_model.get().mixer.recTriggerMode = RecTriggerMode::NORMAL;
+		// TODO - m_model_DEPR_.get().mixer.recTriggerMode = RecTriggerMode::NORMAL;
 	};
 	m_sequencer.onAboutStop = [this]()
 	{
@@ -230,8 +216,6 @@ Engine::Engine()
 	{
 		m_eventDispatcher.pumpEvent([this]()
 		{
-			registerThread(Thread::EVENTS, /*realtime=*/false);
-
 			const Scene newScene = m_sequencer.getCurrentScene();
 
 			/* When a scene change, reset inputRecMode to RIGID if Free input rec
@@ -243,16 +227,6 @@ Engine::Engine()
 			/* Also stop all those sample channels that don't have audio in it. */
 			m_reactor.killEmptySampleChannels(newScene);
 		});
-
-		/* Rebuild UI when the scene has changed to update channels. */
-		assert(onModelSwap != nullptr);
-		onModelSwap(model::SwapType::HARD);
-	};
-
-	m_model.onSwap = [this](model::SwapType t)
-	{
-		assert(onModelSwap != nullptr);
-		onModelSwap(t);
 	};
 
 	rendering::registerOnSendMidiCb([this](ID channelId)
@@ -270,14 +244,31 @@ bool Engine::isAudioReady() const
 
 /* -------------------------------------------------------------------------- */
 
+model::SwapType Engine::pollDocumentChanges()
+{
+	return m_model.pollDocumentChanges();
+}
+
+model::SwapType Engine::pollAssetsChanges()
+{
+	return m_model.pollAssetsChanges();
+}
+
+/* -------------------------------------------------------------------------- */
+
+model::ModelView Engine::readModel() const
+{
+	return m_model.read();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Engine::init(const Conf& conf)
 {
-	registerThread(Thread::MAIN, /*realtime=*/false);
+	// TODO - m_model_DEPR_.init();
+	// TODO - m_model_DEPR_.load(conf);
 
-	m_model.init();
-	m_model.load(conf);
-
-	const model::Document& document = m_model.get();
+	const model::Document& document = m_model.read().getDocument();
 
 	m_kernelAudio.init();
 
@@ -319,7 +310,7 @@ void Engine::reset()
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
 
-	m_model.reset();
+	// TODO - m_model_DEPR_.reset();
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(sampleRate), bufferSize);
 	m_channelManager.reset(sampleRate, bufferSize);
 	m_sequencer.reset(sampleRate);
@@ -339,7 +330,7 @@ void Engine::shutdown(Conf& conf)
 		u::log::print("[Engine::shutdown] Mixer closed\n");
 	}
 
-	m_model.store(conf);
+	// TODO - m_model_DEPR_.store(conf);
 
 	/* It's safer and cleaner to free all plug-ins before closing the app. Some
 	would crash badly otherwise. */
@@ -364,20 +355,9 @@ void Engine::resume()
 #if G_DEBUG_MODE
 void Engine::debug()
 {
-	m_model.debug();
+	m_model.read().getDocument().debug();
 }
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-void Engine::registerThread(Thread t, bool isRealtime) const
-{
-	if (!m_model.registerThread(t, isRealtime))
-	{
-		u::log::print("[Engine::registerThread] Can't register thread {}! Aborting\n", u::string::toString(t));
-		std::abort();
-	}
-}
 
 /* -------------------------------------------------------------------------- */
 

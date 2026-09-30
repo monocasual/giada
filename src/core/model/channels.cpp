@@ -122,8 +122,8 @@ void Channels::debug() const
 		if (c.plugins.size() > 0)
 		{
 			puts("\t\tplugins:");
-			for (const auto& p : c.plugins)
-				fmt::print("\t\t\t{} - ID={}\n", (void*)p, p->id.getValue());
+			// for (const auto& p : c.plugins)
+			//	fmt::print("\t\t\t{} - ID={}\n", (void*)p, p->id.getValue());
 		}
 	}
 }
@@ -132,12 +132,12 @@ void Channels::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Channel*> Channels::getIf(std::function<bool(const Channel&)> f)
+std::vector<ID> Channels::getIf(std::function<bool(const Channel&)> f) const
 {
-	std::vector<Channel*> out;
-	for (Channel& ch : m_channels)
+	std::vector<ID> out;
+	for (const Channel& ch : m_channels)
 		if (f(ch))
-			out.push_back(&ch);
+			out.push_back(ch.id);
 	return out;
 }
 

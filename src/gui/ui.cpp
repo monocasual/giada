@@ -25,7 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/ui.h"
+
+#include "dialogs/actionEditor/baseActionEditor.h"
+#include "src/glue/plugin.h"
+#include "src/glue/sampleEditor.h"
 #include "src/gui/const.h"
+#include "src/gui/dialogs/pluginList.h"
+#include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/keyboard/track.h"
@@ -52,9 +58,15 @@ ID Ui::getPluginWindowId(ID pluginId)
 /* -------------------------------------------------------------------------- */
 
 Ui::Ui()
-: m_updater(*this)
+: onUpdate(nullptr)
+, m_updater()
 , m_blinker(0)
 {
+	m_updater.onUpdate = [this]()
+	{
+		assert(onUpdate != nullptr);
+		onUpdate();
+	};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -91,10 +103,7 @@ const std::vector<std::string>& Ui::getLangMapFilesFound() const
 void Ui::load(const m::Patch& patch)
 {
 	reset();
-
 	model.load(patch);
-
-	mainWindow->keyboard->rebuild();
 	mainWindow->setProjectTitle(patch.name);
 }
 
@@ -142,8 +151,8 @@ void Ui::reset()
 	model.projectName = "";
 	rebuildStaticWidgets();
 	closeAllSubwindows();
-	mainWindow->clearKeyboard();
-	mainWindow->rebuild();
+	mainWindow->clearKeyboard(); // TODO - rebuild main window should do this too
+	rebuildMainWindow();
 	mainWindow->setProjectTitle(G_DEFAULT_PATCH_NAME);
 }
 
@@ -196,36 +205,84 @@ void Ui::refresh()
 
 	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
 
-	refreshSubWindow(WID_SAMPLE_EDITOR);
-	refreshSubWindow(WID_ACTION_EDITOR);
+	refreshSampleEditor();
+	// refreshSubWindow(WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::rebuild()
 {
-	mainWindow->rebuild();
-	rebuildSubWindow(WID_FX_LIST);
-	rebuildSubWindow(WID_SAMPLE_EDITOR);
-	rebuildSubWindow(WID_ACTION_EDITOR);
-	rebuildSubWindow(WID_CHANNEL_ROUTING);
+	rebuildMainWindow();
+	rebuildPluginListWindow();
+	rebuildActionEditorWindow();
+	rebuildSampleEditorWindow();
+	// rebuildSubWindow(WID_CHANNEL_ROUTING);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::rebuildSubWindow(ID wid)
+void Ui::rebuildMainWindow()
 {
-	v::gdWindow* w = getSubwindow(wid);
-	if (w != nullptr) // If its open
-		w->rebuild();
+	mainWindow->rebuild(c::main::getMain());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::refreshSubWindow(ID wid)
+void Ui::rebuildPluginListWindow()
 {
-	v::gdWindow* w = getSubwindow(wid);
-	if (w != nullptr) // If its open
+	auto* w = static_cast<gdPluginList*>(getSubwindow(WID_FX_LIST));
+	if (w != nullptr)
+		w->rebuild(c::plugin::getPlugins(w->getChannelId()));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::rebuildActionEditorWindow()
+{
+	auto* w = static_cast<gdBaseActionEditor*>(getSubwindow(WID_ACTION_EDITOR));
+	if (w != nullptr)
+		w->rebuild(c::actionEditor::getData(w->getChannelId()));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::rebuildSampleEditorWindow()
+{
+	auto* w = static_cast<gdSampleEditor*>(getSubwindow(WID_SAMPLE_EDITOR));
+	if (w != nullptr)
+		w->rebuild(c::sampleEditor::getData(w->getChannelId()));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::update()
+{
+	updateMainWindow();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::updateMainWindow()
+{
+	mainWindow->update();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::refreshSampleEditor()
+{
+	auto* w = static_cast<gdSampleEditor*>(getSubwindow(WID_SAMPLE_EDITOR));
+	if (w != nullptr)
+		w->refresh();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::refreshActionEditor()
+{
+	auto* w = static_cast<gdBaseActionEditor*>(getSubwindow(WID_ACTION_EDITOR));
+	if (w != nullptr)
 		w->refresh();
 }
 
@@ -282,9 +339,9 @@ void Ui::stopJuceDispatchLoop()
 
 void Ui::rebuildStaticWidgets()
 {
-	mainWindow->mainInput->rebuild();
-	mainWindow->mainOutput->rebuild();
-	mainWindow->mainTimer->rebuild();
+	// mainWindow->mainInput->rebuild();
+	// mainWindow->mainOutput->rebuild();
+	// mainWindow->mainTimer->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

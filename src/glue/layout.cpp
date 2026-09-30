@@ -33,6 +33,8 @@
 #include "src/glue/channel.h"
 #include "src/glue/config.h"
 #include "src/glue/io.h"
+#include "src/glue/main.h"
+#include "src/glue/plugin.h"
 #include "src/glue/storage.h"
 #include "src/gui/dialogs/about.h"
 #include "src/gui/dialogs/actionEditor/midiActionEditor.h"
@@ -108,16 +110,20 @@ void openKeyGrabberWindow(int key, std::function<bool(int)> f)
 
 /* -------------------------------------------------------------------------- */
 
-void openBpmWindow(float bpm)
+void openBpmWindow()
 {
+	const auto  view     = g_engine->readModel();
+	const float bpm      = view.getDocument().sequencer.getBpm();
 	g_ui->openSubWindow(new v::gdBpmInput(bpm));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void openBeatsWindow(TimeSignature t)
+void openBeatsWindow()
 {
-	g_ui->openSubWindow(new v::gdBeatsInput(t));
+	const auto          view     = g_engine->readModel();
+	const TimeSignature sig      = view.getDocument().sequencer.getTimeSignature();
+	g_ui->openSubWindow(new v::gdBeatsInput(sig));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -166,14 +172,14 @@ void openMidiChannelMidiOutputWindow(ID channelId)
 
 void openSampleActionEditor(ID channelId)
 {
-	g_ui->openSubWindow(new v::gdSampleActionEditor(channelId, g_ui->model));
+	g_ui->openSubWindow(new v::gdSampleActionEditor(c::actionEditor::getData(channelId), g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMidiActionEditor(ID channelId)
 {
-	g_ui->openSubWindow(new v::gdMidiActionEditor(channelId, g_ui->model));
+	g_ui->openSubWindow(new v::gdMidiActionEditor(c::actionEditor::getData(channelId), g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -185,14 +191,14 @@ void openSampleEditor(ID channelId)
 	resulting in a broken Editor (gdSampleEditor's destructor frees the loaded
 	sample). */
 	g_ui->closeSubWindow(WID_SAMPLE_EDITOR);
-	g_ui->openSubWindow(new v::gdSampleEditor(channelId, g_ui->model));
+	g_ui->openSubWindow(new v::gdSampleEditor(c::sampleEditor::getData(channelId), g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void openRenameChannelWindow(const c::channel::Data& data, bool allscenes)
+void openRenameChannelWindow(const c::channel::Channel& c, bool allscenes)
 {
-	g_ui->openSubWindow(new v::gdChannelNameInput(data, allscenes));
+	g_ui->openSubWindow(new v::gdChannelNameInput(c, allscenes));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -215,21 +221,21 @@ void openBrowserForPlugins(v::gdWindow& parent)
 
 void openChannelPluginListWindow(ID channelId)
 {
-	g_ui->openSubWindow(new v::gdPluginList(channelId, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(c::plugin::getPlugins(channelId), g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterInPluginListWindow()
 {
-	g_ui->openSubWindow(new v::gdPluginList(MASTER_IN_CHANNEL_ID, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(c::plugin::getPlugins(MASTER_IN_CHANNEL_ID), g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterOutPluginListWindow()
 {
-	g_ui->openSubWindow(new v::gdPluginList(MASTER_OUT_CHANNEL_ID, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(c::plugin::getPlugins(MASTER_OUT_CHANNEL_ID), g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */

@@ -43,6 +43,12 @@ public:
 	const Channel&              getChannel(ID) const;
 	bool                        anyChannelOf(std::function<bool(const Channel&)> f) const;
 	std::vector<const Channel*> getChannels() const;
+	const Track&                getByChannel(ID) const;
+	const Track&                get(std::size_t index) const;
+	bool                        hasSampleChannelsWithWaves(Scene) const;
+	bool                        hasInputRecordableChannels(Scene) const;
+	bool                        hasSoloedChannels() const;
+	std::vector<ID>             getChannelsIf(std::function<bool(const Channel&)>) const;
 
 #if G_DEBUG_MODE
 	void debug() const;
@@ -58,16 +64,15 @@ public:
 
 	Track& add(int width, bool internal);
 
-	void                  remove(std::size_t index);
-	Track&                get(std::size_t index);
-	Channel&              getChannel(ID);
-	Track&                getByChannel(ID);
-	void                  addChannel(Channel&&, std::size_t index);
-	void                  addChannel(Channel&&, std::size_t index, std::size_t position);
-	void                  removeChannel(ID);
-	Channel&              getLastChannel(std::size_t index);
-	void                  forEachChannel(std::function<bool(Channel&)>);
-	std::vector<Channel*> getChannelsIf(std::function<bool(const Channel&)>);
+	void     remove(std::size_t index);
+	Track&   get(std::size_t index);
+	Channel& getChannel(ID);
+	Track&   getByChannel(ID);
+	void     addChannel(Channel&&, std::size_t index);
+	void     addChannel(Channel&&, std::size_t index, std::size_t position);
+	void     removeChannel(ID);
+	Channel& getLastChannel(std::size_t index);
+	void     forEachChannel(std::function<bool(Channel&)>);
 
 private:
 	std::vector<Track> m_tracks;

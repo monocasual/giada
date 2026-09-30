@@ -74,7 +74,6 @@ geMainInput::geMainInput()
 		c::main::setInToOut(inToOut->getValue());
 	};
 
-	m_masterFxIn->forceValue(m_io.masterInHasPlugins);
 	m_masterFxIn->onClick = []
 	{ c::layout::openMasterInPluginListWindow(); };
 }
@@ -85,23 +84,22 @@ void geMainInput::setInVol(float v) { m_inVol->value(v); }
 
 /* -------------------------------------------------------------------------- */
 
-void geMainInput::refresh()
+void geMainInput::refresh(const c::main::IO& io)
 {
-	m_inMeter->peak  = m_io.getMasterInPeak();
-	m_inMeter->ready = m_io.isKernelReady();
+	m_inMeter->peak  = io.getMasterInPeak();
+	m_inMeter->ready = io.isKernelReady();
 	m_inMeter->redraw();
 	m_midiIn->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geMainInput::rebuild()
+void geMainInput::rebuild(const c::main::IO& io)
 {
-	m_io = c::main::getIO();
-
-	m_inVol->value(m_io.masterInVol);
-	m_masterFxIn->setValue(m_io.masterInHasPlugins);
-	m_inToOut->setValue(m_io.inToOut);
+	m_inVol->value(io.masterInVol);
+	m_masterFxIn->setValue(io.masterInHasPlugins);
+	m_inToOut->setValue(io.inToOut);
+	m_masterFxIn->setValue(io.masterInHasPlugins);
 }
 
 /* -------------------------------------------------------------------------- */

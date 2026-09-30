@@ -27,19 +27,14 @@
 #ifndef G_RENDERING_SAMPLE_ADVANCE_H
 #define G_RENDERING_SAMPLE_ADVANCE_H
 
+#include "src/core/model/channelView.h"
 #include "src/core/sequencer.h"
-#include "src/core/types.h"
-
-namespace giada::m
-{
-struct Action;
-struct ChannelShared;
-class Channel;
-} // namespace giada::m
 
 namespace giada::m::rendering
 {
-void advanceSampleChannel(const Channel&, const Sequencer::Event&);
+RenderInfo advanceSampleChannel(
+    const model::ChannelView&,
+    const Sequencer::Event&);
 } // namespace giada::m::rendering
 
 #endif

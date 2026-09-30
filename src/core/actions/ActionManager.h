@@ -28,10 +28,15 @@
 #define G_ACTION_MANAGER_H
 
 #include "src/core/midiEvent.h"
-#include "src/core/model/model.h"
-#include "src/core/types.h"
+#include "src/core/model/types.h"
 #include <cstddef>
+#include <optional>
 #include <unordered_set>
+
+namespace giada::m::model
+{
+class Model;
+}
 
 namespace giada::patch
 {
@@ -102,10 +107,10 @@ public:
 
 	/* Pass-thru functions. See Actions.h */
 
-	const Action*              findAction(ID) const;
-	bool                       hasActions(ID channelId, int type = 0) const;
-	bool                       hasActions(Scene) const;
-	std::vector<const Action*> getActionsOnChannel(ID channelId, Scene) const;
+	std::optional<model::Action> findAction(ID) const;
+	bool                         hasActions(ID channelId, int type = 0) const;
+	bool                         hasActions(Scene) const;
+	std::vector<model::Action>   getActionsOnChannel(ID channelId, Scene) const;
 
 	/* clearChannel
 	Removes all actions from channel 'channelId' from a given scene. Pass an invalid Scene
@@ -113,24 +118,24 @@ public:
 
 	void clearChannel(ID channelId, Scene);
 
-	void   clearActions(ID channelId, int type);
-	Action rec(ID channelId, Scene, Tick, MidiEvent e);
-	void   rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
-	void   deleteAction(ID id);
-	void   deleteAction(ID currId, ID nextId);
-	void   updateEvent(ID id, MidiEvent e);
+	void clearActions(ID channelId, int type);
+	void rec(ID channelId, Scene, Tick, MidiEvent e);
+	void rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
+	void deleteAction(ID id);
+	void deleteAction(ID currId, ID nextId);
+	void updateEvent(ID id, MidiEvent e);
 
 private:
 	/* areComposite
 	Composite: NOTE_ON + NOTE_OFF on the same note. */
 
-	bool areComposite(const Action& a1, const Action& a2) const;
+	bool areComposite(const model::Action& a1, const model::Action& a2) const;
 
 	/* consolidate
 	Given an action 'a1' tries to find the matching NOTE_OFF and updates the
 	action accordingly. */
 
-	void consolidate(Action& a1, std::size_t i);
+	void consolidate(model::Action& a1, std::size_t i);
 
 	/* cloneActions
 	Internal generic method for copying actions between channels and/or scenes.
@@ -138,8 +143,8 @@ private:
 
 	void copyActions(ID channelId, Scene src, Scene dst, ID newChannelId);
 
-	model::Model&       m_model;
-	std::vector<Action> m_liveActions;
+	model::Model&              m_model;
+	std::vector<model::Action> m_liveActions;
 };
 } // namespace giada::m
 

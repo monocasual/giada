@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/actionEditor/sampleActionEditor.h"
-#include "src/core/actions/action.h"
 #include "src/glue/actionEditor.h"
 #include "src/gui/dialogs/actionEditor/baseActionEditor.h"
 #include "src/gui/dialogs/actionEditor/sampleActionEditor.h"
@@ -44,11 +43,9 @@ geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor*
 
 /* -------------------------------------------------------------------------- */
 
-void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
+void geSampleActionEditor::rebuild(const c::actionEditor::Data& data)
 {
-	m_data = &d;
-
-	bool isAnyLoopMode = m_data->sample->isLoopMode;
+	bool isAnyLoopMode = data.sample->isLoopMode;
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -56,17 +53,17 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action* a1 : m_data->actions)
+	for (const c::actionEditor::Action& a1 : data.actions)
 	{
-		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_CC)
+		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_CC)
 			continue;
 
-		Pixel px = x() + m_base->tickToPixel(a1->tick);
+		Pixel px = x() + m_base->tickToPixel(a1.tick);
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
 
-		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, *a1);
+		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, a1);
 		add(gsa);
 		resizable(gsa);
 	}
@@ -101,7 +98,7 @@ void geSampleActionEditor::draw()
 void geSampleActionEditor::onAddAction()
 {
 	Tick t = m_base->pixelToTickSnapped(Fl::event_x() - x());
-	c::actionEditor::recordSampleAction(m_data->channelId,
+	c::actionEditor::recordSampleAction(m_base->getData().channelId,
 	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), t);
 }
 
@@ -109,7 +106,7 @@ void geSampleActionEditor::onAddAction()
 
 void geSampleActionEditor::onDeleteAction()
 {
-	c::actionEditor::deleteSampleAction(m_action->a1->id);
+	c::actionEditor::deleteSampleAction(m_action->a1.id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -149,8 +146,8 @@ void geSampleActionEditor::onRefreshAction()
 {
 	const Pixel p    = m_action->x() - x();
 	const Tick  t    = m_base->pixelToTickSnapped(p);
-	const int   type = m_action->a1->event.getStatus();
+	const int   type = m_action->a1.event.getStatus();
 
-	c::actionEditor::updateSampleAction(m_data->channelId, m_action->a1->id, type, t);
+	c::actionEditor::updateSampleAction(m_base->getData().channelId, m_action->a1.id, type, t);
 }
 } // namespace giada::v

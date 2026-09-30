@@ -60,31 +60,22 @@ geScenes::geScenes()
 
 	addWidget(row1);
 	addWidget(row2);
-
-	rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geScenes::rebuild()
-{
-	m_scenes = c::main::getScenes();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geScenes::refresh()
+void geScenes::refresh(const c::main::Scenes& scenes)
 {
 	for (const auto [index, button] : mcl::utils::container::enumerate(m_buttons))
-		button->setDefaultState(m_scenes.activeScenes[index] ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
+		button->setDefaultState(scenes.activeScenes[index] ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
 
-	if (m_scenes.getStatus() == SceneStatus::CHANGING)
+	if (scenes.getStatus() == SceneStatus::CHANGING)
 	{
-		m_buttons[m_scenes.getCurrentScene().getIndex()]->setEndingState();
-		m_buttons[m_scenes.getNextScene().getIndex()]->blink(g_ui->shouldBlink());
+		m_buttons[scenes.getCurrentScene().getIndex()]->setEndingState();
+		m_buttons[scenes.getNextScene().getIndex()]->blink(g_ui->shouldBlink());
 	}
 	else
-		m_buttons[m_scenes.getCurrentScene().getIndex()]->setPlayState();
+		m_buttons[scenes.getCurrentScene().getIndex()]->setPlayState();
 
 	for (gePlayButton* button : m_buttons)
 		button->redraw();
