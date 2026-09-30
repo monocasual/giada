@@ -29,7 +29,7 @@
 
 #include "src/gui/dialogs/window.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 struct LoadState;
 }
@@ -39,7 +39,7 @@ namespace giada::v
 class gdMissingAssets : public gdWindow
 {
 public:
-	gdMissingAssets(const m::model::LoadState&);
+	gdMissingAssets(const m::model_DEPR_::LoadState&);
 };
 } // namespace giada::v
 

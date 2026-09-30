@@ -37,7 +37,7 @@ struct Plugin;
 struct Version;
 } // namespace giada::m::patch
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 class Sequencer;
@@ -78,8 +78,8 @@ public:
 	bool saveList(const std::string& path) const;
 	bool loadList(const std::string& path);
 
-	std::unique_ptr<Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, const model::Sequencer&, ID id = {});
-	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const model::Sequencer&);
+	std::unique_ptr<Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, const model_DEPR_::Sequencer&, ID id = {});
+	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const model_DEPR_::Sequencer&);
 
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& juceId, int sampleRate, int bufferSize);
 
@@ -88,7 +88,7 @@ public:
 	new vector containing the new clones. */
 	// TODO - move to pluginFactory
 
-	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model::Model&);
+	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model_DEPR_::Model&);
 
 	void sortPlugins(PluginSortMode);
 

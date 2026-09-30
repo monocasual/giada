@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/track.h"
+#include "src/core/model_DEPR_/track.h"
 #include "src/core/types.h"
 #include <cassert>
 #if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 Track::Track(std::size_t index, int width, bool internal)
 : width(width)

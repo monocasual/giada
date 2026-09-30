@@ -131,15 +131,15 @@ void startup()
 		{ g_ui->mainWindow->keyboard->notifyMidiOut(channelId); });
 	};
 
-	g_engine->onModelSwap = [](model::SwapType type)
+	g_engine->onModelSwap = [](model_DEPR_::SwapType type)
 	{
 		/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
 		callback might be performed by a non-main thread, which must talk to the
 		UI (main thread) through the UI queue by pumping an event in it. */
-		if (type == model::SwapType::NONE)
+		if (type == model_DEPR_::SwapType::NONE)
 			return;
 		g_ui->pumpEvent([type]()
-		{ type == model::SwapType::HARD ? g_ui->rebuild() : g_ui->refresh(); });
+		{ type == model_DEPR_::SwapType::HARD ? g_ui->rebuild() : g_ui->refresh(); });
 	};
 
 	Conf conf = confFactory::deserialize();

@@ -224,7 +224,7 @@ MiscData getMiscData()
 
 BehaviorsData getBehaviorsData()
 {
-	const m::model::Behaviors& behaviors = g_engine->getConfigApi().behaviors_getData();
+	const m::model_DEPR_::Behaviors& behaviors = g_engine->getConfigApi().behaviors_getData();
 
 	BehaviorsData behaviorsData = {
 	    behaviors.chansStopOnSeqHalt,

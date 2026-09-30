@@ -26,7 +26,7 @@
 
 #include "src/core/rendering/renderer.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/rendering/midiAdvance.h"
 #include "src/core/rendering/midiOutput.h"
 #include "src/core/rendering/midiReactions.h"
@@ -79,7 +79,7 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model& model) const
+void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model_DEPR_::Model& model) const
 {
 	/* Clean up output buffer before any rendering. Do this even if mixer is
 	disabled to avoid audio leftovers during a temporary suspension (e.g. when
@@ -91,13 +91,13 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	Document is locked for realtime rendering by the audio thread. Rendering
 	functions must access the realtime Document coming from documentLock.get(). */
 
-	const model::DocumentLock documentLock = model.get_RT();
-	const model::Document&    document_RT  = documentLock.get();
-	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
-	const model::Mixer&       mixer        = document_RT.mixer;
-	const model::Sequencer&   sequencer    = document_RT.sequencer;
-	const model::Tracks&      tracks       = document_RT.tracks;
-	const model::Actions&     actions      = document_RT.actions;
+	const model_DEPR_::DocumentLock documentLock = model.get_RT();
+	const model_DEPR_::Document&    document_RT  = documentLock.get();
+	const model_DEPR_::KernelAudio& kernelAudio  = document_RT.kernelAudio;
+	const model_DEPR_::Mixer&       mixer        = document_RT.mixer;
+	const model_DEPR_::Sequencer&   sequencer    = document_RT.sequencer;
+	const model_DEPR_::Tracks&      tracks       = document_RT.tracks;
+	const model_DEPR_::Actions&     actions      = document_RT.actions;
 
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
@@ -160,10 +160,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::Tracks& tracks,
+void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model_DEPR_::Tracks& tracks,
     FrameRange block, int quantizerStep) const
 {
-	for (const model::Track& track : tracks.getAll())
+	for (const model_DEPR_::Track& track : tracks.getAll())
 		for (const Channel& c : track.getChannels().getAll())
 			if (!c.isInternal())
 				advanceChannel(c, events, block, quantizerStep);
@@ -188,13 +188,13 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& masterOut,
+void Renderer::renderTracks(const model_DEPR_::Tracks& tracks, mcl::AudioBuffer& masterOut,
     mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene scene, bool hasSolos,
     bool seqIsRunning) const
 {
 	masterOut.clear();
 
-	for (const model::Track& track : tracks.getAll())
+	for (const model_DEPR_::Track& track : tracks.getAll())
 	{
 		if (track.isInternal())
 			continue;

@@ -24,23 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_H
-#define G_MODEL_H
+#ifndef G_MODEL_DEPR_H
+#define G_MODEL_DEPR_H
 
 #include "src/core/channels/channel.h"
 #include "src/core/conf.h"
-#include "src/core/model/actions.h"
-#include "src/core/model/behaviors.h"
-#include "src/core/model/channels.h"
-#include "src/core/model/kernelAudio.h"
-#include "src/core/model/kernelMidi.h"
-#include "src/core/model/loadState.h"
-#include "src/core/model/midiIn.h"
-#include "src/core/model/mixer.h"
-#include "src/core/model/sequencer.h"
-#include "src/core/model/shared.h"
-#include "src/core/model/sharedLock.h"
-#include "src/core/model/types.h"
+#include "src/core/model_DEPR_/actions.h"
+#include "src/core/model_DEPR_/behaviors.h"
+#include "src/core/model_DEPR_/channels.h"
+#include "src/core/model_DEPR_/kernelAudio.h"
+#include "src/core/model_DEPR_/kernelMidi.h"
+#include "src/core/model_DEPR_/loadState.h"
+#include "src/core/model_DEPR_/midiIn.h"
+#include "src/core/model_DEPR_/mixer.h"
+#include "src/core/model_DEPR_/sequencer.h"
+#include "src/core/model_DEPR_/shared.h"
+#include "src/core/model_DEPR_/sharedLock.h"
+#include "src/core/model_DEPR_/types.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/wave.h"
 #include "src/deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
@@ -48,7 +48,7 @@
 #include "src/utils/vector.h"
 #include <memory>
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 struct Document;
 class Model
@@ -160,6 +160,6 @@ private:
 	AtomicSwapper m_swapper;
 	Shared        m_shared;
 };
-} // namespace giada::m::model
+} // namespace giada::m::model_DEPR_
 
 #endif

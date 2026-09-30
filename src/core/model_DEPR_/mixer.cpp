@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/mixer.h"
+#include "src/core/model_DEPR_/mixer.h"
 #include "src/const.h"
 #if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 namespace
 {

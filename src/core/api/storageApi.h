@@ -27,7 +27,7 @@
 #ifndef G_STORAGE_API_H
 #define G_STORAGE_API_H
 
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/types.h"
 #include "src/gui/model.h"
 #include <functional>
@@ -46,7 +46,7 @@ class Sequencer;
 class StorageApi
 {
 public:
-	StorageApi(Engine&, model::Model&, PluginManager&, MidiSynchronizer&,
+	StorageApi(Engine&, model_DEPR_::Model&, PluginManager&, MidiSynchronizer&,
 	    Mixer&, ChannelManager&, KernelAudio&, Sequencer&);
 
 	/* storeProject
@@ -59,11 +59,11 @@ public:
 	Loads a new project. Returns a model::LoadState object containing the
 	operation state. */
 
-	model::LoadState loadProject(const std::string& projectPath, std::function<void(float)> progress);
+	model_DEPR_::LoadState loadProject(const std::string& projectPath, std::function<void(float)> progress);
 
 private:
 	Engine&           m_engine;
-	model::Model&     m_model;
+	model_DEPR_::Model&     m_model;
 	PluginManager&    m_pluginManager;
 	MidiSynchronizer& m_midiSynchronizer;
 	Mixer&            m_mixer;

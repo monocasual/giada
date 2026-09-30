@@ -27,7 +27,7 @@
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/channels/channel.h"
 #include "src/core/const.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
@@ -41,7 +41,7 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginHost::PluginHost(model::Model& m)
+PluginHost::PluginHost(model_DEPR_::Model& m)
 : m_model(m)
 {
 }

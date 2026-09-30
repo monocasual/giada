@@ -24,18 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_BEHAVIORS_H
-#define G_MODEL_BEHAVIORS_H
+#include "src/core/model_DEPR_/loadState.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
-struct Behaviors
+bool LoadState::isGood() const
 {
-	bool chansStopOnSeqHalt         = false;
-	bool treatRecsAsLoops           = false;
-	bool inputMonitorDefaultOn      = false;
-	bool overdubProtectionDefaultOn = false;
-};
+	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
+}
 } // namespace giada::m::model
-
-#endif

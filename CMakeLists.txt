@@ -165,32 +165,32 @@ list(APPEND SOURCES
 	src/core/channels/channelShared.h
 	src/core/channels/channelFactory.cpp
 	src/core/channels/channelFactory.h
-	src/core/model/document.cpp
-	src/core/model/document.h
-	src/core/model/loadState.cpp
-	src/core/model/loadState.h
-	src/core/model/sharedLock.cpp
-	src/core/model/sharedLock.h
-	src/core/model/shared.cpp
-	src/core/model/shared.h
-	src/core/model/kernelAudio.cpp
-	src/core/model/kernelAudio.h
-	src/core/model/sequencer.cpp
-	src/core/model/sequencer.h
-	src/core/model/mixer.cpp
-	src/core/model/mixer.h
-	src/core/model/model.cpp
-	src/core/model/model.h
-	src/core/model/channels.cpp
-	src/core/model/channels.h
-	src/core/model/actions.cpp
-	src/core/model/actions.h
-	src/core/model/tracks.cpp
-	src/core/model/tracks.h
-	src/core/model/track.cpp
-	src/core/model/track.h
-	src/core/model/midiIn.cpp
-	src/core/model/midiIn.h
+	src/core/model_DEPR_/document.cpp
+	src/core/model_DEPR_/document.h
+	src/core/model_DEPR_/loadState.cpp
+	src/core/model_DEPR_/loadState.h
+	src/core/model_DEPR_/sharedLock.cpp
+	src/core/model_DEPR_/sharedLock.h
+	src/core/model_DEPR_/shared.cpp
+	src/core/model_DEPR_/shared.h
+	src/core/model_DEPR_/kernelAudio.cpp
+	src/core/model_DEPR_/kernelAudio.h
+	src/core/model_DEPR_/sequencer.cpp
+	src/core/model_DEPR_/sequencer.h
+	src/core/model_DEPR_/mixer.cpp
+	src/core/model_DEPR_/mixer.h
+	src/core/model_DEPR_/model.cpp
+	src/core/model_DEPR_/model.h
+	src/core/model_DEPR_/channels.cpp
+	src/core/model_DEPR_/channels.h
+	src/core/model_DEPR_/actions.cpp
+	src/core/model_DEPR_/actions.h
+	src/core/model_DEPR_/tracks.cpp
+	src/core/model_DEPR_/tracks.h
+	src/core/model_DEPR_/track.cpp
+	src/core/model_DEPR_/track.h
+	src/core/model_DEPR_/midiIn.cpp
+	src/core/model_DEPR_/midiIn.h
 	src/core/idManager.cpp
 	src/core/idManager.h
 	src/glue/main.cpp

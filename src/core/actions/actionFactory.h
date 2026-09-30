@@ -29,7 +29,7 @@
 
 #include "src/core/actions/action.h"
 #include "src/core/idManager.h"
-#include "src/core/model/actions.h"
+#include "src/core/model_DEPR_/actions.h"
 #include "src/core/patch.h"
 
 namespace giada::m::actionFactory

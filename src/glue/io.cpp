@@ -30,7 +30,7 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/midiDispatcher.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/recorder.h"
 #include "src/core/wave.h"
 #include "src/glue/channel.h"
@@ -131,7 +131,7 @@ Channel_OutputData::Channel_OutputData(const m::Channel& c)
 
 /* -------------------------------------------------------------------------- */
 
-Master_InputData::Master_InputData(const m::model::MidiIn& midiIn)
+Master_InputData::Master_InputData(const m::model_DEPR_::MidiIn& midiIn)
 : enabled(midiIn.enabled)
 , filter(midiIn.filter)
 , rewind(midiIn.rewind)

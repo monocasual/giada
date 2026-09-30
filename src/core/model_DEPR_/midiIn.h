@@ -24,43 +24,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_CHANNELS_H
-#define G_MODEL_CHANNELS_H
+#ifndef G_MODEL_DEPR_MIDI_IN_H
+#define G_MODEL_DEPR_MIDI_IN_H
 
-#include "src/core/channels/channel.h"
-#include "src/core/types.h"
+#include "src/scene.h"
+#include "src/types.h"
+#include <cstdint>
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
-class Channels
+struct MidiIn
 {
-public:
-	const Channel&              get(ID) const;
-	const Channel*              find(ID) const;
-	const std::vector<Channel>& getAll() const;
-	const std::size_t           getIndex(ID) const;
-	const std::vector<ID>       getAllIDs() const;
+	bool                 enabled    = false;
+	int                  filter     = -1;
+	uint32_t             rewind     = 0x0;
+	uint32_t             startStop  = 0x0;
+	uint32_t             actionRec  = 0x0;
+	uint32_t             inputRec   = 0x0;
+	uint32_t             volumeIn   = 0x0;
+	uint32_t             volumeOut  = 0x0;
+	uint32_t             beatDouble = 0x0;
+	uint32_t             beatHalf   = 0x0;
+	uint32_t             metronome  = 0x0;
+	SceneArray<uint32_t> scenes     = {};
 
-	/* anyOf
-	Returns true if any channel satisfies the callback 'f'. */
+	/* isScene
+	True if MIDI learn value passed in exists in the 'scenes' array. */
 
-	bool anyOf(std::function<bool(const Channel&)> f) const;
+	bool hasScene(uint32_t) const;
 
-#if G_DEBUG_MODE
-	void debug() const;
-#endif
+	/* getScene
+	Returns the corresponding scene given a certain MIDI learn value. */
 
-	Channel*              find(ID);
-	Channel&              get(ID);
-	Channel&              getLast();
-	std::vector<Channel>& getAll();
-	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
-	void                  add(Channel&&);
-	void                  add(Channel&&, std::size_t position);
-	void                  remove(ID);
+	Scene getScene(uint32_t) const;
 
-private:
-	std::vector<Channel> m_channels;
+	void setScene(Scene scene, uint32_t);
 };
 } // namespace giada::m::model
 
