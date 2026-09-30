@@ -24,24 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_LOADSTATE_H
-#define G_MODEL_LOADSTATE_H
+#ifndef G_MODEL_DEPR_SHAREDLOCK_H
+#define G_MODEL_DEPR_SHAREDLOCK_H
 
-#include "src/core/patch.h"
-#include <unordered_set>
+#include "src/core/model_DEPR_/types.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
-/* LoadState
-Contains information about the model state after a patch has been loaded. */
-
-struct LoadState
+class Model;
+class SharedLock
 {
-	bool isGood() const;
+public:
+	SharedLock(Model&, SwapType t);
+	~SharedLock();
 
-	Patch                           patch;
-	std::vector<std::string>        missingWaves   = {};
-	std::unordered_set<std::string> missingPlugins = {};
+private:
+	Model&   m_model;
+	SwapType m_swapType;
 };
 } // namespace giada::m::model
 

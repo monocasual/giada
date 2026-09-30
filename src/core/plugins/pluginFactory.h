@@ -38,7 +38,7 @@ namespace giada::m
 class Plugin;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Sequencer;
 }
@@ -52,10 +52,10 @@ void reset();
 
 std::unique_ptr<Plugin> createInvalid(ID id, const std::string& juceId);
 std::unique_ptr<Plugin> create(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance>,
-    const model::Sequencer&, int sampleRate, int bufferSize);
+    const model_DEPR_::Sequencer&, int sampleRate, int bufferSize);
 
 std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, std::unique_ptr<juce::AudioPluginInstance>,
-    const model::Sequencer&, int sampleRate, int bufferSize);
+    const model_DEPR_::Sequencer&, int sampleRate, int bufferSize);
 
 Patch::Plugin serializePlugin(const Plugin&);
 } // namespace giada::m::pluginFactory

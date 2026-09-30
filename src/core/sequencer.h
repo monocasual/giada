@@ -40,7 +40,7 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 class Sequencer;
@@ -76,7 +76,7 @@ public:
 
 	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;
 
-	Sequencer(model::Model&, MidiSynchronizer&, JackTransport&);
+	Sequencer(model_DEPR_::Model&, MidiSynchronizer&, JackTransport&);
 
 	/* canQuantize
 	Tells whether the quantizer value is > 0 and the sequencer is running. */
@@ -148,12 +148,12 @@ public:
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
-	const EventBuffer& advance(const model::Sequencer&, Frame bufferSize, const model::Actions&) const;
+	const EventBuffer& advance(const model_DEPR_::Sequencer&, Frame bufferSize, const model_DEPR_::Actions&) const;
 
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */
 
-	void render(mcl::AudioBuffer& outBuf, const model::Document&) const;
+	void render(mcl::AudioBuffer& outBuf, const model_DEPR_::Document&) const;
 
 	void rewindForced();
 	void rewind();
@@ -196,7 +196,7 @@ private:
 	void rawSetBpm(float v);
 	void rawGoToBeat(int beat, int sampleRate);
 
-	model::Model&     m_model;
+	model_DEPR_::Model&     m_model;
 	MidiSynchronizer& m_midiSynchronizer;
 	JackTransport&    m_jackTransport;
 

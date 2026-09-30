@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/actions/actionFactory.h"
 #include "src/core/channels/channelFactory.h"
-#include "src/core/model/document.h"
+#include "src/core/model_DEPR_/document.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/waveFactory.h"
@@ -42,7 +42,7 @@
 
 using namespace mcl;
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 Model::Model()
 : onSwap(nullptr)
@@ -86,7 +86,7 @@ void Model::reset()
 void Model::load(const Conf& conf)
 {
 	get().load(conf);
-	swap(model::SwapType::NONE);
+	swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */

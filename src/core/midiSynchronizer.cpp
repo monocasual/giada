@@ -28,7 +28,7 @@
 #include "src/core/conf.h"
 #include "src/core/kernelMidi.h"
 #include "src/core/midiEvent.h"
-#include "src/core/model/sequencer.h"
+#include "src/core/model_DEPR_/sequencer.h"
 #include "src/utils/log.h"
 #include "src/utils/time.h"
 #include <numeric>

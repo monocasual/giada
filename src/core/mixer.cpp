@@ -26,7 +26,7 @@
 
 #include "src/core/mixer.h"
 #include "src/core/const.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/log.h"
 
@@ -47,7 +47,7 @@ constexpr int CH_RIGHT = 1;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Mixer::Mixer(model::Model& m)
+Mixer::Mixer(model_DEPR_::Model& m)
 : onSignalTresholdReached(nullptr)
 , onEndOfRecording(nullptr)
 , m_model(m)
@@ -108,7 +108,7 @@ const mcl::AudioBuffer& Mixer::getRecBuffer()
 void Mixer::updateSoloCount(bool hasSolos)
 {
 	m_model.get().mixer.hasSolos = hasSolos;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -116,7 +116,7 @@ void Mixer::updateSoloCount(bool hasSolos)
 void Mixer::setInToOut(bool v)
 {
 	m_model.get().mixer.inToOut = v;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -124,23 +124,23 @@ void Mixer::setInToOut(bool v)
 void Mixer::setRecTriggerMode(RecTriggerMode m)
 {
 	m_model.get().mixer.recTriggerMode = m;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 void Mixer::setInputRecMode(InputRecMode m)
 {
 	m_model.get().mixer.inputRecMode = m;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::render(const mcl::AudioBuffer& in, const model::Document& document_RT, int maxFramesToRec) const
+void Mixer::render(const mcl::AudioBuffer& in, const model_DEPR_::Document& document_RT, int maxFramesToRec) const
 {
-	const model::Mixer&       mixer       = document_RT.mixer;
-	const model::Sequencer&   sequencer   = document_RT.sequencer;
-	const model::Tracks&      tracks      = document_RT.tracks;
-	const model::KernelAudio& kernelAudio = document_RT.kernelAudio;
+	const model_DEPR_::Mixer&       mixer       = document_RT.mixer;
+	const model_DEPR_::Sequencer&   sequencer   = document_RT.sequencer;
+	const model_DEPR_::Tracks&      tracks      = document_RT.tracks;
+	const model_DEPR_::KernelAudio& kernelAudio = document_RT.kernelAudio;
 
 	const Channel& masterInCh = tracks.getChannel(MASTER_IN_CHANNEL_ID);
 
@@ -175,7 +175,7 @@ void Mixer::startInputRec(Frame from)
 {
 	m_model.get().mixer.a_setInputTracker(from);
 	m_model.get().mixer.isRecordingInput = true;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 Frame Mixer::stopInputRec()
@@ -183,7 +183,7 @@ Frame Mixer::stopInputRec()
 	const Frame ret = m_model.get().mixer.a_getInputTracker();
 	m_model.get().mixer.a_setInputTracker(0);
 	m_model.get().mixer.isRecordingInput = false;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 	m_signalCbFired   = false;
 	m_endOfRecCbFired = false;
 	return ret;
@@ -194,13 +194,13 @@ Frame Mixer::stopInputRec()
 void Mixer::startActionRec()
 {
 	m_model.get().mixer.isRecordingActions = true;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 void Mixer::stopActionRec()
 {
 	m_model.get().mixer.isRecordingActions = false;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -288,7 +288,7 @@ int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Fr
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
+void Mixer::processLineIn(const model_DEPR_::Mixer& mixer, const mcl::AudioBuffer& inBuf,
     float inVol, float recTriggerLevel, bool isSeqActive) const
 {
 	/* Prepare the working buffer for input stream, which will be processed
@@ -321,7 +321,7 @@ void Mixer::limit(mcl::AudioBuffer& outBuf) const
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::finalizeOutput(const model::Mixer& mixer, mcl::AudioBuffer& buf,
+void Mixer::finalizeOutput(const model_DEPR_::Mixer& mixer, mcl::AudioBuffer& buf,
     bool inToOut, bool shouldLimit, float vol) const
 {
 	if (inToOut)
@@ -335,7 +335,7 @@ void Mixer::finalizeOutput(const model::Mixer& mixer, mcl::AudioBuffer& buf,
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::updateOutputPeak(const model::Mixer& mixer, const mcl::AudioBuffer& buf) const
+void Mixer::updateOutputPeak(const model_DEPR_::Mixer& mixer, const mcl::AudioBuffer& buf) const
 {
 	mixer.a_setPeakOut({buf.getPeak(CH_LEFT), buf.getPeak(CH_RIGHT)});
 }

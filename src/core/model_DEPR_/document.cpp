@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/document.h"
+#include "src/core/model_DEPR_/document.h"
 #include "src/core/actions/actionFactory.h"
 #include "src/core/channels/channelFactory.h"
 #include "src/core/conf.h"
-#include "src/core/model/shared.h"
+#include "src/core/model_DEPR_/shared.h"
 #include "src/utils/vector.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 {

@@ -24,67 +24,63 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_DOCUMENT_H
-#define G_MODEL_DOCUMENT_H
+#ifndef G_MODEL_DEPR_TRACK_H
+#define G_MODEL_DEPR_TRACK_H
 
-#include "src/core/model/actions.h"
-#include "src/core/model/behaviors.h"
-#include "src/core/model/channels.h"
-#include "src/core/model/kernelAudio.h"
-#include "src/core/model/kernelMidi.h"
-#include "src/core/model/midiIn.h"
-#include "src/core/model/mixer.h"
-#include "src/core/model/sequencer.h"
-#include "src/core/model/tracks.h"
+#include "src/core/model_DEPR_/channels.h"
 
-namespace giada::m
+namespace giada::m::model_DEPR_
 {
-struct Conf;
-}
-
-namespace giada::m::model
+class Track
 {
-class Shared;
-struct Document
-{
-	/* load (1)
-	Loads data from a Patch object. */
+	friend class Tracks;
 
-	void load(const Patch&, Shared&, float sampleRateRatio);
+public:
+	/* ctor
+	A non-internal track always contains at least one Group Channel that determines the
+	track's behavior and properties (volumes, FXs, ...). */
 
-	/* load (2)
-	Loads data from a Conf object. */
+	Track(std::size_t index, int width, bool internal);
 
-	void load(const Conf&);
+	const Channels& getChannels() const;
+	const Channel*  findChannel(ID) const;
+	const Channel&  getGroupChannel() const;
+	std::size_t     getNumChannels() const;
 
-	/* store (1)
-	Stores data into a Patch object. */
+	/* getIndex
+	Returns this Track index. */
 
-	void store(Patch&) const;
+	std::size_t getIndex() const;
 
-	/* store (2)
-	Stores data into a Conf object. */
+	/* getChannelIndex
+	Returns the Channel index given its ID. */
 
-	void store(Conf&) const;
+	std::size_t getChannelIndex(ID) const;
+
+	/* isInternal
+	True when the Track should be hidden, containing only master i/o or preview
+	channels, not to be shown on the UI. */
+
+	bool isInternal() const;
 
 #if G_DEBUG_MODE
 	void debug() const;
 #endif
 
-	/* locked
-	If locked, Mixer won't process channels. This is used to allow editing the
-	shared data (e.g. Plugins, Waves) by the rendering engine without data races. */
+	Channel*  findChannel(ID);
+	Channel&  getGroupChannel();
+	void      addChannel(Channel&&);
+	void      addChannel(Channel&&, std::size_t position);
+	Channel&  getLastChannel();
+	Channels& getChannels();
+	void      removeChannel(ID);
 
-	bool locked = false;
+	int width;
 
-	KernelAudio kernelAudio;
-	KernelMidi  kernelMidi;
-	Sequencer   sequencer;
-	Mixer       mixer;
-	MidiIn      midiIn;
-	Tracks      tracks;
-	Actions     actions;
-	Behaviors   behaviors;
+private:
+	Channels    m_channels;
+	std::size_t m_index;
+	bool        m_internal;
 };
 } // namespace giada::m::model
 

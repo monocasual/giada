@@ -27,7 +27,7 @@
 #include "src/core/midiDispatcher.h"
 #include "src/core/conf.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/recorder.h"
@@ -42,7 +42,7 @@
 
 namespace giada::m
 {
-MidiDispatcher::MidiDispatcher(model::Model& m)
+MidiDispatcher::MidiDispatcher(model_DEPR_::Model& m)
 : m_learnCb(nullptr)
 , m_model(m)
 {
@@ -177,7 +177,7 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 
 void MidiDispatcher::processTracks(const MidiEvent& midiEvent)
 {
-	for (const model::Track& track : m_model.get().tracks.getAll())
+	for (const model_DEPR_::Track& track : m_model.get().tracks.getAll())
 		processChannels(track.getChannels().getAll(), midiEvent);
 }
 
@@ -260,7 +260,7 @@ void MidiDispatcher::processChannel(const Channel& c, const MidiEvent& midiEvent
 void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 {
 	const uint32_t       pure   = midiEvent.getRawNoVelocity();
-	const model::MidiIn& midiIn = m_model.get().midiIn;
+	const model_DEPR_::MidiIn& midiIn = m_model.get().midiIn;
 
 	if (pure == midiIn.rewind)
 	{
@@ -365,7 +365,7 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 		break;
 	}
 
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 
 	stopLearn();
 	doneCb();
@@ -379,7 +379,7 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 		return;
 
 	const uint32_t raw    = e.getRawNoVelocity();
-	model::MidiIn& midiIn = m_model.get().midiIn;
+	model_DEPR_::MidiIn& midiIn = m_model.get().midiIn;
 
 	if (param == G_MIDI_IN_REWIND)
 		midiIn.rewind = raw;
@@ -402,7 +402,7 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 	else if (utils::container::has(G_MIDI_IN_SCENES, param))
 		midiIn.setScene(Scene{utils::container::indexOf(G_MIDI_IN_SCENES, param)}, raw);
 
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 
 	stopLearn();
 	doneCb();
@@ -412,7 +412,7 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 
 void MidiDispatcher::learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb)
 {
-	model::SharedLock lock   = m_model.lockShared(model::SwapType::NONE);
+	model_DEPR_::SharedLock lock   = m_model.lockShared(model_DEPR_::SwapType::NONE);
 	Plugin*           plugin = m_model.findPlugin(pluginId);
 
 	assert(plugin != nullptr);

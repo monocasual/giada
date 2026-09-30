@@ -27,11 +27,11 @@
 #include "src/core/api/configApi.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/midiSynchronizer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 
 namespace giada::m
 {
-ConfigApi::ConfigApi(model::Model& m, KernelAudio& ka, KernelMidi& km, MidiMapper<KernelMidi>& mm,
+ConfigApi::ConfigApi(model_DEPR_::Model& m, KernelAudio& ka, KernelMidi& km, MidiMapper<KernelMidi>& mm,
     MidiSynchronizer& ms)
 : m_model(m)
 , m_kernelAudio(ka)
@@ -94,8 +94,8 @@ void ConfigApi::audio_setAPI(RtAudio::Api api)
 /* -------------------------------------------------------------------------- */
 
 bool ConfigApi::audio_openStream(
-    const model::KernelAudio::Device& out,
-    const model::KernelAudio::Device& in,
+    const model_DEPR_::KernelAudio::Device& out,
+    const model_DEPR_::KernelAudio::Device& in,
     unsigned int                      sampleRate,
     unsigned int                      bufferSize)
 {
@@ -110,13 +110,13 @@ bool ConfigApi::audio_openStream(
 
 void ConfigApi::audio_storeData(bool limitOutput, Resampler::Quality rsmpQuality, float recTriggerLevel)
 {
-	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	kernelAudio.limitOutput     = limitOutput;
 	kernelAudio.rsmpQuality     = rsmpQuality;
 	kernelAudio.recTriggerLevel = recTriggerLevel;
 
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -202,7 +202,7 @@ void ConfigApi::midi_setSyncMode(int syncMode)
 	const float currentBpm = m_model.get().sequencer.getBpm();
 
 	m_model.get().kernelMidi.sync = syncMode;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	m_midiSynchronizer.stopSendClock();
 	m_midiSynchronizer.startSendClock(currentBpm);
@@ -213,7 +213,7 @@ void ConfigApi::midi_setSyncMode(int syncMode)
 void ConfigApi::midi_setMidiMapPath(const std::string& midiMapPath)
 {
 	m_model.get().kernelMidi.midiMapPath = midiMapPath;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	m_midiMapper.read(midiMapPath);
 	m_midiMapper.sendInitMessages();
@@ -221,16 +221,16 @@ void ConfigApi::midi_setMidiMapPath(const std::string& midiMapPath)
 
 /* -------------------------------------------------------------------------- */
 
-const model::Behaviors& ConfigApi::behaviors_getData() const
+const model_DEPR_::Behaviors& ConfigApi::behaviors_getData() const
 {
 	return m_model.get().behaviors;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ConfigApi::behaviors_storeData(const model::Behaviors& data)
+void ConfigApi::behaviors_storeData(const model_DEPR_::Behaviors& data)
 {
 	m_model.get().behaviors = data;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 } // namespace giada::m

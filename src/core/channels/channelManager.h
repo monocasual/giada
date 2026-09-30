@@ -43,7 +43,7 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 }
@@ -63,7 +63,7 @@ class ChannelManager final
 public:
 	friend Engine;
 
-	ChannelManager(model::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
+	ChannelManager(model_DEPR_::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -257,7 +257,7 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	model::Model&           m_model;
+	model_DEPR_::Model&           m_model;
 	KernelMidi&             m_kernelMidi;
 	MidiMapper<KernelMidi>& m_midiMapper;
 };
