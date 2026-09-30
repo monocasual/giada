@@ -34,7 +34,7 @@
 
 namespace giada::m
 {
-ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
+ChannelsApi::ChannelsApi(model_DEPR_::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
     ChannelManager& cm, Recorder& r, ActionManager& ar, PluginHost& ph, PluginManager& pm,
     rendering::Reactor& re)
 : m_model(m)
@@ -80,7 +80,7 @@ Channel& ChannelsApi::get(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-model::Tracks& ChannelsApi::getTracks()
+model_DEPR_::Tracks& ChannelsApi::getTracks()
 {
 	return m_model.get().tracks;
 }

@@ -24,12 +24,33 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/loadState.h"
+#include "src/core/model_DEPR_/midiIn.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 
-namespace giada::m::model
+namespace utils = mcl::utils;
+
+namespace giada::m::model_DEPR_
 {
-bool LoadState::isGood() const
+bool MidiIn::hasScene(uint32_t val) const
 {
-	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
+	return utils::container::has(scenes, val);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Scene MidiIn::getScene(uint32_t val) const
+{
+	assert(hasScene(val));
+
+	return Scene{utils::container::indexOf(scenes, val)};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiIn::setScene(Scene scene, uint32_t val)
+{
+	assert(scene.getIndex() < scenes.size());
+
+	scenes[scene.getIndex()] = val;
 }
 } // namespace giada::m::model

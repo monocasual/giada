@@ -28,7 +28,7 @@
 #define G_GLUE_IO_H
 
 #include "src/core/midiEvent.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/types.h"
 
 /* giada::c::io
@@ -82,7 +82,7 @@ struct Channel_InputData
 struct Master_InputData
 {
 	Master_InputData() = default;
-	Master_InputData(const m::model::MidiIn&);
+	Master_InputData(const m::model_DEPR_::MidiIn&);
 
 	bool enabled;
 	int  filter;

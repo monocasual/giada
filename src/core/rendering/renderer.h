@@ -49,7 +49,7 @@ class JackTransport;
 #endif
 } // namespace giada::m
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 class Channels;
@@ -67,19 +67,19 @@ public:
 	Renderer(Sequencer&, Mixer&, PluginHost&, KernelMidi&);
 #endif
 
-	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
+	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model_DEPR_::Model&) const;
 
 private:
 	/* advanceTracks
 	Processes Channels' static events (e.g. pre-recorded actions or sequencer
 	events) in the current audio block. Called when the sequencer is running. */
 
-	void advanceTracks(const Sequencer::EventBuffer&, const model::Tracks&,
+	void advanceTracks(const Sequencer::EventBuffer&, const model_DEPR_::Tracks&,
 	    FrameRange, int quantizerStep) const;
 
 	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, FrameRange, Frame quantizerStep) const;
 
-	void renderTracks(const model::Tracks&, mcl::AudioBuffer& masterOut,
+	void renderTracks(const model_DEPR_::Tracks&, mcl::AudioBuffer& masterOut,
 	    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene,
 	    bool hasSolos, bool seqIsRunning) const;
 	void renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in, Scene, bool seqIsRunning) const;

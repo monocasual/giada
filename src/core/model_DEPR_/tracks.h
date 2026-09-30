@@ -24,17 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_TRACKS_H
-#define G_MODEL_TRACKS_H
+#ifndef G_MODEL_DEPR_TRACKS_H
+#define G_MODEL_DEPR_TRACKS_H
 
-#include "src/core/model/track.h"
+#include "src/core/model_DEPR_/track.h"
 
 namespace giada::m
 {
 class Channel;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Tracks
 {

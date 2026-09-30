@@ -29,7 +29,7 @@
 
 #include "src/core/actions/action.h"
 #include "src/core/midiEvent.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/types.h"
 #include <cstddef>
 #include <cstdint>
@@ -40,7 +40,7 @@ namespace giada::m
 class MidiDispatcher
 {
 public:
-	MidiDispatcher(model::Model&);
+	MidiDispatcher(model_DEPR_::Model&);
 
 	void startChannelLearn(int param, ID channelId, std::function<void()> f);
 	void startMasterLearn(int param, std::function<void()> f);
@@ -92,7 +92,7 @@ private:
 
 	std::function<void(MidiEvent)> m_learnCb;
 
-	model::Model& m_model;
+	model_DEPR_::Model& m_model;
 };
 } // namespace giada::m
 

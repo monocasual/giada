@@ -29,7 +29,7 @@
 #include "src/core/channels/channelFactory.h"
 #include "src/core/engine.h"
 #include "src/core/midiSynchronizer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/patchFactory.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/waveFactory.h"
@@ -40,7 +40,7 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-StorageApi::StorageApi(Engine& e, model::Model& m, PluginManager& pm, MidiSynchronizer& ms,
+StorageApi::StorageApi(Engine& e, model_DEPR_::Model& m, PluginManager& pm, MidiSynchronizer& ms,
     Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s)
 : m_engine(e)
 , m_model(m)
@@ -97,7 +97,7 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 /* -------------------------------------------------------------------------- */
 
-model::LoadState StorageApi::loadProject(const std::string& projectPath, std::function<void(float)> progress)
+model_DEPR_::LoadState StorageApi::loadProject(const std::string& projectPath, std::function<void(float)> progress)
 {
 	u::log::print("[StorageApi::loadProject] Load project from {}\n", projectPath);
 
@@ -124,7 +124,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const int                bufferSize  = m_kernelAudio.getBufferSize();
 	const Resampler::Quality rsmpQuality = m_kernelAudio.getResamplerQuality();
-	const model::LoadState   state       = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
+	const model_DEPR_::LoadState   state       = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
 
 	progress(0.6f);
 

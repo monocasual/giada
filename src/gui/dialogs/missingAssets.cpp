@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/missingAssets.h"
-#include "src/core/model/loadState.h"
+#include "src/core/model_DEPR_/loadState.h"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/browser.h"
@@ -39,7 +39,7 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
+gdMissingAssets::gdMissingAssets(const m::model_DEPR_::LoadState& state)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 300}), g_ui->getI18Text(LangMap::COMMON_WARNING), WID_MISSING_ASSETS)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);

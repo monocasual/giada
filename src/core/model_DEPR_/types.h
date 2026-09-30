@@ -24,22 +24,35 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/sharedLock.h"
-#include "src/core/model/model.h"
+#ifndef G_MODEL_DEPR_TYPES_H
+#define G_MODEL_DEPR_TYPES_H
 
-namespace giada::m::model
-{
-SharedLock::SharedLock(Model& m, SwapType t)
-: m_model(m)
-, m_swapType(t)
-{
-	m_model.get().locked = true;
-	m_model.swap(SwapType::NONE);
-}
+#include "src/core/model_DEPR_/document.h"
+#include "src/deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
 
-SharedLock::~SharedLock()
+namespace giada::m::model_DEPR_
 {
-	m_model.get().locked = false;
-	m_model.swap(m_swapType);
-}
+/* DocumentLock
+Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
+real-time thread to lock the Document. */
+
+using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
+using DocumentLock  = AtomicSwapper::RtLock;
+
+/* SwapType
+Type of Document change.
+    Hard: the structure has changed (e.g. add a new channel);
+    Soft: a property has changed (e.g. change volume);
+    None: something has changed but we don't care.
+Used by model listeners to determine the type of change that occurred in the
+Document. */
+
+enum class SwapType
+{
+	HARD,
+	SOFT,
+	NONE
+};
 } // namespace giada::m::model
+
+#endif

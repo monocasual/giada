@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/kernelAudio.h"
+#include "src/core/model_DEPR_/kernelAudio.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 void KernelAudio::a_setCpuLoad(double v) const
 {

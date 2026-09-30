@@ -49,7 +49,7 @@ namespace giada::m
 class Plugin;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 class Sequencer;
@@ -60,7 +60,7 @@ namespace giada::m
 class PluginHost final
 {
 public:
-	PluginHost(model::Model&);
+	PluginHost(model_DEPR_::Model&);
 
 	/* reset
 	Brings everything back to the initial state. */
@@ -120,7 +120,7 @@ private:
 
 	void processPlugin(Plugin*, juce::MidiBuffer& events);
 
-	model::Model& m_model;
+	model_DEPR_::Model& m_model;
 
 	juce::AudioBuffer<float> m_audioBuffer;
 };

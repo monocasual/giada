@@ -26,14 +26,14 @@
 
 #include "src/core/rendering/reactor.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/rendering/midiOutput.h"
 #include "src/core/rendering/midiReactions.h"
 #include "src/core/rendering/sampleReactions.h"
 
 namespace giada::m::rendering
 {
-Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
+Reactor::Reactor(model_DEPR_::Model& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
 : m_model(model)
 , m_kernelMidi(km)
 , m_actionManager(a)
@@ -76,7 +76,7 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 				keyPress(child.id, scene, velocity, canRecordActions, canQuantize, currentTickQuantized);
 	}
 
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -113,7 +113,7 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick 
 				keyRelease(child.id, scene, canRecordActions, currentTickQuantized);
 	}
 
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,7 +151,7 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 				keyKill(child.id, scene, canRecordActions, currentTickQuantized);
 	}
 
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -166,7 +166,7 @@ void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
 	if (canRecordActions)
 	{
 		recordMidiAction(channelId, scene, e, currentTickQuantized, m_actionManager);
-		m_model.swap(model::SwapType::HARD);
+		m_model.swap(model_DEPR_::SwapType::HARD);
 	}
 	sendMidiEventToPlugins(ch.shared->midiQueue, e);
 	if (ch.canSendMidi())
@@ -199,7 +199,7 @@ void Reactor::killReadActions(ID channelId)
 void Reactor::toggleMute(ID channelId)
 {
 	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
-	model::Track& track   = m_model.get().tracks.getByChannel(ch.id);
+	model_DEPR_::Track& track   = m_model.get().tracks.getByChannel(ch.id);
 	const bool    newMute = !ch.isMuted();
 
 	ch.setMute(newMute);
@@ -212,7 +212,7 @@ void Reactor::toggleMute(ID channelId)
 				child.setMute(newMute);
 	}
 
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 
 	if (ch.midiLightning.enabled)
 		sendMidiLightningMute(ch.id, ch.midiLightning, newMute, m_midiMapper);
@@ -223,7 +223,7 @@ void Reactor::toggleMute(ID channelId)
 void Reactor::toggleSolo(ID channelId)
 {
 	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
-	model::Track& track   = m_model.get().tracks.getByChannel(ch.id);
+	model_DEPR_::Track& track   = m_model.get().tracks.getByChannel(ch.id);
 	const bool    newSolo = !ch.isSoloed();
 
 	ch.setSolo(newSolo);
@@ -237,7 +237,7 @@ void Reactor::toggleSolo(ID channelId)
 	}
 	else
 	{
-		const auto noChildrenSoloed = [](const model::Track& track)
+		const auto noChildrenSoloed = [](const model_DEPR_::Track& track)
 		{
 			for (const Channel& child : track.getChannels().getAll())
 				if (child.type != ChannelType::GROUP && child.isSoloed())
@@ -253,7 +253,7 @@ void Reactor::toggleSolo(ID channelId)
 			group.setSolo(false);
 	}
 
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 
 	if (ch.midiLightning.enabled)
 		sendMidiLightningSolo(ch.id, ch.midiLightning, newSolo, m_midiMapper);
@@ -263,7 +263,7 @@ void Reactor::toggleSolo(ID channelId)
 
 void Reactor::stopAll()
 {
-	for (const model::Track& track : m_model.get().tracks.getAll())
+	for (const model_DEPR_::Track& track : m_model.get().tracks.getAll())
 	{
 		for (const Channel& ch : track.getChannels().getAll())
 		{
@@ -280,18 +280,18 @@ void Reactor::stopAll()
 			}
 		}
 	}
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Reactor::rewindAll()
 {
-	for (const model::Track& track : m_model.get().tracks.getAll())
+	for (const model_DEPR_::Track& track : m_model.get().tracks.getAll())
 		for (const Channel& ch : track.getChannels().getAll())
 			if (ch.type == ChannelType::MIDI)
 				rewindMidiChannel(ch.shared->playStatus);
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */

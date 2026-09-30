@@ -24,23 +24,43 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_SHAREDLOCK_H
-#define G_MODEL_SHAREDLOCK_H
+#ifndef G_MODEL_DEPR_CHANNELS_H
+#define G_MODEL_DEPR_CHANNELS_H
 
-#include "src/core/model/types.h"
+#include "src/core/channels/channel.h"
+#include "src/core/types.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
-class Model;
-class SharedLock
+class Channels
 {
 public:
-	SharedLock(Model&, SwapType t);
-	~SharedLock();
+	const Channel&              get(ID) const;
+	const Channel*              find(ID) const;
+	const std::vector<Channel>& getAll() const;
+	const std::size_t           getIndex(ID) const;
+	const std::vector<ID>       getAllIDs() const;
+
+	/* anyOf
+	Returns true if any channel satisfies the callback 'f'. */
+
+	bool anyOf(std::function<bool(const Channel&)> f) const;
+
+#if G_DEBUG_MODE
+	void debug() const;
+#endif
+
+	Channel*              find(ID);
+	Channel&              get(ID);
+	Channel&              getLast();
+	std::vector<Channel>& getAll();
+	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
+	void                  add(Channel&&);
+	void                  add(Channel&&, std::size_t position);
+	void                  remove(ID);
 
 private:
-	Model&   m_model;
-	SwapType m_swapType;
+	std::vector<Channel> m_channels;
 };
 } // namespace giada::m::model
 

@@ -30,7 +30,7 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/metronome.h"
 #include "src/core/midiSynchronizer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/quantizer.h"
 #include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/log.h"
@@ -109,7 +109,7 @@ struct ActionsBlock
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
+Sequencer::Sequencer(model_DEPR_::Model& m, MidiSynchronizer& s, JackTransport& j)
 : onAboutStart(nullptr)
 , onAboutStop(nullptr)
 , onSceneChanged(nullptr)
@@ -179,7 +179,7 @@ void Sequencer::reset(int sampleRate)
 {
 	m_currentSampleRate = sampleRate;
 	m_model.get().sequencer.reset();
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 	rewind();
 }
 
@@ -192,8 +192,8 @@ void Sequencer::setSampleRate(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequencer,
-    Frame bufferSize, const model::Actions& actions) const
+const Sequencer::EventBuffer& Sequencer::advance(const model_DEPR_::Sequencer& sequencer,
+    Frame bufferSize, const model_DEPR_::Actions& actions) const
 {
 	m_eventBuffer.clear();
 
@@ -276,7 +276,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::render(mcl::AudioBuffer& outBuf, const model::Document& document_RT) const
+void Sequencer::render(mcl::AudioBuffer& outBuf, const model_DEPR_::Document& document_RT) const
 {
 	if (document_RT.sequencer.metronome)
 		m_metronome.render(outBuf);
@@ -372,7 +372,7 @@ void Sequencer::toggleMetronome() { setMetronome(!isMetronomeOn()); }
 void Sequencer::setMetronome(bool v)
 {
 	m_model.get().sequencer.metronome = v;
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -391,7 +391,7 @@ void Sequencer::setBpm(float b)
 void Sequencer::rawSetBpm(float v)
 {
 	m_model.get().sequencer.setBpm(v);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 
 	u::log::print("[sequencer::rawSetBpm] Bpm changed to {}\n", v);
 }
@@ -401,7 +401,7 @@ void Sequencer::rawSetBpm(float v)
 void Sequencer::setTimeSignature(TimeSignature t)
 {
 	m_model.get().sequencer.setTimeSignature(t);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -409,7 +409,7 @@ void Sequencer::setTimeSignature(TimeSignature t)
 void Sequencer::rawGoToBeat(int beat, int sampleRate)
 {
 	m_model.get().sequencer.a_setCurrentBeat(beat, sampleRate);
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -417,7 +417,7 @@ void Sequencer::rawGoToBeat(int beat, int sampleRate)
 void Sequencer::setQuantize(int q)
 {
 	m_model.get().sequencer.quantize = q;
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -425,7 +425,7 @@ void Sequencer::setQuantize(int q)
 void Sequencer::setStatus(SeqStatus s)
 {
 	m_model.get().sequencer.status = s;
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 
 	/* Additional things to do when the status changes. */
 
@@ -482,7 +482,7 @@ void Sequencer::setScene(Scene scene, bool forced)
 	else
 		sequencer.a_setSceneStatus(SceneStatus::CHANGING);
 	sequencer.a_setNextScene(scene);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */

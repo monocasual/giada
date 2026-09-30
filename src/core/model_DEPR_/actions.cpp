@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/actions.h"
+#include "src/core/model_DEPR_/actions.h"
 #include "src/core/actions/actionFactory.h"
 #include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
@@ -37,7 +37,7 @@
 
 namespace utils = mcl::utils;
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 void Actions::set(std::vector<Action>&& actions)
 {

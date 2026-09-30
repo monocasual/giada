@@ -25,11 +25,11 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/pluginAudioPlayHead.h"
-#include "src/core/model/sequencer.h"
+#include "src/core/model_DEPR_/sequencer.h"
 
 namespace giada::m
 {
-PluginAudioPlayHead::PluginAudioPlayHead(const model::Sequencer& s, int sampleRate)
+PluginAudioPlayHead::PluginAudioPlayHead(const model_DEPR_::Sequencer& s, int sampleRate)
 : m_sequencer(s)
 , m_sampleRate(sampleRate)
 {

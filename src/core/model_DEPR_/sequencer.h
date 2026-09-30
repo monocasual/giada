@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_SEQUENCER_H
-#define G_MODEL_SEQUENCER_H
+#ifndef G_MODEL_DEPR_SEQUENCER_H
+#define G_MODEL_DEPR_SEQUENCER_H
 
 #include "src/core/const.h"
 #include "src/core/types.h"
@@ -33,7 +33,7 @@
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/scene.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Sequencer
 {

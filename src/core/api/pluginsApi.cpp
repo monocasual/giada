@@ -38,7 +38,7 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginsApi::PluginsApi(KernelAudio& ka, PluginManager& pm, PluginHost& ph, model::Model& m)
+PluginsApi::PluginsApi(KernelAudio& ka, PluginManager& pm, PluginHost& ph, model_DEPR_::Model& m)
 : m_kernelAudio(ka)
 , m_pluginManager(pm)
 , m_pluginHost(ph)
@@ -86,7 +86,7 @@ void PluginsApi::add(const std::string& juceId, ID channelId)
 	    presence of the non-const processBlock() method. Why not const_casting
 	    only in the Plugin class? */
 	m_model.get().tracks.getChannel(channelId).plugins.push_back(const_cast<Plugin*>(pluginPtr));
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -99,7 +99,7 @@ void PluginsApi::swap(ID pluginId1, ID pluginId2, ID channelId)
 	const std::size_t index2  = utils::container::indexOfIf(plugins, [pluginId2](const Plugin* p)
 	 { return p->id == pluginId2; });
 	std::swap(plugins.at(index1), plugins.at(index2));
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -117,7 +117,7 @@ void PluginsApi::free(ID pluginId, ID channelId)
 	{
 		return p->id == pluginId;
 	});
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 	m_pluginHost.freePlugin(pluginId);
 }
 

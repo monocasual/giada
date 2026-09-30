@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_ACTIONS_H
-#define G_MODEL_ACTIONS_H
+#ifndef G_MODEL_DEPR_ACTIONS_H
+#define G_MODEL_DEPR_ACTIONS_H
 
 #include "src/const.h"
 #include "src/core/actions/action.h"
@@ -37,7 +37,7 @@
 #include <span>
 #include <vector>
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Actions
 {

@@ -33,7 +33,7 @@
 #include <string>
 #include <vector>
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 class Tracks;
@@ -61,7 +61,7 @@ class Wave;
 class ChannelsApi
 {
 public:
-	ChannelsApi(model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
+	ChannelsApi(model_DEPR_::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
 	    Recorder&, ActionManager&, PluginHost&, PluginManager&, rendering::Reactor&);
 
 	/* hasChannelsWithAudioData
@@ -73,7 +73,7 @@ public:
 	bool hasActions(ID channelId) const;
 
 	Channel&       get(ID);
-	model::Tracks& getTracks();
+	model_DEPR_::Tracks& getTracks();
 
 	void     addTrack();
 	void     removeTrack(std::size_t trackIndex);
@@ -115,7 +115,7 @@ public:
 	void sendMidi(ID, const MidiEvent&);
 
 private:
-	model::Model&       m_model;
+	model_DEPR_::Model&       m_model;
 	KernelAudio&        m_kernelAudio;
 	Mixer&              m_mixer;
 	Sequencer&          m_sequencer;

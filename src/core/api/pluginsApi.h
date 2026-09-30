@@ -30,7 +30,7 @@
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/types.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 }
@@ -46,7 +46,7 @@ class Plugin;
 class PluginsApi
 {
 public:
-	PluginsApi(KernelAudio&, PluginManager&, PluginHost&, model::Model&);
+	PluginsApi(KernelAudio&, PluginManager&, PluginHost&, model_DEPR_::Model&);
 
 	const Plugin*           get(ID pluginId) const;
 	std::vector<PluginInfo> getInfo() const;
@@ -66,7 +66,7 @@ private:
 	KernelAudio&   m_kernelAudio;
 	PluginManager& m_pluginManager;
 	PluginHost&    m_pluginHost;
-	model::Model&  m_model;
+	model_DEPR_::Model&  m_model;
 };
 } // namespace giada::m
 

@@ -39,7 +39,7 @@ namespace giada::m
 class Channel;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Sequencer;
 class Mixer;

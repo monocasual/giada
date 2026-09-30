@@ -28,8 +28,8 @@
 
 #include "src/core/kernelAudio.h"
 #include "src/core/const.h"
-#include "src/core/model/kernelAudio.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/kernelAudio.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/utils/log.h"
 #include "src/utils/string.h"
@@ -71,7 +71,7 @@ double computeCpuLoad(const Now& startTime, unsigned int sampleRate, int bufferS
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-KernelAudio::KernelAudio(model::Model& model)
+KernelAudio::KernelAudio(model_DEPR_::Model& model)
 : onAudioCallback(nullptr)
 , onStreamAboutToOpen(nullptr)
 , onStreamOpened(nullptr)
@@ -84,7 +84,7 @@ KernelAudio::KernelAudio(model::Model& model)
 
 bool KernelAudio::init()
 {
-	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	kernelAudio.api = setAPI_(kernelAudio.api);
 
@@ -102,7 +102,7 @@ bool KernelAudio::init()
 		kernelAudio.buffersize = result.actualBufferSize;
 	}
 
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	return result.success;
 }
@@ -113,7 +113,7 @@ void KernelAudio::setAPI(RtAudio::Api desiredApi)
 {
 	m_model.get().kernelAudio     = {}; // Set API = reset everything
 	m_model.get().kernelAudio.api = setAPI_(desiredApi);
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	printDevices(getAvailableDevices());
 }
@@ -121,8 +121,8 @@ void KernelAudio::setAPI(RtAudio::Api desiredApi)
 /* -------------------------------------------------------------------------- */
 
 bool KernelAudio::openStream(
-    const model::KernelAudio::Device& out,
-    const model::KernelAudio::Device& in,
+    const model_DEPR_::KernelAudio::Device& out,
+    const model_DEPR_::KernelAudio::Device& in,
     unsigned int                      sampleRate,
     unsigned int                      bufferSize)
 {
@@ -135,13 +135,13 @@ bool KernelAudio::openStream(
 	if (!result.success)
 		return false;
 
-	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	kernelAudio.deviceOut  = result.deviceOut;
 	kernelAudio.deviceIn   = result.deviceIn;
 	kernelAudio.samplerate = result.actualSampleRate;
 	kernelAudio.buffersize = result.actualBufferSize;
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	onStreamOpened();
 
@@ -217,7 +217,7 @@ KernelAudio::Device KernelAudio::getCurrentOutDevice() const
 {
 	assert(m_rtAudio != nullptr);
 
-	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceOut.id : m_rtAudio->getDefaultOutputDevice());
 	d.channelsStart = kernelAudio.deviceOut.channelsStart;
@@ -231,7 +231,7 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 {
 	assert(m_rtAudio != nullptr);
 
-	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceIn.id : m_rtAudio->getDefaultInputDevice());
 	d.channelsStart = kernelAudio.deviceIn.channelsStart;
@@ -342,8 +342,8 @@ RtAudio::Api KernelAudio::setAPI_(RtAudio::Api api)
 /* -------------------------------------------------------------------------- */
 
 KernelAudio::OpenStreamResult KernelAudio::openStream_(
-    const model::KernelAudio::Device& out,
-    const model::KernelAudio::Device& in,
+    const model_DEPR_::KernelAudio::Device& out,
+    const model_DEPR_::KernelAudio::Device& in,
     unsigned int                      sampleRate,
     unsigned int                      bufferSize)
 
@@ -479,9 +479,9 @@ int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	/* CPU load computation. */
 
-	const model::DocumentLock documentLock = info.kernelAudio->m_model.get_RT();
-	const model::Document&    document_RT  = documentLock.get();
-	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
+	const model_DEPR_::DocumentLock documentLock = info.kernelAudio->m_model.get_RT();
+	const model_DEPR_::Document&    document_RT  = documentLock.get();
+	const model_DEPR_::KernelAudio& kernelAudio  = document_RT.kernelAudio;
 
 	kernelAudio.a_setCpuLoad(computeCpuLoad(startTime, kernelAudio.samplerate, bufferSize));
 
