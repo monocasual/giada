@@ -87,6 +87,16 @@ public:
 		m_value = t;
 	}
 
+	T exchange(T t)
+	{
+		return m_atomic.exchange(t, std::memory_order_relaxed);
+	}
+
+	bool compareExchange(T oldV, T newV)
+	{
+		return m_atomic.compare_exchange_weak(oldV, newV, std::memory_order_relaxed);
+	}
+
 	std::function<void(T)> onChange = nullptr;
 
 private:
