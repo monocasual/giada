@@ -1,0 +1,243 @@
+/* -----------------------------------------------------------------------------
+ *
+ * Giada - Your Hardcore Loopmachine
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * Copyright (C) 2010-2026 Giovanni A. Zuliani | Monocasual Laboratories
+ *
+ * This file is part of Giada - Your Hardcore Loopmachine.
+ *
+ * Giada - Your Hardcore Loopmachine is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Giada - Your Hardcore Loopmachine. If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * -------------------------------------------------------------------------- */
+
+#include "src/core/model/actions.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/deps/mcl-utils/src/container.hpp"
+#include "src/utils/log.h"
+#include <algorithm>
+#include <cassert>
+#include <memory>
+#if G_DEBUG_MODE
+#include <fmt/core.h>
+#endif
+
+namespace utils = mcl::utils;
+
+namespace giada::m::model
+{
+void Actions::set(std::vector<Action>&& actions)
+{
+	m_actions = std::move(actions);
+	sort(); // Always assume unsorted data coming in
+}
+
+void Actions::clearAll()
+{
+	m_actions.clear();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Actions::clearChannel(ID channelId, Scene scene)
+{
+	utils::container::removeIf(m_actions, [=](const Action& a)
+	{ return a.channelId == channelId && a.scene == scene; });
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Actions::clearActions(ID channelId, int type)
+{
+	utils::container::removeIf(m_actions, [=](const Action& a)
+	{
+		return a.channelId == channelId && a.event.getStatus() == type;
+	});
+}
+
+void Actions::clearActions(Scene scene)
+{
+	utils::container::removeIf(m_actions, [=](const Action& a)
+	{ return a.scene == scene; });
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Actions::deleteAction(ID id)
+{
+	utils::container::removeIf(m_actions, [=](const Action& a)
+	{ return a.id == id; });
+}
+
+void Actions::deleteAction(ID currId, ID nextId)
+{
+	utils::container::removeIf(m_actions, [=](const Action& a)
+	{ return a.id == currId || a.id == nextId; });
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Actions::updateEvent(ID id, MidiEvent e)
+{
+	Action* a = findAction(id);
+	assert(a != nullptr);
+	a->event = e;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Actions::hasActions(ID channelId, int type) const
+{
+	for (const Action& a : m_actions)
+		if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
+			return true;
+	return false;
+}
+
+bool Actions::hasActions(Scene scene) const
+{
+	for (const Action& a : m_actions)
+		if (a.scene == scene)
+			return true;
+	return false;
+}
+
+/* -------------------------------------------------------------------------- */
+
+const std::vector<Action>& Actions::getAll() const { return m_actions; }
+
+/* -------------------------------------------------------------------------- */
+
+const Action* Actions::findAction(ID id) const
+{
+	if (!id.isValid())
+		return nullptr;
+	for (const Action& a : m_actions)
+		if (a.id == id)
+			return &a;
+	return nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
+#if G_DEBUG_MODE
+
+void Actions::debug() const
+{
+	puts("model::actions");
+	for (const Action& a : m_actions)
+		fmt::print("\t\ttick={}, ID={}, scene={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
+		    a.tick.value(), a.id.getValue(), a.scene.getIndex(), a.channelId.getValue(), a.event.getRaw(),
+		    a.prevId.getValue(), a.nextId.getValue());
+}
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+Action Actions::rec(ID channelId, Scene scene, Tick tick, MidiEvent event)
+{
+	/* Skip duplicates. */
+
+	if (exists(channelId, scene, tick, event))
+		return {};
+
+	Action a = actionFactory::makeAction({}, channelId, scene, tick, event);
+
+	m_actions.push_back(a);
+	sort();
+
+	return a;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Actions::rec(std::vector<Action>& actions, Scene scene)
+{
+	if (actions.size() == 0)
+		return;
+
+	for (const Action& a : actions)
+		if (!exists(a.channelId, scene, a.tick, a.event))
+			m_actions.push_back(a);
+
+	sort();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
+{
+	Action a1 = actionFactory::makeAction({}, channelId, scene, range.getA(), e1);
+	Action a2 = actionFactory::makeAction({}, channelId, scene, range.getB(), e2);
+	a1.nextId = a2.id;
+	a2.prevId = a1.id;
+	m_actions.push_back(a1);
+	m_actions.push_back(a2);
+	sort();
+}
+
+/* -------------------------------------------------------------------------- */
+
+const std::span<const Action> Actions::getActionsInTickRange(TickRange r) const
+{
+	if (!r.isValid())
+		return {};
+
+	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.getA(), [](const Action& a, Tick value)
+	{ return a.tick < value; });
+
+	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.getB(), [](const Action& a, Tick value)
+	{ return a.tick < value; });
+
+	return {first, last};
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<const Action*> Actions::getActionsOnChannel(ID channelId, Scene scene) const
+{
+	std::vector<const Action*> out;
+	for (const Action& a : m_actions)
+		if (a.channelId == channelId && a.scene == scene)
+			out.push_back(&a);
+	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
+Action* Actions::findAction(ID id)
+{
+	return const_cast<Action*>(std::as_const(*this).findAction(id));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Actions::sort()
+{
+	std::ranges::sort(m_actions, std::ranges::less{}, &Action::tick);
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event) const
+{
+	for (const Action& a : m_actions)
+		if (a.channelId == channelId && a.tick == tick && a.event.getRaw() == event.getRaw() && a.scene == scene)
+			return true;
+	return false;
+}
+} // namespace giada::m::model
