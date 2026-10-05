@@ -1,0 +1,296 @@
+/* -----------------------------------------------------------------------------
+ *
+ * Giada - Your Hardcore Loopmachine
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * Copyright (C) 2010-2026 Giovanni A. Zuliani | Monocasual Laboratories
+ *
+ * This file is part of Giada - Your Hardcore Loopmachine.
+ *
+ * Giada - Your Hardcore Loopmachine is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Giada - Your Hardcore Loopmachine. If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * -------------------------------------------------------------------------- */
+
+#include "src/core/model/plugin.h"
+#include "src/deps/mcl-utils/src/container.hpp"
+#include "src/utils/log.h"
+#include "src/utils/time.h"
+#include <FL/Fl.H>
+#include <cassert>
+#include <memory>
+
+#if G_OS_WINDOWS
+#undef IN
+#undef OUT
+#endif
+
+namespace utils = mcl::utils;
+
+namespace giada::m::model
+{
+Plugin::Plugin(ID id, const std::string& juceId)
+: id(id)
+, valid(false)
+, onEditorResize(nullptr)
+, m_plugin(nullptr)
+, m_juceId(juceId)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance> plugin,
+    std::unique_ptr<PluginAudioPlayHead> playHead, double samplerate, int buffersize)
+: id(id)
+, valid(true)
+, onEditorResize(nullptr)
+, m_plugin(std::move(plugin))
+, m_playHead(std::move(playHead))
+, m_bypass(false)
+, m_juceId(juceId)
+{
+	for (const auto& [index, parameter] : utils::container::enumerate(m_plugin->getParameters()))
+		m_parameters.emplace_back(parameter, index);
+
+	/* Try to set the main bus to the current number of channels. In the future
+	this setup will be performed manually through a proper channel matrix. Also,
+	currently only the main bus is supported. */
+
+	juce::AudioProcessor::Bus* outBus = getMainBus(BusType::OUT);
+	juce::AudioProcessor::Bus* inBus  = getMainBus(BusType::IN);
+	if (outBus != nullptr)
+		outBus->setNumberOfChannels(G_MAX_IO_CHANS);
+	if (inBus != nullptr)
+		inBus->setNumberOfChannels(G_MAX_IO_CHANS);
+
+	/* Prepare internal buffer. Must have enough channels to accomodate all audio
+	buses in use by the plug-in, both in and out. */
+
+	const int defaultOutCh = countChannelsForCurrentBusLayout(BusType::OUT);
+	const int defaultInCh  = countChannelsForCurrentBusLayout(BusType::IN);
+
+	m_buffer.setSize(std::max(defaultInCh, defaultOutCh), buffersize, /*keepExistingContent=*/false,
+	    /*clearExtraSpace=*/true);
+
+	/* Set pointer to PlayHead, used to pass Giada information (bpm, time, ...)
+	to the plug-in. */
+
+	m_plugin->setPlayHead(m_playHead.get());
+
+	m_plugin->prepareToPlay(samplerate, buffersize);
+
+	u::log::print("[Plugin] plugin initialized and ready. Out buses: {}, in buses: {}, Parameters: {}\n",
+	    m_plugin->getBusCount(/*isInput=*/false),
+	    m_plugin->getBusCount(/*isInput=*/true),
+	    m_parameters.size());
+}
+
+/* -------------------------------------------------------------------------- */
+
+Plugin::~Plugin()
+{
+	if (!valid)
+		return;
+
+	juce::AudioProcessorEditor* e = m_plugin->getActiveEditor();
+	if (e != nullptr)
+		e->removeComponentListener(this);
+
+	m_plugin->suspendProcessing(true);
+	m_plugin->releaseResources();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Plugin::componentMovedOrResized(juce::Component& c, bool moved, bool /* resized*/)
+{
+	if (moved)
+		return;
+	if (onEditorResize != nullptr)
+		onEditorResize(c.getWidth(), c.getHeight());
+}
+
+/* -------------------------------------------------------------------------- */
+
+juce::AudioProcessor::Bus* Plugin::getMainBus(BusType b) const
+{
+	const bool isInput = static_cast<bool>(b);
+	for (int i = 0; i < m_plugin->getBusCount(isInput); i++)
+		if (m_plugin->getBus(isInput, i)->isMain())
+			return m_plugin->getBus(isInput, i);
+	return nullptr;
+}
+
+int Plugin::countMainOutChannels() const
+{
+	juce::AudioProcessor::Bus* b = getMainBus(BusType::OUT);
+	assert(b != nullptr);
+	return b->getNumberOfChannels();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Plugin::countChannelsForCurrentBusLayout(BusType b) const
+{
+	const bool isInput = static_cast<bool>(b);
+	int        total   = 0;
+	for (int i = 0; i < m_plugin->getBusCount(isInput); i++)
+	{
+		if (auto* bus = m_plugin->getBus(isInput, i))
+			if (bus->isEnabled()) // important: only enabled buses contribute
+				total += bus->getNumberOfChannels();
+	}
+	return total;
+}
+
+/* -------------------------------------------------------------------------- */
+
+juce::AudioProcessorEditor* Plugin::createEditor() const
+{
+	juce::AudioProcessorEditor* e = m_plugin->createEditorIfNeeded();
+	if (e != nullptr)
+		e->addComponentListener(const_cast<Plugin*>(this));
+	return e;
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string Plugin::getJuceId() const
+{
+	return m_juceId;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Plugin::setParameter(int paramIndex, float value) const
+{
+	m_plugin->getParameters()[paramIndex]->setValue(value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string Plugin::getName() const
+{
+	if (!valid)
+		return "** invalid **";
+	return m_plugin->getName().toStdString();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Plugin::isSuspended() const
+{
+	if (!valid)
+		return false;
+	return m_plugin->isSuspended();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Plugin::isInstrument() const
+{
+	if (!valid)
+		return false;
+	return m_plugin->acceptsMidi() && m_plugin->getTotalNumInputChannels() == 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+PluginState Plugin::getState() const
+{
+	if (!valid)
+		return {};
+	juce::MemoryBlock data;
+	m_plugin->getStateInformation(data);
+	return PluginState(std::move(data));
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Plugin::isBypassed() const { return m_bypass.load(); }
+void Plugin::setBypass(bool b) { m_bypass.store(b); }
+
+/* -------------------------------------------------------------------------- */
+
+const std::vector<PluginParameter>& Plugin::getParameters() const { return m_parameters; }
+std::vector<PluginParameter>&       Plugin::getParameters() { return m_parameters; }
+
+/* -------------------------------------------------------------------------- */
+
+const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffer& m)
+{
+	/* Copy the incoming buffer data into the temporary one. This way FXes will
+	process	existing audio data on the private buffer. This is needed later on
+	when merging it back into the incoming buffer. */
+
+	const int channelsToCopy   = std::min(out.getNumChannels(), m_buffer.getNumChannels());
+	const int numSamplesToCopy = std::min(out.getNumSamples(), m_buffer.getNumSamples());
+	for (int ch = 0; ch < channelsToCopy; ch++)
+		m_buffer.copyFrom(ch, 0, out, ch, 0, numSamplesToCopy);
+
+	m_plugin->processBlock(m_buffer, m);
+	return m_buffer;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Plugin::setState(PluginState state)
+{
+	m_plugin->setStateInformation(state.getData(), static_cast<int>(state.getSize()));
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Plugin::getNumPrograms() const
+{
+	if (!valid)
+		return 0;
+	return m_plugin->getNumPrograms();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Plugin::getCurrentProgram() const
+{
+	if (!valid)
+		return 0;
+	return m_plugin->getCurrentProgram();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Plugin::setCurrentProgram(int index) const
+{
+	if (valid)
+		m_plugin->setCurrentProgram(index);
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Plugin::hasEditor() const
+{
+	return m_plugin->hasEditor();
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string Plugin::getProgramName(int index) const
+{
+	if (!valid)
+		return {};
+	return m_plugin->getProgramName(index).toStdString();
+}
+} // namespace giada::m::model
