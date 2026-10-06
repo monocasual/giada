@@ -549,6 +549,10 @@ endif()
 # Dependencies
 # ------------------------------------------------------------------------------
 
+# Concurrentqueue used by realtime-model dependency
+
+list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src/deps/concurrentqueue)
+
 # Threads (system)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
