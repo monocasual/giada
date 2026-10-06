@@ -41,36 +41,36 @@ Engine::Engine()
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
 , onModelSwap(nullptr)
-, m_kernelAudio(m_model)
-, m_kernelMidi(m_model)
+, m_kernelAudio(m_model_DEPR_)
+, m_kernelMidi(m_model_DEPR_)
 , m_midiMapper(m_kernelMidi)
-, m_pluginHost(m_model)
+, m_pluginHost(m_model_DEPR_)
 , m_midiSynchronizer(m_kernelMidi)
-, m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
-, m_mixer(m_model)
-, m_actionManager(m_model)
-, m_channelManager(m_model, m_midiMapper, m_kernelMidi)
+, m_sequencer(m_model_DEPR_, m_midiSynchronizer, m_jackTransport)
+, m_mixer(m_model_DEPR_)
+, m_actionManager(m_model_DEPR_)
+, m_channelManager(m_model_DEPR_, m_midiMapper, m_kernelMidi)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionManager)
-, m_midiDispatcher(m_model)
+, m_midiDispatcher(m_model_DEPR_)
 #ifdef WITH_AUDIO_JACK
 , m_renderer(m_sequencer, m_mixer, m_pluginHost, m_jackSynchronizer, m_jackTransport, m_kernelMidi)
 #else
 , m_renderer(m_sequencer, m_mixer, m_pluginHost, m_kernelMidi)
 #endif
-, m_reactor(m_model, m_midiMapper, m_actionManager, m_kernelMidi)
+, m_reactor(m_model_DEPR_, m_midiMapper, m_actionManager, m_kernelMidi)
 , m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder, m_actionManager, m_reactor)
-, m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionManager, m_pluginHost, m_pluginManager, m_reactor)
-, m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model)
-, m_sampleEditorApi(m_kernelAudio, m_model, m_channelManager, m_reactor, m_sequencer)
+, m_channelsApi(m_model_DEPR_, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionManager, m_pluginHost, m_pluginManager, m_reactor)
+, m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model_DEPR_)
+, m_sampleEditorApi(m_kernelAudio, m_model_DEPR_, m_channelManager, m_reactor, m_sequencer)
 , m_actionEditorApi(*this, m_sequencer, m_actionManager)
-, m_ioApi(m_model, m_midiDispatcher)
-, m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer)
-, m_configApi(m_model, m_kernelAudio, m_kernelMidi, m_midiMapper, m_midiSynchronizer)
+, m_ioApi(m_model_DEPR_, m_midiDispatcher)
+, m_storageApi(*this, m_model_DEPR_, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer)
+, m_configApi(m_model_DEPR_, m_kernelAudio, m_kernelMidi, m_midiMapper, m_midiSynchronizer)
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
 	{
 		registerThread(Thread::AUDIO, /*realtime=*/true);
-		m_renderer.render(out, in, m_model);
+		m_renderer.render(out, in, m_model_DEPR_);
 		return 0;
 	};
 	m_kernelAudio.onStreamAboutToOpen = [this]()
@@ -193,7 +193,7 @@ Engine::Engine()
 		m_eventDispatcher.pumpEvent([this, channelId, status]()
 		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
-			const Channel& ch = m_model.get().tracks.getChannel(channelId);
+			const Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 			if (ch.midiLightning.enabled)
 				rendering::sendMidiLightningStatus(ch.id, ch.midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
 		});
@@ -214,7 +214,7 @@ Engine::Engine()
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
 			m_recorder.stopActionRec();
-		m_model.get().mixer.recTriggerMode = RecTriggerMode::NORMAL;
+		m_model_DEPR_.get().mixer.recTriggerMode = RecTriggerMode::NORMAL;
 	};
 	m_sequencer.onAboutStop = [this]()
 	{
@@ -249,7 +249,7 @@ Engine::Engine()
 		onModelSwap(model_DEPR_::SwapType::HARD);
 	};
 
-	m_model.onSwap = [this](model_DEPR_::SwapType t)
+	m_model_DEPR_.onSwap = [this](model_DEPR_::SwapType t)
 	{
 		assert(onModelSwap != nullptr);
 		onModelSwap(t);
@@ -274,10 +274,10 @@ void Engine::init(const Conf& conf)
 {
 	registerThread(Thread::MAIN, /*realtime=*/false);
 
-	m_model.init();
-	m_model.load(conf);
+	m_model_DEPR_.init();
+	m_model_DEPR_.load(conf);
 
-	const model_DEPR_::Document& document = m_model.get();
+	const model_DEPR_::Document& document = m_model_DEPR_.get();
 
 	m_kernelAudio.init();
 
@@ -319,7 +319,7 @@ void Engine::reset()
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
 
-	m_model.reset();
+	m_model_DEPR_.reset();
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(sampleRate), bufferSize);
 	m_channelManager.reset(sampleRate, bufferSize);
 	m_sequencer.reset(sampleRate);
@@ -339,7 +339,7 @@ void Engine::shutdown(Conf& conf)
 		u::log::print("[Engine::shutdown] Mixer closed\n");
 	}
 
-	m_model.store(conf);
+	m_model_DEPR_.store(conf);
 
 	/* It's safer and cleaner to free all plug-ins before closing the app. Some
 	would crash badly otherwise. */
@@ -364,7 +364,7 @@ void Engine::resume()
 #if G_DEBUG_MODE
 void Engine::debug()
 {
-	m_model.debug();
+	m_model_DEPR_.debug();
 }
 #endif
 
@@ -372,7 +372,7 @@ void Engine::debug()
 
 void Engine::registerThread(Thread t, bool isRealtime) const
 {
-	if (!m_model.registerThread(t, isRealtime))
+	if (!m_model_DEPR_.registerThread(t, isRealtime))
 	{
 		u::log::print("[Engine::registerThread] Can't register thread {}! Aborting\n", u::string::toString(t));
 		std::abort();
