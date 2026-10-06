@@ -49,7 +49,7 @@ Engine::Engine()
 , m_sequencer(m_model_DEPR_, m_midiSynchronizer, m_jackTransport)
 , m_mixer(m_model_DEPR_)
 , m_actionManager(m_model_DEPR_)
-, m_channelManager(m_model_DEPR_, m_midiMapper, m_kernelMidi)
+, m_channelManager(m_model, m_model_DEPR_, m_midiMapper, m_kernelMidi)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionManager)
 , m_midiDispatcher(m_model_DEPR_)
 #ifdef WITH_AUDIO_JACK

@@ -28,6 +28,7 @@
 #define G_CHANNEL_MANAGER_H
 
 #include "src/core/midiMapper.h"
+#include "src/core/model/types.h"
 #include "src/core/resampler.h"
 #include "src/core/types.h"
 #include "src/deps/geompp/src/range.hpp"
@@ -63,7 +64,7 @@ class ChannelManager final
 public:
 	friend Engine;
 
-	ChannelManager(model_DEPR_::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
+	ChannelManager(model::Model&, model_DEPR_::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -257,7 +258,8 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	model_DEPR_::Model&           m_model;
+	model::Model&           m_model;
+	model_DEPR_::Model&     m_model_DEPR_;
 	KernelMidi&             m_kernelMidi;
 	MidiMapper<KernelMidi>& m_midiMapper;
 };
