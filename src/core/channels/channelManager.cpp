@@ -52,8 +52,9 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ChannelManager::ChannelManager(model_DEPR_::Model& model, MidiMapper<KernelMidi>& m, KernelMidi& km)
+ChannelManager::ChannelManager(model::Model& model, model_DEPR_::Model& model_depr_, MidiMapper<KernelMidi>& m, KernelMidi& km)
 : m_model(model)
+, m_model_DEPR_(model_depr_)
 , m_kernelMidi(km)
 , m_midiMapper(m)
 {
@@ -63,7 +64,7 @@ ChannelManager::ChannelManager(model_DEPR_::Model& model, MidiMapper<KernelMidi>
 
 Channel& ChannelManager::getChannel(ID channelId)
 {
-	return m_model.get().tracks.getChannel(channelId);
+	return m_model_DEPR_.get().tracks.getChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -73,7 +74,7 @@ void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 	/* Create internal track with internal channels (Master In/Out, Preview). */
 
 	const bool               overdubProtection = false;
-	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
+	const Resampler::Quality rsmpQuality       = m_model_DEPR_.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data masterOutData = channelFactory::create(
 	    MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
@@ -82,15 +83,15 @@ void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 	channelFactory::Data previewData = channelFactory::create(
 	    PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
 
-	m_model.get().tracks = {};
+	m_model_DEPR_.get().tracks = {};
 
-	model_DEPR_::Track& track = m_model.get().tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
+	model_DEPR_::Track& track = m_model_DEPR_.get().tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
 	track.addChannel(std::move(masterInData.channel));
 	track.addChannel(std::move(previewData.channel));
 
-	m_model.addChannelShared(std::move(masterOutData.shared));
-	m_model.addChannelShared(std::move(masterInData.shared));
-	m_model.addChannelShared(std::move(previewData.shared));
+	m_model_DEPR_.addChannelShared(std::move(masterOutData.shared));
+	m_model_DEPR_.addChannelShared(std::move(masterInData.shared));
+	m_model_DEPR_.addChannelShared(std::move(previewData.shared));
 
 	/* Create six visible empty tracks. */
 
@@ -106,7 +107,7 @@ void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 
 void ChannelManager::setBufferSize(int bufferSize)
 {
-	for (auto& channelShared : m_model.getAllChannelsShared())
+	for (auto& channelShared : m_model_DEPR_.getAllChannelsShared())
 		channelShared->setBufferSize(bufferSize);
 }
 
@@ -115,14 +116,14 @@ void ChannelManager::setBufferSize(int bufferSize)
 void ChannelManager::addTrack(int sampleRate, Frame bufferSize)
 {
 	const bool               overdubProtection = false;
-	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
+	const Resampler::Quality rsmpQuality       = m_model_DEPR_.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data groupData = channelFactory::create(/*id=*/{}, ChannelType::GROUP, sampleRate,
 	    bufferSize, rsmpQuality, overdubProtection);
 
-	m_model.addChannelShared(std::move(groupData.shared));
-	m_model.get().tracks.add(std::move(groupData.channel), G_DEFAULT_TRACK_WIDTH, /*isInternal=*/false);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.addChannelShared(std::move(groupData.shared));
+	m_model_DEPR_.get().tracks.add(std::move(groupData.channel), G_DEFAULT_TRACK_WIDTH, /*isInternal=*/false);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -131,19 +132,19 @@ void ChannelManager::removeTrack(std::size_t trackIndex)
 {
 	assert(canRemoveTrack(trackIndex));
 
-	const Channel& ch = m_model.get().tracks.get(trackIndex).getGroupChannel();
+	const Channel& ch = m_model_DEPR_.get().tracks.get(trackIndex).getGroupChannel();
 
-	m_model.removeChannelShared(*ch.shared);
-	m_model.get().tracks.remove(trackIndex);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.removeChannelShared(*ch.shared);
+	m_model_DEPR_.get().tracks.remove(trackIndex);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setTrackWidth(std::size_t trackIndex, int width)
 {
-	m_model.get().tracks.get(trackIndex).width = width;
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.get().tracks.get(trackIndex).width = width;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,21 +152,21 @@ void ChannelManager::setTrackWidth(std::size_t trackIndex, int width)
 Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex,
     int sampleRate, int bufferSize)
 {
-	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
-	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
+	const bool               overdubProtectionDefaultOn = m_model_DEPR_.get().behaviors.overdubProtectionDefaultOn;
+	const Resampler::Quality rsmpQuality                = m_model_DEPR_.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data data = channelFactory::create(/*id=*/{}, type, sampleRate,
 	    bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 
 	setupChannelCallbacks(data.channel, *data.shared);
 
-	m_model.get().tracks.addChannel(std::move(data.channel), trackIndex);
-	m_model.addChannelShared(std::move(data.shared));
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.get().tracks.addChannel(std::move(data.channel), trackIndex);
+	m_model_DEPR_.addChannelShared(std::move(data.shared));
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 
 	triggerOnChannelsAltered();
 
-	return m_model.get().tracks.getLastChannel(trackIndex);
+	return m_model_DEPR_.get().tracks.getLastChannel(trackIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -177,7 +178,7 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 	if (res.status != G_RES_OK)
 		return res.status;
 
-	loadSampleChannel(channelId, m_model.addWave(std::move(res.wave)), scene);
+	loadSampleChannel(channelId, m_model_DEPR_.addWave(std::move(res.wave)), scene);
 
 	return G_RES_OK;
 }
@@ -186,18 +187,18 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 
 void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, Scene scene)
 {
-	Channel&    channel = m_model.get().tracks.getChannel(channelId);
+	Channel&    channel = m_model_DEPR_.get().tracks.getChannel(channelId);
 	Wave&       newWave = wave;
 	const Wave* oldWave = channel.sampleChannel->getWave(scene);
 
 	loadSampleChannel(channel, &newWave, scene);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 
 	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is
 	already processing the new Document. */
 
 	if (oldWave != nullptr)
-		m_model.removeWave(*oldWave);
+		m_model_DEPR_.removeWave(*oldWave);
 
 	triggerOnChannelsAltered();
 }
@@ -206,9 +207,9 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, Scene scene)
 
 void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int bufferSize, const std::vector<Plugin*>& plugins)
 {
-	const Channel&           oldChannel     = m_model.get().tracks.getChannel(channelId);
-	const std::size_t        trackIndex     = m_model.get().tracks.getByChannel(channelId).getIndex();
-	const Resampler::Quality rsmpQuality    = m_model.get().kernelAudio.rsmpQuality;
+	const Channel&           oldChannel     = m_model_DEPR_.get().tracks.getChannel(channelId);
+	const std::size_t        trackIndex     = m_model_DEPR_.get().tracks.getByChannel(channelId).getIndex();
+	const Resampler::Quality rsmpQuality    = m_model_DEPR_.get().kernelAudio.rsmpQuality;
 	channelFactory::Data     newChannelData = channelFactory::create(oldChannel, sampleRate, bufferSize, rsmpQuality);
 
 	setupChannelCallbacks(newChannelData.channel, *newChannelData.shared);
@@ -221,7 +222,7 @@ void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int
 		const Wave&   oldWave  = *sample.wave;
 		const Frame   oldShift = sample.shift;
 		const auto    oldRange = sample.range;
-		Wave&         wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
+		Wave&         wave     = m_model_DEPR_.addWave(waveFactory::createFromWave(oldWave));
 
 		newChannelData.channel.loadSample({&wave, oldRange, oldShift}, scene);
 	}
@@ -230,37 +231,37 @@ void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int
 
 	/* Then push the new channel in the channels vector. */
 
-	m_model.get().tracks.get(trackIndex).addChannel(std::move(newChannelData.channel));
-	m_model.addChannelShared(std::move(newChannelData.shared));
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.get().tracks.get(trackIndex).addChannel(std::move(newChannelData.channel));
+	m_model_DEPR_.addChannelShared(std::move(newChannelData.shared));
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::copyChannelToScene(ID channelId, Scene srcScene, Scene dstScene)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
+	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 	copyChannelToScene(ch, srcScene, dstScene);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::copyAllChannelsToScene(Scene srcScene, Scene dstScene)
 {
-	m_model.get().tracks.forEachChannel([this, srcScene, dstScene](Channel& ch)
+	m_model_DEPR_.get().tracks.forEachChannel([this, srcScene, dstScene](Channel& ch)
 	{
 		copyChannelToScene(ch, srcScene, dstScene);
 		return true;
 	});
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
+	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 
 	assert(ch.sampleChannel);
 
@@ -281,9 +282,9 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 	if (wavesToRemove.empty())
 		return;
 
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 	for (const Wave* w : wavesToRemove)
-		m_model.removeWave(*w);
+		m_model_DEPR_.removeWave(*w);
 
 	triggerOnChannelsAltered();
 }
@@ -293,7 +294,7 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 void ChannelManager::freeAllSampleChannels(Scene scene)
 {
 	// TODO - not super optmized, will swap model for each sample channel
-	m_model.get().tracks.forEachChannel([this, scene](Channel& ch)
+	m_model_DEPR_.get().tracks.forEachChannel([this, scene](Channel& ch)
 	{
 		if (ch.sampleChannel)
 			freeSampleChannel(ch.id, scene);
@@ -307,29 +308,29 @@ void ChannelManager::freeAllSampleChannels(Scene scene)
 
 void ChannelManager::moveChannel(ID channelId, std::size_t newTrackIndex, std::size_t newPosition)
 {
-	Channel ch = m_model.get().tracks.getChannel(channelId); // Make copy
-	m_model.get().tracks.removeChannel(channelId);
-	m_model.get().tracks.addChannel(std::move(ch), newTrackIndex, newPosition);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	Channel ch = m_model_DEPR_.get().tracks.getChannel(channelId); // Make copy
+	m_model_DEPR_.get().tracks.removeChannel(channelId);
+	m_model_DEPR_.get().tracks.addChannel(std::move(ch), newTrackIndex, newPosition);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::deleteChannel(ID channelId)
 {
-	const Channel& ch = m_model.get().tracks.getChannel(channelId);
+	const Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::SAMPLE)
 	{
 		const SceneArray<Sample>& samples = ch.sampleChannel->getSamples();
 		for (const Sample& sample : samples)
 			if (sample.wave != nullptr)
-				m_model.removeWave(*sample.wave);
+				m_model_DEPR_.removeWave(*sample.wave);
 	}
 
-	m_model.removeChannelShared(*ch.shared);
-	m_model.get().tracks.getByChannel(channelId).removeChannel(channelId);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.removeChannelShared(*ch.shared);
+	m_model_DEPR_.get().tracks.getByChannel(channelId).removeChannel(channelId);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 
 	triggerOnChannelsAltered();
 }
@@ -340,20 +341,20 @@ void ChannelManager::renameChannel(ID channelId, const std::string& name, Scene 
 {
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
 		if (!scene.isValid() || scene.getIndex() == sceneIndex)
-			m_model.get().tracks.getChannel(channelId).setName(name, Scene{sceneIndex});
-	m_model.swap(model_DEPR_::SwapType::HARD);
+			m_model_DEPR_.get().tracks.getChannel(channelId).setName(name, Scene{sceneIndex});
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 float ChannelManager::getMasterInVol() const
 {
-	return m_model.get().tracks.getChannel(MASTER_IN_CHANNEL_ID).volume;
+	return m_model_DEPR_.get().tracks.getChannel(MASTER_IN_CHANNEL_ID).volume;
 }
 
 float ChannelManager::getMasterOutVol() const
 {
-	return m_model.get().tracks.getChannel(MASTER_OUT_CHANNEL_ID).volume;
+	return m_model_DEPR_.get().tracks.getChannel(MASTER_OUT_CHANNEL_ID).volume;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -372,24 +373,24 @@ void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame reco
 
 void ChannelManager::setInputMonitor(ID channelId, bool value)
 {
-	m_model.get().tracks.getChannel(channelId).sampleChannel->inputMonitor = value;
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.get().tracks.getChannel(channelId).sampleChannel->inputMonitor = value;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setVolume(ID channelId, float value)
 {
-	m_model.get().tracks.getChannel(channelId).volume = std::clamp(value, 0.0f, G_MAX_VOLUME);
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.get().tracks.getChannel(channelId).volume = std::clamp(value, 0.0f, G_MAX_VOLUME);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setPitch(ID channelId, float value, Scene scene)
 {
-	Channel& c       = m_model.get().tracks.getChannel(channelId);
-	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
+	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
@@ -397,7 +398,7 @@ void ChannelManager::setPitch(ID channelId, float value, Scene scene)
 
 	c.sampleChannel->setPitch(pitch, scene);
 	preview.sampleChannel->setPitch(pitch, Scene{0});
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -420,8 +421,8 @@ void ChannelManager::decreasePitchBySemitone(ID channelId, Scene scene)
 
 void ChannelManager::setTime(ID channelId, float value, Scene scene)
 {
-	Channel& c       = m_model.get().tracks.getChannel(channelId);
-	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
+	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
@@ -429,37 +430,37 @@ void ChannelManager::setTime(ID channelId, float value, Scene scene)
 
 	c.sampleChannel->setTime(time, scene);
 	preview.sampleChannel->setTime(time, Scene{0});
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setPlaybackMode(ID channelId, PlaybackMode playbackMode, Scene scene)
 {
-	Channel& c       = m_model.get().tracks.getChannel(channelId);
-	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
+	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
 	c.sampleChannel->setPlaybackMode(playbackMode, scene);
 	preview.sampleChannel->setPlaybackMode(playbackMode, Scene{0});
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setPan(ID channelId, float value)
 {
-	m_model.get().tracks.getChannel(channelId).pan = std::clamp(value, 0.0f, G_MAX_PAN);
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.get().tracks.getChannel(channelId).pan = std::clamp(value, 0.0f, G_MAX_PAN);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 {
-	Channel& c       = m_model.get().tracks.getChannel(channelId);
-	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
+	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
@@ -475,54 +476,54 @@ void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 
 	c.sampleChannel->setRange(range, scene);
 	preview.sampleChannel->setRange(range, Scene{0});
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 void ChannelManager::resetRange(ID channelId, Scene scene)
 {
-	Channel& c = m_model.get().tracks.getChannel(channelId);
+	Channel& c = m_model_DEPR_.get().tracks.getChannel(channelId);
 
 	assert(c.sampleChannel);
 
 	c.sampleChannel->setRange({0, c.sampleChannel->getWaveSize(scene)}, scene);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::toggleArm(ID channelId)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
+	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 	ch.armed    = !ch.armed;
 
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setOverdubProtection(ID channelId, bool value)
 {
-	Channel& ch                         = m_model.get().tracks.getChannel(channelId);
+	Channel& ch                         = m_model_DEPR_.get().tracks.getChannel(channelId);
 	ch.sampleChannel->overdubProtection = value;
 	if (value == true && ch.armed)
 		ch.armed = false;
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	m_model.get().tracks.getChannel(channelId).sampleChannel->mode = mode;
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.get().tracks.getChannel(channelId).sampleChannel->mode = mode;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setHeight(ID channelId, int height)
 {
-	m_model.get().tracks.getChannel(channelId).height = height;
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.get().tracks.getChannel(channelId).height = height;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -530,10 +531,10 @@ void ChannelManager::setHeight(ID channelId, int height)
 void ChannelManager::setSendToMaster(ID channelId, bool value)
 {
 	/* Can't toggle 'send to master' flag if there are no extra outputs. */
-	assert(m_model.get().tracks.getChannel(channelId).extraOutputs.size() > 0);
+	assert(m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs.size() > 0);
 
-	m_model.get().tracks.getChannel(channelId).sendToMaster = value;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().tracks.getChannel(channelId).sendToMaster = value;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -543,24 +544,24 @@ void ChannelManager::addExtraOutput(ID channelId, int offset)
 	/* 'offset' can be only multiple of 2, that is stereo pair. */
 	assert(offset >= 0 && offset % 2 == 0);
 
-	m_model.get().tracks.getChannel(channelId).extraOutputs.push_back(offset);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs.push_back(offset);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 {
-	utils::container::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
-	if (m_model.get().tracks.getChannel(channelId).extraOutputs.size() == 0)
-		m_model.get().tracks.getChannel(channelId).sendToMaster = true;
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	utils::container::removeAt(m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs, i);
+	if (m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs.size() == 0)
+		m_model_DEPR_.get().tracks.getChannel(channelId).sendToMaster = true;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::loadWaveInPreviewChannel(ID channelId, Scene scene)
 {
-	Channel&       previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
-	const Channel& sourceCh  = m_model.get().tracks.getChannel(channelId);
+	Channel&       previewCh = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const Channel& sourceCh  = m_model_DEPR_.get().tracks.getChannel(channelId);
 
 	assert(previewCh.sampleChannel);
 	assert(sourceCh.sampleChannel);
@@ -570,24 +571,24 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId, Scene scene)
 	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(scene), Scene{0});
 	previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(scene), Scene{0});
 
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::freeWaveInPreviewChannel()
 {
-	Channel& previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	Channel& previewCh = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	previewCh.loadSample({}, Scene{0});
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setPreviewTracker(Frame f)
 {
-	m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID).shared->tracker.store(f);
+	m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID).shared->tracker.store(f);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -596,26 +597,26 @@ void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 {
 	for (ID id : ids)
 	{
-		Channel& ch = m_model.get().tracks.getChannel(id);
+		Channel& ch = m_model_DEPR_.get().tracks.getChannel(id);
 		ch.shared->readActions.store(true);
 		ch.shared->recStatus.store(ChannelStatus::PLAY);
 		if (ch.type == ChannelType::MIDI)
 			ch.shared->playStatus.store(ChannelStatus::PLAY);
 	}
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool ChannelManager::hasInputRecordableChannels(Scene scene) const
 {
-	return m_model.get().tracks.anyChannelOf([scene](const Channel& ch)
+	return m_model_DEPR_.get().tracks.anyChannelOf([scene](const Channel& ch)
 	{ return ch.canInputRec(scene); });
 }
 
 bool ChannelManager::hasAudioData(Scene scene) const
 {
-	return m_model.get().tracks.anyChannelOf([scene](const Channel& ch)
+	return m_model_DEPR_.get().tracks.anyChannelOf([scene](const Channel& ch)
 	{
 		return ch.sampleChannel && ch.sampleChannel->hasWave(scene);
 	});
@@ -623,7 +624,7 @@ bool ChannelManager::hasAudioData(Scene scene) const
 
 bool ChannelManager::hasSolos() const
 {
-	return m_model.get().tracks.anyChannelOf([](const Channel& ch)
+	return m_model_DEPR_.get().tracks.anyChannelOf([](const Channel& ch)
 	{
 		return !ch.isInternal() && ch.isSoloed();
 	});
@@ -633,7 +634,7 @@ bool ChannelManager::hasSolos() const
 
 bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 {
-	return m_model.get().tracks.get(trackIndex).getNumChannels() == 1;
+	return m_model_DEPR_.get().tracks.get(trackIndex).getNumChannels() == 1;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -676,13 +677,13 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 
 std::vector<Channel*> ChannelManager::getRecordableChannels(Scene scene)
 {
-	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
+	return m_model_DEPR_.get().tracks.getChannelsIf([scene](const Channel& c)
 	{ return c.canInputRec(scene) && !c.hasWave(scene); });
 }
 
 std::vector<Channel*> ChannelManager::getOverdubbableChannels(Scene scene)
 {
-	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
+	return m_model_DEPR_.get().tracks.getChannelsIf([scene](const Channel& c)
 	{ return c.canInputRec(scene) && c.hasWave(scene); });
 }
 
@@ -714,10 +715,10 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 	/* Update channel with the new Wave. */
 
-	loadSampleChannel(ch, &m_model.addWave(std::move(wave)), scene);
+	loadSampleChannel(ch, &m_model_DEPR_.addWave(std::move(wave)), scene);
 	setupChannelPostRecording(ch, currentFrame);
 
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -729,7 +730,7 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 	/* Need model::DataLock here, as data might be being read by the audio
 	thread at the same time. */
 
-	model_DEPR_::SharedLock lock = m_model.lockShared();
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
 
 	wave->getBuffer().sumAll(buffer);
 	wave->setLogical(true);
@@ -754,7 +755,7 @@ void ChannelManager::copyChannelToScene(Channel& ch, Scene srcScene, Scene dstSc
 	of Wave and set it to the new scene. */
 
 	Sample sample = ch.sampleChannel->getSample(srcScene);
-	Wave&  wave   = m_model.addWave(waveFactory::createFromWave(*sample.wave));
+	Wave&  wave   = m_model_DEPR_.addWave(waveFactory::createFromWave(*sample.wave));
 
 	sample.wave = &wave;
 	ch.loadSample(sample, dstScene);
