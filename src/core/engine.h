@@ -47,6 +47,7 @@
 #include "src/core/midiMapper.h"
 #include "src/core/midiSynchronizer.h"
 #include "src/core/mixer.h"
+#include "src/core/model/types.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginManager.h"
@@ -124,7 +125,8 @@ public:
 private:
 	void registerThread(Thread, bool isRealtime) const;
 
-	model_DEPR_::Model           m_model;
+	model::Model           m_model;
+	model_DEPR_::Model     m_model_DEPR_;
 	KernelAudio            m_kernelAudio;
 	KernelMidi             m_kernelMidi;
 	MidiMapper<KernelMidi> m_midiMapper;
