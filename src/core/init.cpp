@@ -115,6 +115,13 @@ void startup()
 
 	g_ui->onUpdate = []()
 	{
+		const auto documentSwapType = g_engine->pollDocumentChanges();
+		const auto assetsSwapType   = g_engine->pollAssetsChanges();
+
+		if (documentSwapType == model::SwapType::HARD || assetsSwapType == model::SwapType::HARD)
+			g_ui->rebuild();
+		else if (documentSwapType == model::SwapType::SOFT || assetsSwapType == model::SwapType::SOFT)
+			g_ui->update();
 		g_ui->refresh();
 	};
 
