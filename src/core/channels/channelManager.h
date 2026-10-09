@@ -110,6 +110,7 @@ public:
 	/* addTrack
 	Adds a new empty track, containing only the default Channel Group. */
 
+	void addTrack_DEPR_(int sampleRate, int bufferSize);
 	void addTrack(int sampleRate, int bufferSize);
 
 	/* removeTracks
