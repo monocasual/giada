@@ -71,29 +71,67 @@ Channel& ChannelManager::getChannel(ID channelId)
 
 void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 {
-	/* Create internal track with internal channels (Master In/Out, Preview). */
+	/* DEPR */
+	{
+		/* Create internal track with internal channels (Master In/Out, Preview). */
+
+		const bool               overdubProtection = false;
+		const Resampler::Quality rsmpQuality       = m_model_DEPR_.get().kernelAudio.rsmpQuality;
+
+		channelFactory::Data_DEPR_ masterOutData = channelFactory::create_DEPR_(
+		    MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
+		channelFactory::Data_DEPR_ masterInData = channelFactory::create_DEPR_(
+		    MASTER_IN_CHANNEL_ID, ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
+		channelFactory::Data_DEPR_ previewData = channelFactory::create_DEPR_(
+		    PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
+
+		m_model_DEPR_.get().tracks = {};
+
+		model_DEPR_::Track& track = m_model_DEPR_.get().tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
+		track.addChannel(std::move(masterInData.channel));
+		track.addChannel(std::move(previewData.channel));
+
+		m_model_DEPR_.addChannelShared(std::move(masterOutData.shared));
+		m_model_DEPR_.addChannelShared(std::move(masterInData.shared));
+		m_model_DEPR_.addChannelShared(std::move(previewData.shared));
+
+		/* Create six visible empty tracks. */
+
+		addTrack_DEPR_(sampleRate, framesInBuffer);
+		addTrack_DEPR_(sampleRate, framesInBuffer);
+		addTrack_DEPR_(sampleRate, framesInBuffer);
+		addTrack_DEPR_(sampleRate, framesInBuffer);
+		addTrack_DEPR_(sampleRate, framesInBuffer);
+		addTrack_DEPR_(sampleRate, framesInBuffer);
+	}
+	/* DEPR */
 
 	const bool               overdubProtection = false;
-	const Resampler::Quality rsmpQuality       = m_model_DEPR_.get().kernelAudio.rsmpQuality;
+	const Resampler::Quality rsmpQuality       = m_model.getCurrentDocument()->kernelAudio.rsmpQuality;
 
-	channelFactory::Data masterOutData = channelFactory::create(
-	    MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
-	channelFactory::Data masterInData = channelFactory::create(
-	    MASTER_IN_CHANNEL_ID, ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
-	channelFactory::Data previewData = channelFactory::create(
-	    PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
+	channelFactory::Data masterOutData = channelFactory::create(MASTER_OUT_CHANNEL_ID,
+	    ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
+	channelFactory::Data masterInData  = channelFactory::create(MASTER_IN_CHANNEL_ID,
+	     ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
+	channelFactory::Data previewData   = channelFactory::create(PREVIEW_CHANNEL_ID,
+	      ChannelType::PREVIEW, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
 
-	m_model_DEPR_.get().tracks = {};
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [masterOutData, masterInData, previewData](model::Document& doc, model::Assets& assets) mutable
+	{
+		doc.tracks = {};
 
-	model_DEPR_::Track& track = m_model_DEPR_.get().tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
-	track.addChannel(std::move(masterInData.channel));
-	track.addChannel(std::move(previewData.channel));
+		model::Track& internalTrack = doc.tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
+		internalTrack.addChannel(std::move(masterInData.channel));
+		internalTrack.addChannel(std::move(previewData.channel));
 
-	m_model_DEPR_.addChannelShared(std::move(masterOutData.shared));
-	m_model_DEPR_.addChannelShared(std::move(masterInData.shared));
-	m_model_DEPR_.addChannelShared(std::move(previewData.shared));
-
-	/* Create six visible empty tracks. */
+		assets.channelsParameters.set(MASTER_OUT_CHANNEL_ID, masterOutData.parameters);
+		assets.channelsParameters.set(MASTER_IN_CHANNEL_ID, masterInData.parameters);
+		assets.channelsParameters.set(PREVIEW_CHANNEL_ID, previewData.parameters);
+		assets.channelsRendering.set(MASTER_OUT_CHANNEL_ID, masterOutData.rendering);
+		assets.channelsRendering.set(MASTER_IN_CHANNEL_ID, masterInData.rendering);
+		assets.channelsRendering.set(PREVIEW_CHANNEL_ID, previewData.rendering);
+	});
 
 	addTrack(sampleRate, framesInBuffer);
 	addTrack(sampleRate, framesInBuffer);
@@ -113,17 +151,32 @@ void ChannelManager::setBufferSize(int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::addTrack(int sampleRate, Frame bufferSize)
+void ChannelManager::addTrack_DEPR_(int sampleRate, Frame bufferSize)
 {
 	const bool               overdubProtection = false;
 	const Resampler::Quality rsmpQuality       = m_model_DEPR_.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data groupData = channelFactory::create(/*id=*/{}, ChannelType::GROUP, sampleRate,
+	channelFactory::Data_DEPR_ groupData = channelFactory::create_DEPR_(/*id=*/{}, ChannelType::GROUP, sampleRate,
 	    bufferSize, rsmpQuality, overdubProtection);
 
 	m_model_DEPR_.addChannelShared(std::move(groupData.shared));
 	m_model_DEPR_.get().tracks.add(std::move(groupData.channel), G_DEFAULT_TRACK_WIDTH, /*isInternal=*/false);
 	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+}
+
+void ChannelManager::addTrack(int sampleRate, Frame bufferSize)
+{
+	const bool               overdubProtection = false;
+	const Resampler::Quality rsmpQuality       = m_model.getCurrentDocument()->kernelAudio.rsmpQuality;
+	channelFactory::Data     groupData         = channelFactory::create(/*id=*/{}, ChannelType::GROUP, sampleRate,
+        bufferSize, rsmpQuality, overdubProtection);
+
+	m_model.writeDocumentAndAssets(mcl::SwapType::HARD, [groupData](model::Document& doc, model::Assets& assets) mutable
+	{
+		doc.tracks.add(std::move(groupData.channel), G_DEFAULT_TRACK_WIDTH, /*isInternal=*/false);
+		assets.channelsParameters.set(groupData.channel.id, groupData.parameters);
+		assets.channelsRendering.set(groupData.channel.id, groupData.rendering);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -155,7 +208,7 @@ Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex,
 	const bool               overdubProtectionDefaultOn = m_model_DEPR_.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model_DEPR_.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data data = channelFactory::create(/*id=*/{}, type, sampleRate,
+	channelFactory::Data_DEPR_ data = channelFactory::create_DEPR_(/*id=*/{}, type, sampleRate,
 	    bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 
 	setupChannelCallbacks(data.channel, *data.shared);
@@ -207,10 +260,10 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, Scene scene)
 
 void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int bufferSize, const std::vector<Plugin*>& plugins)
 {
-	const Channel&           oldChannel     = m_model_DEPR_.get().tracks.getChannel(channelId);
-	const std::size_t        trackIndex     = m_model_DEPR_.get().tracks.getByChannel(channelId).getIndex();
-	const Resampler::Quality rsmpQuality    = m_model_DEPR_.get().kernelAudio.rsmpQuality;
-	channelFactory::Data     newChannelData = channelFactory::create(oldChannel, sampleRate, bufferSize, rsmpQuality);
+	const Channel&             oldChannel     = m_model_DEPR_.get().tracks.getChannel(channelId);
+	const std::size_t          trackIndex     = m_model_DEPR_.get().tracks.getByChannel(channelId).getIndex();
+	const Resampler::Quality   rsmpQuality    = m_model_DEPR_.get().kernelAudio.rsmpQuality;
+	channelFactory::Data_DEPR_ newChannelData = channelFactory::create(oldChannel, sampleRate, bufferSize, rsmpQuality);
 
 	setupChannelCallbacks(newChannelData.channel, *newChannelData.shared);
 
