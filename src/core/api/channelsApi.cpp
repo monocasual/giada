@@ -91,7 +91,7 @@ void ChannelsApi::addTrack()
 {
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	m_channelManager.addTrack(sampleRate, bufferSize);
+	m_channelManager.addTrack_DEPR_(sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */

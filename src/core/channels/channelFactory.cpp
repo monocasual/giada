@@ -46,7 +46,7 @@ IdManager channelId_;
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<ChannelShared> makeShared_(ChannelType type, ID channelId, int sampleRate,
+std::unique_ptr<ChannelShared> makeShared_DEPR_(ChannelType type, ID channelId, int sampleRate,
     int bufferSize, Resampler::Quality quality)
 {
 	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(channelId, bufferSize);
@@ -60,6 +60,17 @@ std::unique_ptr<ChannelShared> makeShared_(ChannelType type, ID channelId, int s
 	}
 
 	return shared;
+}
+
+std::tuple<
+    std::shared_ptr<model::Channel::Parameters>,
+    std::shared_ptr<model::Channel::Rendering>>
+makeShared_(ChannelType type, int sampleRate, int bufferSize, Resampler::Quality quality)
+{
+	auto parameters = std::make_shared<model::Channel::Parameters>();
+	auto rendering  = std::make_shared<model::Channel::Rendering>(type, sampleRate, bufferSize, quality);
+
+	return {parameters, rendering};
 }
 } // namespace
 
@@ -81,12 +92,12 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-Data create(ID channelId, ChannelType type, int sampleRate, int bufferSize,
+Data_DEPR_ create_DEPR_(ID channelId, ChannelType type, int sampleRate, int bufferSize,
     Resampler::Quality quality, bool overdubProtection)
 {
 	channelId = channelId_.generate(channelId);
 
-	std::unique_ptr<ChannelShared> shared = makeShared_(type, channelId, sampleRate, bufferSize, quality);
+	std::unique_ptr<ChannelShared> shared = makeShared_DEPR_(type, channelId, sampleRate, bufferSize, quality);
 	Channel                        ch     = Channel(type, channelId, *shared.get());
 
 	if (ch.sampleChannel)
@@ -95,11 +106,25 @@ Data create(ID channelId, ChannelType type, int sampleRate, int bufferSize,
 	return {ch, std::move(shared)};
 }
 
+Data create(ID channelId, ChannelType type, int sampleRate, int bufferSize,
+    Resampler::Quality quality, bool overdubProtection)
+{
+	channelId = channelId_.generate(channelId);
+
+	auto [parameters, rendering] = makeShared_(type, sampleRate, bufferSize, quality);
+	model::Channel ch            = model::Channel(type, channelId);
+
+	if (ch.sampleChannel)
+		ch.sampleChannel->overdubProtection = overdubProtection;
+
+	return {ch, parameters, rendering};
+}
+
 /* -------------------------------------------------------------------------- */
 
-Data create(const Channel& o, int sampleRate, int bufferSize, Resampler::Quality quality)
+Data_DEPR_ create(const Channel& o, int sampleRate, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared_(o.type, o.id, sampleRate, bufferSize, quality);
+	std::unique_ptr<ChannelShared> shared = makeShared_DEPR_(o.type, o.id, sampleRate, bufferSize, quality);
 	Channel                        ch     = Channel(o);
 
 	ch.id     = channelId_.generate();
@@ -122,7 +147,7 @@ Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, flo
 std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel& pch, int sampleRate,
     int bufferSize, Resampler::Quality quality)
 {
-	return makeShared_(pch.type, pch.id, sampleRate, bufferSize, quality);
+	return makeShared_DEPR_(pch.type, pch.id, sampleRate, bufferSize, quality);
 }
 
 /* -------------------------------------------------------------------------- */

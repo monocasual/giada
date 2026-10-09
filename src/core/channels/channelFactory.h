@@ -29,6 +29,7 @@
 
 #include "src/core/channels/channel.h"
 #include "src/core/idManager.h"
+#include "src/core/model/channel.h"
 #include "src/core/patch.h"
 #include "src/core/types.h"
 
@@ -40,10 +41,17 @@ class Channel;
 
 namespace giada::m::channelFactory
 {
-struct Data
+struct Data_DEPR_
 {
 	Channel                        channel;
 	std::unique_ptr<ChannelShared> shared;
+};
+
+struct Data
+{
+	model::Channel                              channel;
+	std::shared_ptr<model::Channel::Parameters> parameters;
+	std::shared_ptr<model::Channel::Rendering>  rendering;
 };
 
 /* getNextId
@@ -60,13 +68,15 @@ void reset();
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one
     passed in otherwise. */
 
-Data create(ID channelId, ChannelType type, int sampleRate,
+Data_DEPR_ create_DEPR_(ID channelId, ChannelType type, int sampleRate,
     int bufferSize, Resampler::Quality, bool overdubProtection);
+Data       create(ID channelId, ChannelType type, int sampleRate,
+          int bufferSize, Resampler::Quality, bool overdubProtection);
 
 /* create (2)
     Creates a new channel given an existing one (i.e. clone). */
 
-Data create(const Channel& ch, int sampleRate, int bufferSize, Resampler::Quality);
+Data_DEPR_ create(const Channel& ch, int sampleRate, int bufferSize, Resampler::Quality);
 
 /* (de)deserializeChannel
 Creates a new channel given the patch raw data and vice versa. */
