@@ -11,7 +11,7 @@ TEST_CASE("channelFactory")
 {
 	SECTION("test creation")
 	{
-		channelFactory::Data data = channelFactory::create(
+		channelFactory::Data_DEPR_ data = channelFactory::create_DEPR_(
 		    /*id=*/{},
 		    ChannelType::SAMPLE,
 		    /*sampleRate=*/44100,
@@ -24,7 +24,7 @@ TEST_CASE("channelFactory")
 
 		SECTION("test clone")
 		{
-			channelFactory::Data clone = channelFactory::create(data.channel, /*sampleRate=*/44100,
+			channelFactory::Data_DEPR_ clone = channelFactory::create(data.channel, /*sampleRate=*/44100,
 			    /*bufferSize=*/1024, Resampler::Quality::LINEAR);
 
 			REQUIRE(clone.channel.id != data.channel.id); // Clone must have new ID
