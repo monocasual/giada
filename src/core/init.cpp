@@ -113,6 +113,11 @@ void startup()
 		g_engine->getMainApi().startActionRecOnCallback();
 	};
 
+	g_ui->onUpdate = []()
+	{
+		g_ui->refresh();
+	};
+
 	g_engine->onMidiReceived = []()
 	{
 		g_ui->pumpEvent([]
