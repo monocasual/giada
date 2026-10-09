@@ -74,6 +74,13 @@ public:
 
 	bool isAudioReady() const;
 
+	model::SwapType pollDocumentChanges();
+	model::SwapType pollAssetsChanges();
+
+	const model::Document&   getCurrentDocument() const;
+	const model::Assets&     getCurrentAssets() const;
+	const model::Parameters& getParameters() const;
+
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process
 	interrupts and Giada is put in an invalid state. */

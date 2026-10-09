@@ -270,6 +270,35 @@ bool Engine::isAudioReady() const
 
 /* -------------------------------------------------------------------------- */
 
+model::SwapType Engine::pollDocumentChanges()
+{
+	return m_model.documentChanges.take();
+}
+
+model::SwapType Engine::pollAssetsChanges()
+{
+	return m_model.assetsChanges.take();
+}
+
+/* -------------------------------------------------------------------------- */
+
+const model::Document& Engine::getCurrentDocument() const
+{
+	return *m_model.getCurrentDocument().get();
+}
+
+const model::Assets& Engine::getCurrentAssets() const
+{
+	return *m_model.getCurrentAssets().get();
+}
+
+const model::Parameters& Engine::getParameters() const
+{
+	return m_model.getParameters();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Engine::init(const Conf& conf)
 {
 	registerThread(Thread::MAIN, /*realtime=*/false);
