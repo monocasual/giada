@@ -52,9 +52,15 @@ ID Ui::getPluginWindowId(ID pluginId)
 /* -------------------------------------------------------------------------- */
 
 Ui::Ui()
-: m_updater(*this)
+: onUpdate(nullptr)
+, m_updater()
 , m_blinker(0)
 {
+	m_updater.onUpdate = [this]()
+	{
+		assert(onUpdate != nullptr);
+		onUpdate();
+	};
 }
 
 /* -------------------------------------------------------------------------- */

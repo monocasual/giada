@@ -124,6 +124,11 @@ public:
 	Dispatcher                    dispatcher;
 	Model                         model;
 
+	/* onUpdate
+	Callback fired on each updater loop. */
+
+	std::function<void()> onUpdate;
+
 private:
 	static constexpr int BLINK_RATE = G_GUI_FPS / 2;
 

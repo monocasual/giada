@@ -30,8 +30,8 @@
 
 namespace giada::v
 {
-Updater::Updater(Ui& ui)
-: m_ui(ui)
+Updater::Updater()
+: onUpdate(nullptr)
 {
 }
 
@@ -62,7 +62,8 @@ void Updater::update(void* p) { static_cast<Updater*>(p)->update(); }
 
 void Updater::update()
 {
-	m_ui.refresh();
+	assert(onUpdate != nullptr);
+	onUpdate();
 	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this); // Repeat
 }
 
