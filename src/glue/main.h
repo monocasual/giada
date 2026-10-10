@@ -56,6 +56,7 @@ namespace giada::c::main
 struct Timer
 {
 	Timer();
+	Timer(const m::model::Document&);
 
 	float         bpm;
 	TimeSignature timeSignature;
@@ -121,6 +122,7 @@ struct Main
 	Main(const m::model::Document&, const m::model::Parameters&, const m::model::Assets&);
 
 	std::vector<channel::Track> tracks;
+	Timer                       timer;
 };
 
 /* get*
