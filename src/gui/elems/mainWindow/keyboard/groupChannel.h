@@ -27,15 +27,19 @@
 #ifndef GE_GROUP_CHANNEL_H
 #define GE_GROUP_CHANNEL_H
 
-#include "src/glue/channel.h"
 #include "src/gui/elems/mainWindow/keyboard/channel.h"
+
+namespace giada::c::channel
+{
+struct Channel;
+}
 
 namespace giada::v
 {
 class geGroupChannel : public geChannel
 {
 public:
-	geGroupChannel(c::channel::Data_DEPR_ d);
+	geGroupChannel(const c::channel::Channel&);
 
 	void resize(int x, int y, int w, int h) override;
 

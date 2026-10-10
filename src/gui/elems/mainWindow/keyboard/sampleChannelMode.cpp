@@ -37,16 +37,16 @@
 
 namespace giada::v
 {
-geSampleChannelMode::geSampleChannelMode(int x, int y, int w, int h, c::channel::Data_DEPR_& d)
+geSampleChannelMode::geSampleChannelMode(int x, int y, int w, int h, const c::channel::Channel& c)
 : geImageButton(x, y, w, h, nullptr, nullptr)
-, m_channel(d)
+, m_channel(c)
 {
 	onClick = [this]()
 	{
 		openMenu();
 	};
 
-	refresh(m_channel.sample->mode);
+	// refresh(m_channel.sample->mode);
 }
 
 /* -------------------------------------------------------------------------- */

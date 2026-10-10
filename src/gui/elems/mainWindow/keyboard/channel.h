@@ -30,6 +30,11 @@
 #include "src/glue/channel.h"
 #include "src/gui/elems/basics/flex.h"
 
+namespace giada::c::channel
+{
+struct Channel;
+}
+
 namespace giada::v
 {
 class geDial;
@@ -40,7 +45,7 @@ class geMidiActivity;
 class geChannel : public geFlex
 {
 public:
-	geChannel(int x, int y, int w, int h, c::channel::Data_DEPR_ d);
+	geChannel(int x, int y, int w, int h, const c::channel::Channel&);
 
 	void draw() override;
 
@@ -68,7 +73,7 @@ public:
 	/* getData
 	Returns a reference to the internal data. Read-only. */
 
-	const c::channel::Data_DEPR_& getData() const;
+	const c::channel::Channel& getData() const;
 
 	geImageButton*     playButton;
 	geImageButton*     arm;
@@ -95,7 +100,7 @@ protected:
 	/* m_channel
 	Channel's data. */
 
-	c::channel::Data_DEPR_ m_channel;
+	const c::channel::Channel& m_channel;
 };
 } // namespace giada::v
 

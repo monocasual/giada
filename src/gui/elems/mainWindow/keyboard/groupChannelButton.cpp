@@ -33,8 +33,8 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-geGroupChannelButton::geGroupChannelButton(const c::channel::Data_DEPR_& d)
-: geChannelButton(d)
+geGroupChannelButton::geGroupChannelButton(const c::channel::Channel& c)
+: geChannelButton(c)
 {
 }
 

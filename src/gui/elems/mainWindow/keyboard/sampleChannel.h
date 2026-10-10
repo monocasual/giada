@@ -37,7 +37,7 @@ class geSampleChannelMode;
 class geSampleChannel : public geChannel
 {
 public:
-	geSampleChannel(int x, int y, int w, int h, c::channel::Data_DEPR_ d);
+	geSampleChannel(int x, int y, int w, int h, const c::channel::Channel&);
 
 	void resize(int x, int y, int w, int h) override;
 	void draw() override;

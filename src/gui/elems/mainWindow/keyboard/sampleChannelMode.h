@@ -38,7 +38,7 @@ enum class SamplePlayerMode;
 
 namespace giada::c::channel
 {
-struct Data_DEPR_;
+struct Channel;
 }
 
 namespace giada::v
@@ -46,13 +46,13 @@ namespace giada::v
 class geSampleChannelMode : public geImageButton
 {
 public:
-	geSampleChannelMode(int x, int y, int w, int h, c::channel::Data_DEPR_& d);
+	geSampleChannelMode(int x, int y, int w, int h, const c::channel::Channel&);
 
 private:
 	void refresh(SamplePlayerMode);
 	void openMenu();
 
-	c::channel::Data_DEPR_& m_channel;
+	const c::channel::Channel& m_channel;
 };
 } // namespace giada::v
 

@@ -27,6 +27,7 @@
 #ifndef GD_MAINWINDOW_H
 #define GD_MAINWINDOW_H
 
+#include "src/glue/main.h"
 #include "src/gui/dialogs/progress.h"
 #include "src/gui/dialogs/window.h"
 #include <string>
@@ -51,6 +52,8 @@ public:
 
 	void refresh() override;
 	void rebuild() override;
+
+	void rebuild(const c::main::Main&);
 
 	/* clearKeyboard
 	Resets Keyboard to initial state, with no tracks. */
@@ -88,6 +91,8 @@ private:
 	};
 
 	void resize(int x, int y, int w, int h) override;
+
+	c::main::Main m_main;
 
 	gdProgress m_progress;
 	geBox*     m_projectTitle;

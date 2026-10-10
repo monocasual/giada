@@ -97,10 +97,7 @@ const std::vector<std::string>& Ui::getLangMapFilesFound() const
 void Ui::load(const m::Patch& patch)
 {
 	reset();
-
 	model.load(patch);
-
-	mainWindow->keyboard->rebuild();
 	mainWindow->setProjectTitle(patch.name);
 }
 
@@ -215,6 +212,13 @@ void Ui::rebuild()
 	rebuildSubWindow(WID_SAMPLE_EDITOR);
 	rebuildSubWindow(WID_ACTION_EDITOR);
 	rebuildSubWindow(WID_CHANNEL_ROUTING);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::rebuildMainWindow(const c::main::Main& main)
+{
+	mainWindow->rebuild(main);
 }
 
 /* -------------------------------------------------------------------------- */
