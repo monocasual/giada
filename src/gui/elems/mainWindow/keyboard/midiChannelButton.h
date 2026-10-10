@@ -34,7 +34,7 @@ namespace giada::v
 class geMidiChannelButton : public geChannelButton
 {
 public:
-	geMidiChannelButton(const c::channel::Data& d);
+	geMidiChannelButton(const c::channel::Data_DEPR_& d);
 
 	void refresh() override;
 

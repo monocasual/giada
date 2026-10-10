@@ -35,7 +35,7 @@ namespace giada::v
 class geMidiChannel : public geChannel
 {
 public:
-	geMidiChannel(int x, int y, int w, int h, c::channel::Data d);
+	geMidiChannel(int x, int y, int w, int h, c::channel::Data_DEPR_ d);
 
 	void resize(int x, int y, int w, int h) override;
 

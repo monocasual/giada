@@ -28,6 +28,7 @@
 #define G_MAIN_H
 
 #include "src/core/types.h"
+#include "src/glue/channel.h"
 #include "src/scene.h"
 #include "src/types.h"
 
@@ -43,7 +44,7 @@ namespace giada::m::model_DEPR_
 {
 class Sequencer;
 class Mixer;
-} // namespace giada::m::model
+} // namespace giada::m::model_DEPR_
 
 namespace giada::c::main
 {
@@ -107,6 +108,13 @@ struct Scenes
 	Scene       getCurrentScene() const;
 	Scene       getNextScene() const;
 	SceneStatus getStatus() const;
+};
+
+struct Main
+{
+	Main(const m::model::Document&, const m::model::Parameters&);
+
+	std::vector<channel::Track> tracks;
 };
 
 /* get*

@@ -33,7 +33,7 @@
 
 namespace giada::c::channel
 {
-struct Data;
+struct Data_DEPR_;
 }
 
 namespace giada::v

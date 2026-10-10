@@ -34,7 +34,7 @@ namespace giada::v
 class geGroupChannelButton : public geChannelButton
 {
 public:
-	geGroupChannelButton(const c::channel::Data& d);
+	geGroupChannelButton(const c::channel::Data_DEPR_& d);
 
 	void refresh() override;
 };
