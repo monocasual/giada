@@ -53,6 +53,15 @@ Timer::Timer()
 {
 }
 
+Timer::Timer(const m::model::Document& doc)
+: bpm(doc.sequencer.getBpm())
+, timeSignature(doc.sequencer.getTimeSignature())
+, quantize(doc.sequencer.quantize)
+, isUsingJack(doc.kernelAudio.api == RtAudio::Api::UNIX_JACK)
+, isRecordingInput(doc.mixer.isRecordingInput)
+{
+}
+
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -120,6 +129,7 @@ SceneStatus Scenes::getStatus() const
 
 Main::Main(const m::model::Document& doc, const m::model::Parameters& params, const m::model::Assets& assets)
 : tracks(channel::getTracks(doc, params, assets))
+, timer(doc)
 {
 }
 
