@@ -79,7 +79,7 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
+geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data_DEPR_ d)
 : geChannel(X, Y, W, H, d)
 {
 	playButton     = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);

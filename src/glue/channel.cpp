@@ -67,21 +67,40 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-Data makeData_(ID channelId, const m::model_DEPR_::Track& modelTrack, Scene scene)
+Data_DEPR_ makeData_DEPR_(ID channelId, const m::model_DEPR_::Track& modelTrack, Scene scene)
 {
 	const std::size_t channelIndex = modelTrack.getChannelIndex(channelId);
 	const std::size_t trackIndex   = modelTrack.getIndex();
-	return Data(g_engine->getChannelsApi().get(channelId), scene, trackIndex, channelIndex);
+	return Data_DEPR_(g_engine->getChannelsApi().get(channelId), scene, trackIndex, channelIndex);
+}
+
+Channel makeChannel_(ID channelId, const m::model::Track& track, Scene scene)
+{
+	const std::size_t channelIndex = track.getChannelIndex(channelId);
+	const std::size_t trackIndex   = track.getIndex();
+	const auto        channel      = track.findChannel(channelId);
+	assert(channel != nullptr);
+	return Channel(*channel, scene, trackIndex, channelIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Track makeTrack_(const m::model_DEPR_::Track& modelTrack, Scene scene)
+Track_DEPR_ makeTrack_DEPR_(const m::model_DEPR_::Track& modelTrack, Scene scene)
+{
+	Track_DEPR_ track{modelTrack.getIndex(), modelTrack.width, {}};
+
+	for (const m::Channel& channel : modelTrack.getChannels().getAll())
+		track.channels.push_back(makeData_DEPR_(channel.id, modelTrack, scene));
+
+	return track;
+}
+
+Track makeTrack_(const m::model::Track& modelTrack, Scene scene)
 {
 	Track track{modelTrack.getIndex(), modelTrack.width, {}};
 
-	for (const m::Channel& channel : modelTrack.getChannels().getAll())
-		track.channels.push_back(makeData_(channel.id, modelTrack, scene));
+	for (const m::model::Channel& channel : modelTrack.getChannels().getAll())
+		track.channels.push_back(makeChannel_(channel.id, modelTrack, scene));
 
 	return track;
 }
@@ -115,7 +134,7 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, Scene scene, std::size_t trackIndex, std::size_t channelIndex)
+Data_DEPR_::Data_DEPR_(const m::Channel& c, Scene scene, std::size_t trackIndex, std::size_t channelIndex)
 : id(c.id)
 , trackIndex(trackIndex)
 , channelIndex(channelIndex)
@@ -139,31 +158,80 @@ Data::Data(const m::Channel& c, Scene scene, std::size_t trackIndex, std::size_t
 		midi = std::make_optional<MidiData>(c);
 }
 
-ChannelStatus Data::getPlayStatus() const { return m_playStatus->load(); }
-ChannelStatus Data::getRecStatus() const { return m_recStatus->load(); }
-bool          Data::getReadActions() const { return m_readActions->load(); }
-bool          Data::isRecordingInput() const { return g_engine->getMainApi().isRecordingInput(); }
-bool          Data::isRecordingActions() const { return g_engine->getMainApi().isRecordingActions(); }
-bool          Data::isMuted() const { return g_engine->getChannelsApi().get(id).isMuted(); }
-bool          Data::isSoloed() const { return g_engine->getChannelsApi().get(id).isSoloed(); }
-bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).armed; }
-bool          Data::isActive() const { return g_engine->getChannelsApi().get(id).isActive(); }
+ChannelStatus Data_DEPR_::getPlayStatus() const { return m_playStatus->load(); }
+ChannelStatus Data_DEPR_::getRecStatus() const { return m_recStatus->load(); }
+bool          Data_DEPR_::getReadActions() const { return m_readActions->load(); }
+bool          Data_DEPR_::isRecordingInput() const { return g_engine->getMainApi().isRecordingInput(); }
+bool          Data_DEPR_::isRecordingActions() const { return g_engine->getMainApi().isRecordingActions(); }
+bool          Data_DEPR_::isMuted() const { return g_engine->getChannelsApi().get(id).isMuted(); }
+bool          Data_DEPR_::isSoloed() const { return g_engine->getChannelsApi().get(id).isSoloed(); }
+bool          Data_DEPR_::isArmed() const { return g_engine->getChannelsApi().get(id).armed; }
+bool          Data_DEPR_::isActive() const { return g_engine->getChannelsApi().get(id).isActive(); }
 
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
+Channel::Channel(const m::model::Channel& c, Scene scene, std::size_t trackIndex, std::size_t channelIndex)
+: id(c.id)
+, trackIndex(trackIndex)
+, channelIndex(channelIndex)
+//, plugins(c.plugins)
+, type(c.type)
+, height(c.height)
+, name(c.getName(scene))
+, volume(c.volume)
+, pan(c.pan.asFloat())
+, key(c.key)
+, mute(c.isMuted())
+, solo(c.isSoloed())
+, armed(c.armed)
+, active(/* TODO */ false)
+, hasActions(g_engine->getChannelsApi().hasActions(c.id))
+, sendToMaster(c.sendToMaster)
+, extraOutputsCount(c.extraOutputs.size())
+, m_channel(c)
 
-Data getData(ID channelId)
+//, m_playStatus(&c.shared->playStatus)
+//, m_recStatus(&c.shared->recStatus)
+//, m_readActions(&c.shared->readActions)
 {
-	const Scene scene = g_engine->getMainApi().getCurrentScene();
-	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId), scene);
+	/*
+	if (c.type == ChannelType::SAMPLE)
+	    sample = std::make_optional<SampleData>(c, scene);
+	else if (c.type == ChannelType::MIDI)
+	    midi = std::make_optional<MidiData>(c);
+	    */
 }
 
-std::vector<Track> getTracks()
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Data_DEPR_ getData_DEPR_(ID channelId)
 {
-	const Scene        scene = g_engine->getMainApi().getCurrentScene();
-	std::vector<Track> out;
+	const Scene scene = g_engine->getMainApi().getCurrentScene();
+	return makeData_DEPR_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId), scene);
+}
+
+Channel getChannel(ID channelId, const m::model::Document& doc, const m::model::Parameters& params)
+{
+	const Scene scene = params.sequencer.getCurrentScene();
+	const auto  track = doc.tracks.getByChannel(channelId);
+	return makeChannel_(channelId, track, scene);
+}
+
+std::vector<Track_DEPR_> getTracks_DEPR_()
+{
+	const Scene              scene = g_engine->getMainApi().getCurrentScene();
+	std::vector<Track_DEPR_> out;
 	for (const m::model_DEPR_::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
+		if (!modelTrack.isInternal())
+			out.push_back(makeTrack_DEPR_(modelTrack, scene));
+	return out;
+}
+
+std::vector<Track> getTracks(const m::model::Document& doc, const m::model::Parameters& params)
+{
+	const Scene        scene = params.sequencer.getCurrentScene();
+	std::vector<Track> out;
+	for (const m::model::Track& modelTrack : doc.tracks.getAll())
 		if (!modelTrack.isInternal())
 			out.push_back(makeTrack_(modelTrack, scene));
 	return out;

@@ -190,7 +190,7 @@ void openSampleEditor(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void openRenameChannelWindow(const c::channel::Data& data, bool allscenes)
+void openRenameChannelWindow(const c::channel::Data_DEPR_& data, bool allscenes)
 {
 	g_ui->openSubWindow(new v::gdChannelNameInput(data, allscenes));
 }

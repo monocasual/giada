@@ -33,7 +33,7 @@
 
 namespace giada::v
 {
-geChannelProgress::geChannelProgress(int x, int y, int w, int h, c::channel::Data& d)
+geChannelProgress::geChannelProgress(int x, int y, int w, int h, c::channel::Data_DEPR_& d)
 : Fl_Box(x, y, w, h)
 , m_channel(d)
 {

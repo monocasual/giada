@@ -49,6 +49,13 @@ class Channel;
 class MidiEvent;
 } // namespace giada::m
 
+namespace giada::m::model
+{
+class Channel;
+struct Document;
+struct Parameters;
+} // namespace giada::m::model
+
 namespace giada::v
 {
 class Dispatcher;
@@ -84,9 +91,9 @@ struct MidiData
 	int  filter;
 };
 
-struct Data
+struct Data_DEPR_
 {
-	Data(const m::Channel&, Scene, std::size_t trackIndex, std::size_t channelIndex);
+	Data_DEPR_(const m::Channel&, Scene, std::size_t trackIndex, std::size_t channelIndex);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
@@ -121,11 +128,55 @@ private:
 	WeakAtomic<bool>*          m_readActions;
 };
 
+struct Channel
+{
+	Channel(const m::model::Channel&, Scene, std::size_t trackIndex, std::size_t channelIndex);
+
+	// ChannelStatus getPlayStatus() const;
+	// ChannelStatus getRecStatus() const;
+	// bool          getReadActions() const;
+
+	ID                      id;
+	std::size_t             trackIndex;
+	std::size_t             channelIndex;
+	std::vector<m::Plugin*> plugins;
+	ChannelType             type;
+	int                     height;
+	std::string             name;
+	float                   volume;
+	float                   pan;
+	int                     key;
+	bool                    mute;
+	bool                    solo;
+	bool                    armed;
+	bool                    active;
+	bool                    hasActions;
+	bool                    sendToMaster;
+	std::size_t             extraOutputsCount;
+
+	// TODO - std::optional<SampleData> sample;
+	// TODO - std::optional<MidiData>   midi;
+
+private:
+	const m::model::Channel& m_channel;
+	// TODO
+	// WeakAtomic<ChannelStatus>* m_playStatus;
+	// WeakAtomic<ChannelStatus>* m_recStatus;
+	// WeakAtomic<bool>*          m_readActions;
+};
+
+struct Track_DEPR_
+{
+	std::size_t             index;
+	int                     width;
+	std::vector<Data_DEPR_> channels;
+};
+
 struct Track
 {
-	std::size_t       index;
-	int               width;
-	std::vector<Data> channels;
+	std::size_t          index;
+	int                  width;
+	std::vector<Channel> channels;
 };
 
 struct RoutingData
@@ -143,13 +194,15 @@ struct RoutingData
 /* getChannels
 Returns a single viewModel object filled with data from a channel. */
 
-Data getData(ID channelId);
+Data_DEPR_ getData_DEPR_(ID channelId);
+Channel    getChannel(ID, const m::model::Document&, const m::model::Parameters&);
 
 /* getTracks
 Returns a vector of Track's filled with Data objects, which reflects the layout
 described by m::model::Tracks. */
 
-std::vector<Track> getTracks();
+std::vector<Track_DEPR_> getTracks_DEPR_();
+std::vector<Track>       getTracks(const m::model::Document&, const m::model::Parameters&);
 
 /* getRoutingData
 Returns a single viewModel object for the 'Routing' window. */
