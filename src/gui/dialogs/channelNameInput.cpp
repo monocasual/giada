@@ -36,9 +36,9 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdChannelNameInput::gdChannelNameInput(const c::channel::Data_DEPR_& d, bool allScenes)
+gdChannelNameInput::gdChannelNameInput(const c::channel::Channel& c, bool allScenes)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 64}), g_ui->getI18Text(LangMap::CHANNELNAME_TITLE), WID_SAMPLE_NAME)
-, m_data(d)
+, m_channel(c)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -60,12 +60,12 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data_DEPR_& d, bool all
 
 	add(container);
 
-	m_name->setValue(m_data.name);
+	m_name->setValue(m_channel.name);
 
 	m_ok->shortcut(FL_Enter);
 	m_ok->onClick = [this, allScenes]()
 	{
-		c::channel::setName(m_data.id, m_name->getValue(), allScenes);
+		c::channel::setName(m_channel.id, m_name->getValue(), allScenes);
 		do_callback();
 	};
 

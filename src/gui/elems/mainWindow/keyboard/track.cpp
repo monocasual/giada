@@ -54,16 +54,16 @@ enum class Menu
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* makeChannel_(const c::channel::Data_DEPR_& data)
+geChannel* makeChannel_(const c::channel::Channel& channel)
 {
-	switch (data.type)
+	switch (channel.type)
 	{
 	case ChannelType::SAMPLE:
-		return new geSampleChannel(0, 0, 0, 0, data);
+		return new geSampleChannel(0, 0, 0, 0, channel);
 	case ChannelType::MIDI:
-		return new geMidiChannel(0, 0, 0, 0, data);
+		return new geMidiChannel(0, 0, 0, 0, channel);
 	case ChannelType::GROUP:
-		return new geGroupChannel(data);
+		return new geGroupChannel(channel);
 	default:
 		assert(false);
 		return nullptr;
@@ -104,10 +104,10 @@ void geTrack::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geTrack::addChannel(const c::channel::Data_DEPR_& d)
+geChannel* geTrack::addChannel(const c::channel::Channel& channel)
 {
-	geChannel* gch = makeChannel_(d);
-	addWidget(gch, d.height);
+	geChannel* gch = makeChannel_(channel);
+	addWidget(gch, channel.height);
 	return gch;
 }
 

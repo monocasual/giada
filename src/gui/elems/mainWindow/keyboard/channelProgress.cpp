@@ -33,9 +33,9 @@
 
 namespace giada::v
 {
-geChannelProgress::geChannelProgress(int x, int y, int w, int h, c::channel::Data_DEPR_& d)
+geChannelProgress::geChannelProgress(int x, int y, int w, int h, const c::channel::Channel& c)
 : Fl_Box(x, y, w, h)
-, m_channel(d)
+, m_channel(c)
 {
 }
 
@@ -45,6 +45,7 @@ void geChannelProgress::draw()
 {
 	namespace math = mcl::utils::math;
 
+#if 0
 	const Frame tracker = m_channel.sample->getTracker();
 	const auto  range   = m_channel.sample->range;
 	const Pixel pos     = range.isValid() ? math::map(std::max(tracker, range.getA()), range.getA(), range.getB(), 0, w()) : 0;
@@ -63,5 +64,6 @@ void geChannelProgress::draw()
 		drawRectf(bounds.withW(pos), G_COLOR_GREY_4);
 		drawRect(bounds, G_COLOR_GREY_4);
 	}
+#endif
 }
 } // namespace giada::v

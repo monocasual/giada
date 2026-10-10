@@ -38,8 +38,8 @@
 
 namespace giada::c::channel
 {
-struct Track_DEPR_;
-}
+struct Track;
+} // namespace giada::c::channel
 
 namespace giada::v
 {
@@ -74,7 +74,7 @@ public:
 	/* rebuild
 	Rebuilds this widget from scratch. Used when the model has changed. */
 
-	void rebuild();
+	void rebuild(const std::vector<c::channel::Track>&);
 
 	/* refresh
 	Refreshes each track's channel, called on each GUI cycle. */
@@ -167,7 +167,7 @@ private:
 	Adds new track at the end of the stack. Pass Track::id != 0 when loading
 	tracks from model. */
 
-	geTrack& addTrack(const c::channel::Track_DEPR_&);
+	geTrack& addTrack(const c::channel::Track&);
 
 	ChannelDragger        m_channelDragger;
 	std::vector<geTrack*> m_tracks;

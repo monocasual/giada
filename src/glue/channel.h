@@ -63,10 +63,10 @@ class Dispatcher;
 
 namespace giada::c::channel
 {
-struct SampleData
+struct SampleChannel
 {
-	SampleData() = delete;
-	SampleData(const m::Channel&, Scene);
+	SampleChannel() = delete;
+	SampleChannel(const m::model::Channel&, Scene);
 
 	Frame getTracker() const;
 
@@ -79,53 +79,16 @@ struct SampleData
 	bool             overdubProtection;
 
 private:
-	WeakAtomic<Frame>* m_tracker;
+	// const WeakAtomic<Frame>& m_tracker;
 };
 
-struct MidiData
+struct MidiChannel
 {
-	MidiData() = delete;
-	MidiData(const m::Channel&);
+	MidiChannel() = delete;
+	MidiChannel(const m::model::Channel&);
 
 	bool isOutputEnabled;
 	int  filter;
-};
-
-struct Data_DEPR_
-{
-	Data_DEPR_(const m::Channel&, Scene, std::size_t trackIndex, std::size_t channelIndex);
-
-	ChannelStatus getPlayStatus() const;
-	ChannelStatus getRecStatus() const;
-	bool          getReadActions() const;
-	bool          isRecordingInput() const;
-	bool          isRecordingActions() const;
-	bool          isMuted() const;
-	bool          isSoloed() const;
-	bool          isArmed() const;
-	bool          isActive() const;
-
-	ID                      id;
-	std::size_t             trackIndex;
-	std::size_t             channelIndex;
-	std::vector<m::Plugin*> plugins;
-	ChannelType             type;
-	int                     height;
-	std::string             name;
-	float                   volume;
-	float                   pan;
-	int                     key;
-	bool                    hasActions;
-	bool                    sendToMaster;
-	std::size_t             extraOutputsCount;
-
-	std::optional<SampleData> sample;
-	std::optional<MidiData>   midi;
-
-private:
-	WeakAtomic<ChannelStatus>* m_playStatus;
-	WeakAtomic<ChannelStatus>* m_recStatus;
-	WeakAtomic<bool>*          m_readActions;
 };
 
 struct Channel
@@ -154,22 +117,14 @@ struct Channel
 	bool                    sendToMaster;
 	std::size_t             extraOutputsCount;
 
-	// TODO - std::optional<SampleData> sample;
+	std::optional<SampleChannel> sampleChannel;
 	// TODO - std::optional<MidiData>   midi;
 
 private:
-	const m::model::Channel& m_channel;
 	// TODO
 	// WeakAtomic<ChannelStatus>* m_playStatus;
 	// WeakAtomic<ChannelStatus>* m_recStatus;
 	// WeakAtomic<bool>*          m_readActions;
-};
-
-struct Track_DEPR_
-{
-	std::size_t             index;
-	int                     width;
-	std::vector<Data_DEPR_> channels;
 };
 
 struct Track
@@ -194,15 +149,13 @@ struct RoutingData
 /* getChannels
 Returns a single viewModel object filled with data from a channel. */
 
-Data_DEPR_ getData_DEPR_(ID channelId);
-Channel    getChannel(ID, const m::model::Document&, const m::model::Parameters&);
+Channel getChannel(ID, const m::model::Document&, const m::model::Parameters&);
 
 /* getTracks
 Returns a vector of Track's filled with Data objects, which reflects the layout
 described by m::model::Tracks. */
 
-std::vector<Track_DEPR_> getTracks_DEPR_();
-std::vector<Track>       getTracks(const m::model::Document&, const m::model::Parameters&);
+std::vector<Track> getTracks(const m::model::Document&, const m::model::Parameters&);
 
 /* getRoutingData
 Returns a single viewModel object for the 'Routing' window. */

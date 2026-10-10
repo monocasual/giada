@@ -34,9 +34,9 @@
 
 namespace giada::v
 {
-geChannelButton::geChannelButton(const c::channel::Data_DEPR_& d)
+geChannelButton::geChannelButton(const c::channel::Channel& c)
 : gePlayButton()
-, m_channel(d)
+, m_channel(c)
 , m_imgExtraOuputs(std::make_unique<Fl_SVG_Image>(nullptr, graphics::extraOutputs))
 {
 }
@@ -45,6 +45,7 @@ geChannelButton::geChannelButton(const c::channel::Data_DEPR_& d)
 
 void geChannelButton::refresh()
 {
+#if 0
 	switch (m_channel.getPlayStatus())
 	{
 	case ChannelStatus::OFF:
@@ -68,6 +69,7 @@ void geChannelButton::refresh()
 	default:
 		break;
 	}
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
