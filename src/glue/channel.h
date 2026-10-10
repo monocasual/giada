@@ -27,6 +27,7 @@
 #ifndef G_GLUE_CHANNEL_H
 #define G_GLUE_CHANNEL_H
 
+#include "src/core/model/channel.h"
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
 #include "src/deps/geompp/src/line.hpp"
@@ -51,9 +52,9 @@ class MidiEvent;
 
 namespace giada::m::model
 {
-class Channel;
 struct Document;
 struct Parameters;
+struct Assets;
 } // namespace giada::m::model
 
 namespace giada::v
@@ -66,7 +67,10 @@ namespace giada::c::channel
 struct SampleChannel
 {
 	SampleChannel() = delete;
-	SampleChannel(const m::model::Channel&, Scene);
+	SampleChannel(
+	    const m::model::Channel&,
+	    std::shared_ptr<const m::model::Channel::Parameters>,
+	    Scene);
 
 	Frame getTracker() const;
 
@@ -79,7 +83,7 @@ struct SampleChannel
 	bool             overdubProtection;
 
 private:
-	// const WeakAtomic<Frame>& m_tracker;
+	std::shared_ptr<const m::model::Channel::Parameters> m_params;
 };
 
 struct MidiChannel
@@ -93,11 +97,16 @@ struct MidiChannel
 
 struct Channel
 {
-	Channel(const m::model::Channel&, Scene, std::size_t trackIndex, std::size_t channelIndex);
+	Channel(
+	    const m::model::Channel&,
+	    std::shared_ptr<const m::model::Channel::Parameters>,
+	    Scene,
+	    std::size_t trackIndex,
+	    std::size_t channelIndex);
 
-	// ChannelStatus getPlayStatus() const;
-	// ChannelStatus getRecStatus() const;
-	// bool          getReadActions() const;
+	ChannelStatus getPlayStatus() const;
+	ChannelStatus getRecStatus() const;
+	bool          getReadActions() const;
 
 	ID                      id;
 	std::size_t             trackIndex;
@@ -118,13 +127,10 @@ struct Channel
 	std::size_t             extraOutputsCount;
 
 	std::optional<SampleChannel> sampleChannel;
-	// TODO - std::optional<MidiData>   midi;
+	std::optional<MidiChannel>   midiChannel;
 
 private:
-	// TODO
-	// WeakAtomic<ChannelStatus>* m_playStatus;
-	// WeakAtomic<ChannelStatus>* m_recStatus;
-	// WeakAtomic<bool>*          m_readActions;
+	std::shared_ptr<const m::model::Channel::Parameters> m_params;
 };
 
 struct Track
@@ -146,16 +152,14 @@ struct RoutingData
 	std::string      outputDeviceName;
 };
 
-/* getChannels
-Returns a single viewModel object filled with data from a channel. */
-
-Channel getChannel(ID, const m::model::Document&, const m::model::Parameters&);
-
 /* getTracks
 Returns a vector of Track's filled with Data objects, which reflects the layout
 described by m::model::Tracks. */
 
-std::vector<Track> getTracks(const m::model::Document&, const m::model::Parameters&);
+std::vector<Track> getTracks(
+    const m::model::Document&,
+    const m::model::Parameters&,
+    const m::model::Assets&);
 
 /* getRoutingData
 Returns a single viewModel object for the 'Routing' window. */
