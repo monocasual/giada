@@ -175,12 +175,10 @@ void geSampleChannel::openMenu()
 
 	geMenu menu;
 
-#if 0
 	menu.addItem(ID{Menu::INPUT_MONITOR}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR),
-	    FL_MENU_TOGGLE | (m_channel_DEPR_.sample->inputMonitor ? FL_MENU_VALUE : 0));
+	    FL_MENU_TOGGLE | (m_channel.sampleChannel->inputMonitor ? FL_MENU_VALUE : 0));
 	menu.addItem(ID{Menu::OVERDUB_PROTECTION}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION),
-	    FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel_DEPR_.sample->overdubProtection ? FL_MENU_VALUE : 0));
-#endif
+	    FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sampleChannel->overdubProtection ? FL_MENU_VALUE : 0));
 	menu.addItem(ID{Menu::LOAD_SAMPLE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE));
 	menu.addItem(ID{Menu::SETUP_KEYBOARD_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
 	menu.addItem(ID{Menu::SETUP_MIDI_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));

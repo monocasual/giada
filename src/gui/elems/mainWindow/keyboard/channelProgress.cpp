@@ -45,16 +45,15 @@ void geChannelProgress::draw()
 {
 	namespace math = mcl::utils::math;
 
-#if 0
-	const Frame tracker = m_channel.sample->getTracker();
-	const auto  range   = m_channel.sample->range;
+	const Frame tracker = m_channel.sampleChannel->getTracker();
+	const auto  range   = m_channel.sampleChannel->range;
 	const Pixel pos     = range.isValid() ? math::map(std::max(tracker, range.getA()), range.getA(), range.getB(), 0, w()) : 0;
 
 	const geompp::Rect<int> bounds(x(), y(), w(), h());
 
 	drawRectf(bounds, G_COLOR_GREY_2); // reset background
 
-	if (m_channel.isActive())
+	if (m_channel.active)
 	{
 		drawRectf(bounds.withW(pos), G_COLOR_LIGHT_1);
 		drawRect(bounds, G_COLOR_LIGHT_1);
@@ -64,6 +63,5 @@ void geChannelProgress::draw()
 		drawRectf(bounds.withW(pos), G_COLOR_GREY_4);
 		drawRect(bounds, G_COLOR_GREY_4);
 	}
-#endif
 }
 } // namespace giada::v
