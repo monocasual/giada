@@ -43,7 +43,7 @@ class gdWindow;
 
 namespace giada::c::channel
 {
-struct Data;
+struct Data_DEPR_;
 }
 
 namespace giada::c::layout
@@ -64,7 +64,7 @@ void openMidiChannelMidiOutputWindow(ID channelId);
 void openSampleActionEditor(ID channelId);
 void openMidiActionEditor(ID channelId);
 void openSampleEditor(ID channelId);
-void openRenameChannelWindow(const c::channel::Data&, bool allScenes);
+void openRenameChannelWindow(const c::channel::Data_DEPR_&, bool allScenes);
 void openMissingAssetsWindow(const m::model_DEPR_::LoadState&);
 void openBrowserForPlugins(v::gdWindow& parent);
 void openChannelPluginListWindow(ID channelId);

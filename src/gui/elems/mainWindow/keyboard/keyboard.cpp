@@ -224,7 +224,7 @@ void geKeyboard::init()
 void geKeyboard::rebuild()
 {
 	deleteAllTracks();
-	for (const c::channel::Track& c : c::channel::getTracks())
+	for (const c::channel::Track_DEPR_& c : c::channel::getTracks_DEPR_())
 		addTrack(c);
 	redraw();
 }
@@ -389,7 +389,7 @@ void geKeyboard::addTrack() const
 
 /* -------------------------------------------------------------------------- */
 
-geTrack& geKeyboard::addTrack(const c::channel::Track& trackModel)
+geTrack& geKeyboard::addTrack(const c::channel::Track_DEPR_& trackModel)
 {
 	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()
 
@@ -419,7 +419,7 @@ geTrack& geKeyboard::addTrack(const c::channel::Track& trackModel)
 
 	/* Fill track with channels. */
 
-	for (const c::channel::Data& ch : trackModel.channels)
+	for (const c::channel::Data_DEPR_& ch : trackModel.channels)
 		track->addChannel(ch);
 
 	redraw();

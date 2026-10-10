@@ -30,7 +30,7 @@
 
 namespace giada::v
 {
-geMidiChannelButton::geMidiChannelButton(const c::channel::Data& d)
+geMidiChannelButton::geMidiChannelButton(const c::channel::Data_DEPR_& d)
 : geChannelButton(d)
 {
 }

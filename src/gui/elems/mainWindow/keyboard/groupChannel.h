@@ -35,7 +35,7 @@ namespace giada::v
 class geGroupChannel : public geChannel
 {
 public:
-	geGroupChannel(c::channel::Data d);
+	geGroupChannel(c::channel::Data_DEPR_ d);
 
 	void resize(int x, int y, int w, int h) override;
 

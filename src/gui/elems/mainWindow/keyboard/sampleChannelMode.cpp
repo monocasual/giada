@@ -37,7 +37,7 @@
 
 namespace giada::v
 {
-geSampleChannelMode::geSampleChannelMode(int x, int y, int w, int h, c::channel::Data& d)
+geSampleChannelMode::geSampleChannelMode(int x, int y, int w, int h, c::channel::Data_DEPR_& d)
 : geImageButton(x, y, w, h, nullptr, nullptr)
 , m_channel(d)
 {
