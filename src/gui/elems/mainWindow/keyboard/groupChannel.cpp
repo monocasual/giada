@@ -62,7 +62,7 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geGroupChannel::geGroupChannel(c::channel::Data d)
+geGroupChannel::geGroupChannel(c::channel::Data_DEPR_ d)
 : geChannel(0, 0, 0, 0, d)
 {
 	playButton   = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);

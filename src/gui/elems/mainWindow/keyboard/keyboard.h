@@ -38,7 +38,7 @@
 
 namespace giada::c::channel
 {
-struct Track;
+struct Track_DEPR_;
 }
 
 namespace giada::v
@@ -167,7 +167,7 @@ private:
 	Adds new track at the end of the stack. Pass Track::id != 0 when loading
 	tracks from model. */
 
-	geTrack& addTrack(const c::channel::Track&);
+	geTrack& addTrack(const c::channel::Track_DEPR_&);
 
 	ChannelDragger        m_channelDragger;
 	std::vector<geTrack*> m_tracks;

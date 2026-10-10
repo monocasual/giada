@@ -40,7 +40,7 @@ namespace utils = mcl::utils;
 
 namespace giada::v
 {
-geSampleChannelButton::geSampleChannelButton(const c::channel::Data& d)
+geSampleChannelButton::geSampleChannelButton(const c::channel::Data_DEPR_& d)
 : geChannelButton(d)
 {
 	switch (m_channel.getPlayStatus())
