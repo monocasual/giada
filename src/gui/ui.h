@@ -89,6 +89,12 @@ public:
 
 	void rebuild();
 
+	/* update
+	Updates part of the UI. Used when a model property has been modified, e.g.
+	a channel volume knob. */
+
+	void update();
+
 	/* [rebuild|refresh]SubWindow
 	Rebuilds or refreshes subwindow with ID 'wid' if it exists, i.e. if it's open. */
 
