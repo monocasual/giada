@@ -125,7 +125,7 @@ void startup()
 			const model::Parameters& params = g_engine->getParameters();
 
 			g_ui->rebuild();
-			g_ui->rebuildMainWindow(c::main::getMain(doc, params));
+			g_ui->rebuildMainWindow(c::main::getMain(doc, params, assets));
 		}
 		else if (documentSwapType == model::SwapType::SOFT || assetsSwapType == model::SwapType::SOFT)
 			g_ui->update();
