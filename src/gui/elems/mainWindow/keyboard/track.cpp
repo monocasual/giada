@@ -54,7 +54,7 @@ enum class Menu
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* makeChannel_(const c::channel::Data& data)
+geChannel* makeChannel_(const c::channel::Data_DEPR_& data)
 {
 	switch (data.type)
 	{
@@ -104,7 +104,7 @@ void geTrack::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geTrack::addChannel(const c::channel::Data& d)
+geChannel* geTrack::addChannel(const c::channel::Data_DEPR_& d)
 {
 	geChannel* gch = makeChannel_(d);
 	addWidget(gch, d.height);

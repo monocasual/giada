@@ -68,7 +68,7 @@ public:
 	/* addChannel
 	Adds a new channel in this track. */
 
-	geChannel* addChannel(const c::channel::Data&);
+	geChannel* addChannel(const c::channel::Data_DEPR_&);
 
 	/* refreshChannels
 	Updates channels' graphical statues. Called on each GUI cycle. */

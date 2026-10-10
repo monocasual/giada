@@ -34,7 +34,7 @@
 
 namespace giada::v
 {
-geChannelButton::geChannelButton(const c::channel::Data& d)
+geChannelButton::geChannelButton(const c::channel::Data_DEPR_& d)
 : gePlayButton()
 , m_channel(d)
 , m_imgExtraOuputs(std::make_unique<Fl_SVG_Image>(nullptr, graphics::extraOutputs))

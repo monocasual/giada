@@ -39,7 +39,7 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-geChannel::geChannel(int x, int y, int w, int h, c::channel::Data d)
+geChannel::geChannel(int x, int y, int w, int h, c::channel::Data_DEPR_ d)
 : geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_channel(d)
 {
@@ -129,7 +129,7 @@ bool geChannel::handleKey(int e)
 
 /* -------------------------------------------------------------------------- */
 
-const c::channel::Data& geChannel::getData() const
+const c::channel::Data_DEPR_& geChannel::getData() const
 {
 	return m_channel;
 }

@@ -40,7 +40,7 @@ class geMidiActivity;
 class geChannel : public geFlex
 {
 public:
-	geChannel(int x, int y, int w, int h, c::channel::Data d);
+	geChannel(int x, int y, int w, int h, c::channel::Data_DEPR_ d);
 
 	void draw() override;
 
@@ -68,7 +68,7 @@ public:
 	/* getData
 	Returns a reference to the internal data. Read-only. */
 
-	const c::channel::Data& getData() const;
+	const c::channel::Data_DEPR_& getData() const;
 
 	geImageButton*     playButton;
 	geImageButton*     arm;
@@ -95,7 +95,7 @@ protected:
 	/* m_channel
 	Channel's data. */
 
-	c::channel::Data m_channel;
+	c::channel::Data_DEPR_ m_channel;
 };
 } // namespace giada::v
 
