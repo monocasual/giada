@@ -33,7 +33,7 @@
 
 namespace giada::c::channel
 {
-struct Data_DEPR_;
+struct Channel;
 }
 
 namespace giada::v
@@ -41,7 +41,7 @@ namespace giada::v
 class geChannelButton : public gePlayButton
 {
 public:
-	geChannelButton(const c::channel::Data_DEPR_& d);
+	geChannelButton(const c::channel::Channel&);
 
 	virtual void refresh();
 
@@ -51,7 +51,7 @@ public:
 	void setActionRecordState();
 
 protected:
-	const c::channel::Data_DEPR_& m_channel;
+	const c::channel::Channel& m_channel;
 
 private:
 	std::unique_ptr<Fl_SVG_Image> m_imgExtraOuputs;

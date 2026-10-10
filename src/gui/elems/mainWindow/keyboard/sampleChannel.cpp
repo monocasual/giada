@@ -79,8 +79,8 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data_DEPR_ d)
-: geChannel(X, Y, W, H, d)
+geSampleChannel::geSampleChannel(int X, int Y, int W, int H, const c::channel::Channel& c)
+: geChannel(X, Y, W, H, c)
 {
 	playButton     = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm            = new geImageButton(graphics::armOff, graphics::armOn, graphics::armDisabled);
@@ -118,11 +118,13 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data_DE
 	fx->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
-	fx->forceValue(m_channel.plugins.size() > 0);
+	/*
+	fx->forceValue(m_channel_DEPR_.plugins.size() > 0);
 	fx->onClick = [this]()
 	{
-		c::layout::openChannelPluginListWindow(m_channel.id);
+	    c::layout::openChannelPluginListWindow(m_channel_DEPR_.id);
 	};
+	*/
 
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
 	playButton->onClick = [this]()
@@ -168,15 +170,17 @@ void geSampleChannel::openMenu()
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel. */
 
-	if (m_channel.isRecordingActions() || m_channel.isRecordingInput())
-		return;
+	// if (m_channel_DEPR_.isRecordingActions() || m_channel_DEPR_.isRecordingInput())
+	//	return;
 
 	geMenu menu;
 
+#if 0
 	menu.addItem(ID{Menu::INPUT_MONITOR}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR),
-	    FL_MENU_TOGGLE | (m_channel.sample->inputMonitor ? FL_MENU_VALUE : 0));
+	    FL_MENU_TOGGLE | (m_channel_DEPR_.sample->inputMonitor ? FL_MENU_VALUE : 0));
 	menu.addItem(ID{Menu::OVERDUB_PROTECTION}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION),
-	    FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->overdubProtection ? FL_MENU_VALUE : 0));
+	    FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel_DEPR_.sample->overdubProtection ? FL_MENU_VALUE : 0));
+#endif
 	menu.addItem(ID{Menu::LOAD_SAMPLE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE));
 	menu.addItem(ID{Menu::SETUP_KEYBOARD_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
 	menu.addItem(ID{Menu::SETUP_MIDI_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
@@ -214,8 +218,8 @@ void geSampleChannel::openMenu()
 	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE), freeChannelSubMenu);
 
 	menu.addItem(ID{Menu::DELETE_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
-
-	if (!m_channel.sample->waveId.isValid())
+#if 0
+	if (!m_channel_DEPR_.sample->waveId.isValid())
 	{
 		menu.setEnabled(ID{Menu::EDIT_SAMPLE}, false);
 		menu.setEnabled(ID{Menu::RENAME_CHANNEL_THIS_SCENE}, false);
@@ -224,18 +228,18 @@ void geSampleChannel::openMenu()
 		menu.setEnabled(ID{Menu::FREE_CHANNEL_ALL_SCENES}, false);
 	}
 
-	if (!m_channel.hasActions)
+	if (!m_channel_DEPR_.hasActions)
 	{
 		menu.setEnabled(ID{Menu::CLEAR_ACTIONS_ALL_SCENES}, false);
 		menu.setEnabled(ID{Menu::CLEAR_ACTIONS_THIS_SCENE}, false);
 	}
-
+#endif
 	menu.onSelect = [&channel = m_channel](ID id)
 	{
 		if (id == Menu::INPUT_MONITOR)
-			c::channel::setInputMonitor(channel.id, !channel.sample->inputMonitor);
+			c::channel::setInputMonitor(channel.id, !channel.sampleChannel->inputMonitor);
 		else if (id == Menu::OVERDUB_PROTECTION)
-			c::channel::setOverdubProtection(channel.id, !channel.sample->overdubProtection);
+			c::channel::setOverdubProtection(channel.id, !channel.sampleChannel->overdubProtection);
 		else if (id == Menu::LOAD_SAMPLE)
 			c::layout::openBrowserForSampleLoad(channel.id);
 		else if (id == Menu::SETUP_KEYBOARD_INPUT)
@@ -307,19 +311,19 @@ void geSampleChannel::refresh()
 	geChannel::refresh();
 
 	progress->redraw();
-
-	if (!m_channel.sample->waveId.isValid())
+#if 0
+	if (!m_channel_DEPR_.sample->waveId.isValid())
 	{
-		if (m_channel.sample->overdubProtection)
+		if (m_channel_DEPR_.sample->overdubProtection)
 			arm->deactivate();
 		else
 			arm->activate();
 	}
-
+#endif
 	if (m_channel.hasActions)
 	{
 		readActionsBtn->activate();
-		readActionsBtn->setValue(m_channel.getReadActions());
+		// readActionsBtn->setValue(m_channel_DEPR_.getReadActions());
 	}
 	else
 		readActionsBtn->deactivate();

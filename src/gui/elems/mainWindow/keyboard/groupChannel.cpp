@@ -62,8 +62,8 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geGroupChannel::geGroupChannel(c::channel::Data_DEPR_ d)
-: geChannel(0, 0, 0, 0, d)
+geGroupChannel::geGroupChannel(const c::channel::Channel& c)
+: geChannel(0, 0, 0, 0, c)
 {
 	playButton   = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm          = new geImageButton(graphics::armOff, graphics::armOn);
@@ -90,12 +90,13 @@ geGroupChannel::geGroupChannel(c::channel::Data_DEPR_ d)
 	fx->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
-	fx->forceValue(m_channel.plugins.size() > 0);
+	/*
+	fx->forceValue(m_channel_DEPR_.plugins.size() > 0);
 	fx->onClick = [this]()
 	{
-		c::layout::openChannelPluginListWindow(m_channel.id);
+	    c::layout::openChannelPluginListWindow(m_channel_DEPR_.id);
 	};
-
+*/
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
 	playButton->onClick = [this]()
 	{
@@ -143,30 +144,30 @@ void geGroupChannel::openMenu()
 	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_7}, fmt::format("{} 8", g_ui->getI18Text(LangMap::COMMON_SCENE)));
 	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE), sceneSubMenu);
 
-	menu.onSelect = [&data = m_channel](ID id)
+	menu.onSelect = [&channel = m_channel](ID id)
 	{
 		if (id == Menu::SETUP_MIDI_INPUT)
-			c::layout::openChannelMidiInputWindow(data.id);
+			c::layout::openChannelMidiInputWindow(channel.id);
 		else if (id == Menu::EDIT_ROUTING)
-			c::layout::openChannelRoutingWindow(data.id);
+			c::layout::openChannelRoutingWindow(channel.id);
 		else if (id == Menu::RENAME_CHANNEL)
-			c::layout::openRenameChannelWindow(data, /*allScenes=*/true);
+			c::layout::openRenameChannelWindow(channel, /*allScenes=*/true);
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_0)
-			c::channel::copyChannelToScene(data.id, Scene{0});
+			c::channel::copyChannelToScene(channel.id, Scene{0});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_1)
-			c::channel::copyChannelToScene(data.id, Scene{1});
+			c::channel::copyChannelToScene(channel.id, Scene{1});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_2)
-			c::channel::copyChannelToScene(data.id, Scene{2});
+			c::channel::copyChannelToScene(channel.id, Scene{2});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_3)
-			c::channel::copyChannelToScene(data.id, Scene{3});
+			c::channel::copyChannelToScene(channel.id, Scene{3});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_4)
-			c::channel::copyChannelToScene(data.id, Scene{4});
+			c::channel::copyChannelToScene(channel.id, Scene{4});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_5)
-			c::channel::copyChannelToScene(data.id, Scene{5});
+			c::channel::copyChannelToScene(channel.id, Scene{5});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_6)
-			c::channel::copyChannelToScene(data.id, Scene{6});
+			c::channel::copyChannelToScene(channel.id, Scene{6});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
-			c::channel::copyChannelToScene(data.id, Scene{7});
+			c::channel::copyChannelToScene(channel.id, Scene{7});
 	};
 
 	menu.popup();

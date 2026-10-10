@@ -211,11 +211,18 @@ void gdMainWindow::refresh()
 
 void gdMainWindow::rebuild()
 {
-	keyboard->rebuild();
 	mainTimer->rebuild();
 	mainInput->rebuild();
 	mainOutput->rebuild();
 	scenes->rebuild();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdMainWindow::rebuild(const c::main::Main& main)
+{
+	m_main = main;
+	keyboard->rebuild(m_main.tracks);
 }
 
 /* -------------------------------------------------------------------------- */

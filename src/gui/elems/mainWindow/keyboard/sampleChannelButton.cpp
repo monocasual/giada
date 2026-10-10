@@ -40,9 +40,10 @@ namespace utils = mcl::utils;
 
 namespace giada::v
 {
-geSampleChannelButton::geSampleChannelButton(const c::channel::Data_DEPR_& d)
-: geChannelButton(d)
+geSampleChannelButton::geSampleChannelButton(const c::channel::Channel& c)
+: geChannelButton(c)
 {
+#if 0
 	switch (m_channel.getPlayStatus())
 	{
 	case ChannelStatus::MISSING:
@@ -53,19 +54,21 @@ geSampleChannelButton::geSampleChannelButton(const c::channel::Data_DEPR_& d)
 		label(!m_channel.sample->waveId.isValid() ? g_ui->getI18Text(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
 		break;
 	}
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geSampleChannelButton::refresh()
 {
+#if 0
 	geChannelButton::refresh();
 
 	if (m_channel.isRecordingInput() && m_channel.isArmed())
 		setInputRecordState();
 	else if (m_channel.isRecordingActions() && m_channel.sample->waveId.isValid() && !m_channel.sample->isLoop)
 		setActionRecordState();
-
+#endif
 	redraw();
 }
 

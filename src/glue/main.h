@@ -112,6 +112,7 @@ struct Scenes
 
 struct Main
 {
+	Main() = default;
 	Main(const m::model::Document&, const m::model::Parameters&);
 
 	std::vector<channel::Track> tracks;
@@ -120,6 +121,7 @@ struct Main
 /* get*
 Returns viewModel objects filled with data. */
 
+Main      getMain(const m::model::Document&, const m::model::Parameters&);
 Timer     getTimer();
 IO        getIO();
 Sequencer getSequencer();

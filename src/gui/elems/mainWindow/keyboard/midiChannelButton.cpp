@@ -30,8 +30,8 @@
 
 namespace giada::v
 {
-geMidiChannelButton::geMidiChannelButton(const c::channel::Data_DEPR_& d)
-: geChannelButton(d)
+geMidiChannelButton::geMidiChannelButton(const c::channel::Channel& c)
+: geChannelButton(c)
 {
 }
 
@@ -43,8 +43,8 @@ void geMidiChannelButton::refresh()
 
 	refreshLabel();
 
-	if (m_channel.isRecordingActions() && m_channel.isArmed())
-		setActionRecordState();
+	// if (m_channel.isRecordingActions() && m_channel.isArmed())
+	//	setActionRecordState();
 
 	redraw();
 }
@@ -55,8 +55,8 @@ void geMidiChannelButton::refreshLabel()
 {
 	std::string l = m_channel.name.empty() ? "-- MIDI --" : m_channel.name;
 
-	if (m_channel.midi->isOutputEnabled)
-		l += fmt::format(" (ch {} out)", m_channel.midi->filter + 1);
+	// if (m_channel.midi->isOutputEnabled)
+	//	l += fmt::format(" (ch {} out)", m_channel.midi->filter + 1);
 
 	copy_label(l.c_str());
 }
