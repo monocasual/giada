@@ -69,8 +69,8 @@ enum class Menu
 
 /* -------------------------------------------------------------------------- */
 
-geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data_DEPR_ d)
-: geChannel(X, Y, W, H, d)
+geMidiChannel::geMidiChannel(int X, int Y, int W, int H, const c::channel::Channel& c)
+: geChannel(X, Y, W, H, c)
 {
 	playButton   = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm          = new geImageButton(graphics::armOff, graphics::armOn);
@@ -99,11 +99,13 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data_DEPR_ 
 	fx->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
-	fx->forceValue(m_channel.plugins.size() > 0);
+	/*
+	fx->forceValue(m_channel_DEPR_.plugins.size() > 0);
 	fx->onClick = [this]()
 	{
-		c::layout::openChannelPluginListWindow(m_channel.id);
+	    c::layout::openChannelPluginListWindow(m_channel_DEPR_.id);
 	};
+	*/
 
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
 	playButton->onClick = [this]()
@@ -182,49 +184,49 @@ void geMidiChannel::openMenu()
 		menu.setEnabled(ID{Menu::CLEAR_ACTIONS_ALL_SCENES}, false);
 	}
 
-	menu.onSelect = [&data = m_channel](ID id)
+	menu.onSelect = [&channel = m_channel](ID id)
 	{
 		if (id == Menu::EDIT_ACTIONS)
-			c::layout::openMidiActionEditor(data.id);
+			c::layout::openMidiActionEditor(channel.id);
 		else if (id == Menu::CLEAR_ACTIONS_THIS_SCENE)
-			c::channel::clearAllActions(data.id, /*allScenes=*/false);
+			c::channel::clearAllActions(channel.id, /*allScenes=*/false);
 		else if (id == Menu::CLEAR_ACTIONS_ALL_SCENES)
-			c::channel::clearAllActions(data.id, /*allScenes=*/true);
+			c::channel::clearAllActions(channel.id, /*allScenes=*/true);
 		else if (id == Menu::SETUP_KEYBOARD_INPUT)
-			c::layout::openKeyGrabberWindow(data.key, [channelId = data.id](int key)
+			c::layout::openKeyGrabberWindow(channel.key, [channelId = channel.id](int key)
 			{
 				return c::io::channel_setKey(channelId, key);
 			});
 		else if (id == Menu::SETUP_MIDI_INPUT)
-			c::layout::openChannelMidiInputWindow(data.id);
+			c::layout::openChannelMidiInputWindow(channel.id);
 		else if (id == Menu::SETUP_MIDI_OUTPUT)
-			c::layout::openMidiChannelMidiOutputWindow(data.id);
+			c::layout::openMidiChannelMidiOutputWindow(channel.id);
 		else if (id == Menu::EDIT_ROUTING)
-			c::layout::openChannelRoutingWindow(data.id);
+			c::layout::openChannelRoutingWindow(channel.id);
 		else if (id == Menu::CLONE_CHANNEL)
-			c::channel::cloneChannel(data.id);
+			c::channel::cloneChannel(channel.id);
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_0)
-			c::channel::copyChannelToScene(data.id, Scene{0});
+			c::channel::copyChannelToScene(channel.id, Scene{0});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_1)
-			c::channel::copyChannelToScene(data.id, Scene{1});
+			c::channel::copyChannelToScene(channel.id, Scene{1});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_2)
-			c::channel::copyChannelToScene(data.id, Scene{2});
+			c::channel::copyChannelToScene(channel.id, Scene{2});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_3)
-			c::channel::copyChannelToScene(data.id, Scene{3});
+			c::channel::copyChannelToScene(channel.id, Scene{3});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_4)
-			c::channel::copyChannelToScene(data.id, Scene{4});
+			c::channel::copyChannelToScene(channel.id, Scene{4});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_5)
-			c::channel::copyChannelToScene(data.id, Scene{5});
+			c::channel::copyChannelToScene(channel.id, Scene{5});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_6)
-			c::channel::copyChannelToScene(data.id, Scene{6});
+			c::channel::copyChannelToScene(channel.id, Scene{6});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
-			c::channel::copyChannelToScene(data.id, Scene{7});
+			c::channel::copyChannelToScene(channel.id, Scene{7});
 		else if (id == Menu::RENAME_CHANNEL_THIS_SCENE)
-			c::layout::openRenameChannelWindow(data, /*allScenes=*/false);
+			c::layout::openRenameChannelWindow(channel, /*allScenes=*/false);
 		else if (id == Menu::RENAME_CHANNEL_ALL_SCENES)
-			c::layout::openRenameChannelWindow(data, /*allScenes=*/true);
+			c::layout::openRenameChannelWindow(channel, /*allScenes=*/true);
 		else if (id == Menu::DELETE_CHANNEL)
-			c::channel::deleteChannel(data.id);
+			c::channel::deleteChannel(channel.id);
 	};
 
 	menu.popup();
