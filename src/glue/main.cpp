@@ -118,8 +118,8 @@ SceneStatus Scenes::getStatus() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Main::Main(const m::model::Document& doc, const m::model::Parameters& params)
-: tracks(channel::getTracks(doc, params))
+Main::Main(const m::model::Document& doc, const m::model::Parameters& params, const m::model::Assets& assets)
+: tracks(channel::getTracks(doc, params, assets))
 {
 }
 
@@ -150,9 +150,12 @@ bool Transport::canEnableRecOnSignal() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Main getMain(const m::model::Document& doc, const m::model::Parameters& params)
+Main getMain(
+    const m::model::Document&   doc,
+    const m::model::Parameters& params,
+    const m::model::Assets&     assets)
 {
-	return Main(doc, params);
+	return Main(doc, params, assets);
 }
 
 /* -------------------------------------------------------------------------- */
