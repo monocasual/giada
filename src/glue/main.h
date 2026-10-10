@@ -40,6 +40,11 @@ namespace giada::m
 class Channel;
 }
 
+namespace giada::m::model
+{
+struct Assets;
+}
+
 namespace giada::m::model_DEPR_
 {
 class Sequencer;
@@ -113,7 +118,7 @@ struct Scenes
 struct Main
 {
 	Main() = default;
-	Main(const m::model::Document&, const m::model::Parameters&);
+	Main(const m::model::Document&, const m::model::Parameters&, const m::model::Assets&);
 
 	std::vector<channel::Track> tracks;
 };
@@ -121,7 +126,7 @@ struct Main
 /* get*
 Returns viewModel objects filled with data. */
 
-Main      getMain(const m::model::Document&, const m::model::Parameters&);
+Main      getMain(const m::model::Document&, const m::model::Parameters&, const m::model::Assets&);
 Timer     getTimer();
 IO        getIO();
 Sequencer getSequencer();

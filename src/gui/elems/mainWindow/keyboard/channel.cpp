@@ -71,10 +71,8 @@ void geChannel::cb_changeVol(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_ch
 
 void geChannel::refresh()
 {
-// TODO
-#if 0
-	ChannelStatus playStatus = m_channel_DEPR_.getPlayStatus();
-	ChannelStatus recStatus  = m_channel_DEPR_.getRecStatus();
+	ChannelStatus playStatus = m_channel.getPlayStatus();
+	ChannelStatus recStatus  = m_channel.getRecStatus();
 
 	if (mainButton->visible())
 		mainButton->refresh();
@@ -84,10 +82,6 @@ void geChannel::refresh()
 
 	playButton->setValue(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
 	midiActivity->redraw();
-	arm->setValue(m_channel_DEPR_.isArmed());
-	mute->setValue(m_channel_DEPR_.isMuted());
-	solo->setValue(m_channel_DEPR_.isSoloed());
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
