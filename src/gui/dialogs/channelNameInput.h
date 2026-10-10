@@ -31,7 +31,7 @@
 
 namespace giada::c::channel
 {
-struct Data_DEPR_;
+struct Channel;
 }
 
 namespace giada::v
@@ -41,10 +41,10 @@ class geInput;
 class gdChannelNameInput : public gdWindow
 {
 public:
-	gdChannelNameInput(const c::channel::Data_DEPR_& d, bool allScenes);
+	gdChannelNameInput(const c::channel::Channel&, bool allScenes);
 
 private:
-	const c::channel::Data_DEPR_& m_data;
+	const c::channel::Channel& m_channel;
 
 	geInput*      m_name;
 	geTextButton* m_ok;

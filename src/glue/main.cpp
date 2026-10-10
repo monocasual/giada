@@ -150,6 +150,13 @@ bool Transport::canEnableRecOnSignal() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+Main getMain(const m::model::Document& doc, const m::model::Parameters& params)
+{
+	return Main(doc, params);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Timer getTimer()
 {
 	return Timer();
