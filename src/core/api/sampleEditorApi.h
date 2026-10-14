@@ -56,20 +56,20 @@ public:
 	Frame         getPreviewTracker();
 	ChannelStatus getPreviewStatus();
 
-	void           cut(ID channelId, Frame a, Frame b);
-	void           copy(ID channelId, Frame a, Frame b);
-	void           paste(ID channelId, Frame a);
-	void           silence(ID channelId, Frame a, Frame b);
-	void           fade(ID channelId, Frame a, Frame b, wfx::Fade);
-	void           smoothEdges(ID channelId, Frame a, Frame b);
-	void           reverse(ID channelId, Frame a, Frame b);
-	void           normalize(ID channelId, Frame a, Frame b);
-	void           trim(ID channelId, Frame a, Frame b);
-	void           shift(ID channelId, Frame offset);
-	const Channel& toNewChannel(ID channelId, Frame a, Frame b);
-	void           setRange(ID channelId, FrameRange);
-	void           resetRange(ID channelId);
-	void           reload(ID channelId);
+	void cut(ID channelId, Frame a, Frame b);
+	void copy(ID channelId, Frame a, Frame b);
+	void paste(ID channelId, Frame a);
+	void silence(ID channelId, Frame a, Frame b);
+	void fade(ID channelId, Frame a, Frame b, wfx::Fade);
+	void smoothEdges(ID channelId, Frame a, Frame b);
+	void reverse(ID channelId, Frame a, Frame b);
+	void normalize(ID channelId, Frame a, Frame b);
+	void trim(ID channelId, Frame a, Frame b);
+	void shift(ID channelId, Frame offset);
+	ID   toNewChannel(ID channelId, Frame a, Frame b);
+	void setRange(ID channelId, FrameRange);
+	void resetRange(ID channelId);
+	void reload(ID channelId);
 
 private:
 	Wave& getWave(ID channelId) const;
