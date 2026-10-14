@@ -119,7 +119,7 @@ struct Scenes
 struct Main
 {
 	Main() = default;
-	Main(const m::model::Document&, const m::model::Parameters&, const m::model::Assets&);
+	Main(const m::model::Document&, const m::model::Assets&, Scene);
 
 	std::vector<channel::Track> tracks;
 	Timer                       timer;
