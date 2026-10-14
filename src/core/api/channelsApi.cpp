@@ -143,11 +143,12 @@ void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
 
 void ChannelsApi::remove(ID channelId)
 {
-	const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
-	const bool                 hasSolos = m_channelManager.hasSolos();
-	std::vector<ID>            pluginIds;
-	for (const Plugin* p : plugins)
-		pluginIds.push_back(p->id);
+	// TODO - new model
+	// const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
+	const bool      hasSolos = m_channelManager.hasSolos();
+	std::vector<ID> pluginIds;
+	// for (const Plugin* p : plugins)
+	//     pluginIds.push_back(p->id);
 
 	m_actionManager.clearChannel(channelId, {});
 	m_channelManager.deleteChannel(channelId);
