@@ -47,7 +47,6 @@ public:
 	bool       hasWaves() const;
 	ID         getWaveId(Scene) const;
 	Frame      getWaveSize(Scene) const;
-	Wave*      getWave(Scene) const;
 	FrameRange getRange(Scene) const;
 	Frame      getShift(Scene) const;
 	float      getPitch(Scene) const;
@@ -62,11 +61,11 @@ public:
 	void loadSample(const Sample&, Scene);
 
 	/* setWave
-	Just sets the pointer to a Wave object. Used during de-serialization. The
-	ratio is used to adjust begin/end points in case of patch vs. conf sample
-	rate mismatch. If nullptr, set the wave to invalid. */
+	Just sets Wave ID. Used during de-serialization. The ratio is used to adjust
+	begin/end points in case of patch vs. conf sample rate mismatch. If invalid,
+	set the wave to invalid. */
 
-	void setWave(Wave* w, Scene, float samplerateRatio);
+	void setWave(ID waveId, Scene, float samplerateRatio);
 
 	void setRange(FrameRange, Scene);
 	void setSample(const Sample&, Scene, float samplerateRatio);
