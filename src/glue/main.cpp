@@ -127,8 +127,8 @@ SceneStatus Scenes::getStatus() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Main::Main(const m::model::Document& doc, const m::model::Parameters& params, const m::model::Assets& assets)
-: tracks(channel::getTracks(doc, params, assets))
+Main::Main(const m::model::Document& doc, const m::model::Assets& assets, Scene scene)
+: tracks(channel::getTracks(doc, assets, scene))
 , timer(doc)
 {
 }
@@ -165,7 +165,7 @@ Main getMain(
     const m::model::Parameters& params,
     const m::model::Assets&     assets)
 {
-	return Main(doc, params, assets);
+	return Main(doc, assets, params.sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
