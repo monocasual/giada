@@ -200,6 +200,8 @@ ID ChannelManager::addChannel(ChannelType type, std::size_t trackIndex,
 		assets.channelsRendering.set(channelId, data.rendering);
 	});
 
+	m_model.flush();
+
 	triggerOnChannelsAltered();
 
 	return channelId;
@@ -369,6 +371,8 @@ void ChannelManager::deleteChannel(ID channelId)
 
 		doc.tracks.getByChannel(channelId).removeChannel(channelId);
 	});
+
+	m_model.flush();
 
 	triggerOnChannelsAltered();
 }
