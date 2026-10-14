@@ -345,10 +345,12 @@ void ChannelManager::freeAllSampleChannels(Scene scene)
 
 void ChannelManager::moveChannel(ID channelId, std::size_t newTrackIndex, std::size_t newPosition)
 {
-	Channel ch = m_model_DEPR_.get().tracks.getChannel(channelId); // Make copy
-	m_model_DEPR_.get().tracks.removeChannel(channelId);
-	m_model_DEPR_.get().tracks.addChannel(std::move(ch), newTrackIndex, newPosition);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [channelId, newTrackIndex, newPosition](model::Document& doc)
+	{
+		model::Channel ch = doc.tracks.getChannel(channelId); // Make copy
+		doc.tracks.removeChannel(channelId);
+		doc.tracks.addChannel(std::move(ch), newTrackIndex, newPosition);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
