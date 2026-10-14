@@ -355,19 +355,18 @@ void ChannelManager::moveChannel(ID channelId, std::size_t newTrackIndex, std::s
 
 void ChannelManager::deleteChannel(ID channelId)
 {
-	const Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
-
-	if (ch.type == ChannelType::SAMPLE)
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [channelId](model::Document& doc, model::Assets& assets) mutable
 	{
-		const SceneArray<Sample>& samples = ch.sampleChannel->getSamples();
-		for (const Sample& sample : samples)
-			if (sample.wave != nullptr)
-				m_model_DEPR_.removeWave(*sample.wave);
-	}
+		const model::Channel& ch = doc.tracks.getChannel(channelId);
 
-	m_model_DEPR_.removeChannelShared(*ch.shared);
-	m_model_DEPR_.get().tracks.getByChannel(channelId).removeChannel(channelId);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+		if (ch.type == ChannelType::SAMPLE)
+			for (const Sample& sample : ch.sampleChannel->getSamples())
+				if (sample.waveId.isValid())
+					assets.waves.remove(sample.waveId);
+
+		doc.tracks.getByChannel(channelId).removeChannel(channelId);
+	});
 
 	triggerOnChannelsAltered();
 }
@@ -663,7 +662,7 @@ bool ChannelManager::hasAudioData(Scene scene) const
 
 bool ChannelManager::hasSolos() const
 {
-	return m_model_DEPR_.get().tracks.anyChannelOf([](const Channel& ch)
+	return m_model.getCurrentDocument()->tracks.anyChannelOf([](const model::Channel& ch)
 	{
 		return !ch.isInternal() && ch.isSoloed();
 	});
