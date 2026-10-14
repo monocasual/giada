@@ -45,8 +45,6 @@ Functions to interact with channels. */
 
 namespace giada::m
 {
-class Plugin;
-class Channel;
 class MidiEvent;
 } // namespace giada::m
 
@@ -57,11 +55,6 @@ struct Parameters;
 struct Assets;
 } // namespace giada::m::model
 
-namespace giada::v
-{
-class Dispatcher;
-}
-
 namespace giada::c::channel
 {
 struct SampleChannel
@@ -69,7 +62,7 @@ struct SampleChannel
 	SampleChannel() = delete;
 	SampleChannel(
 	    const m::model::Channel&,
-	    std::shared_ptr<const m::model::Channel::Parameters>,
+	    const m::model::Channel::Parameters*,
 	    Scene);
 
 	Frame getTracker() const;
@@ -83,7 +76,7 @@ struct SampleChannel
 	bool             overdubProtection;
 
 private:
-	std::shared_ptr<const m::model::Channel::Parameters> m_params;
+	const m::model::Channel::Parameters* m_params;
 };
 
 struct MidiChannel
@@ -108,23 +101,23 @@ struct Channel
 	ChannelStatus getRecStatus() const;
 	bool          getReadActions() const;
 
-	ID                      id;
-	std::size_t             trackIndex;
-	std::size_t             channelIndex;
-	std::vector<m::Plugin*> plugins;
-	ChannelType             type;
-	int                     height;
-	std::string             name;
-	float                   volume;
-	float                   pan;
-	int                     key;
-	bool                    mute;
-	bool                    solo;
-	bool                    armed;
-	bool                    active;
-	bool                    hasActions;
-	bool                    sendToMaster;
-	std::size_t             extraOutputsCount;
+	ID              id;
+	std::size_t     trackIndex;
+	std::size_t     channelIndex;
+	std::vector<ID> plugins;
+	ChannelType     type;
+	int             height;
+	std::string     name;
+	float           volume;
+	float           pan;
+	int             key;
+	bool            mute;
+	bool            solo;
+	bool            armed;
+	bool            active;
+	bool            hasActions;
+	bool            sendToMaster;
+	std::size_t     extraOutputsCount;
 
 	std::optional<SampleChannel> sampleChannel;
 	std::optional<MidiChannel>   midiChannel;
@@ -156,10 +149,7 @@ struct RoutingData
 Returns a vector of Track's filled with Data objects, which reflects the layout
 described by m::model::Tracks. */
 
-std::vector<Track> getTracks(
-    const m::model::Document&,
-    const m::model::Parameters&,
-    const m::model::Assets&);
+std::vector<Track> getTracks(const m::model::Document&, const m::model::Assets&, Scene);
 
 /* getRoutingData
 Returns a single viewModel object for the 'Routing' window. */
@@ -243,8 +233,7 @@ delete only actions in the current scene. */
 
 void clearAllActions(ID channelId, bool allScenes);
 
-void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
-
+void  setSamplePlayerMode(ID channelId, SamplePlayerMode m);
 void  pressChannel(ID channelId, float velocity, Thread t);
 void  releaseChannel(ID channelId, Thread t);
 void  killChannel(ID channelId, Thread t);
