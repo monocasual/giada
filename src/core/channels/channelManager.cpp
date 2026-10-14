@@ -551,8 +551,10 @@ void ChannelManager::setOverdubProtection(ID channelId, bool value)
 
 void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	m_model_DEPR_.get().tracks.getChannel(channelId).sampleChannel->mode = mode;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, mode](model::Document& doc)
+	{
+		doc.tracks.getChannel(channelId).sampleChannel->mode = mode;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
