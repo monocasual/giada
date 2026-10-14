@@ -244,8 +244,8 @@ void addAndLoadChannels(std::size_t trackIndex, const std::vector<std::string>& 
 	{
 		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE, trackIndex);
-		const int         res = channelsApi.loadSampleChannel(ch.id, f);
+		const ID  channelId = channelsApi.add(ChannelType::SAMPLE, trackIndex);
+		const int res       = channelsApi.loadSampleChannel(channelId, f);
 		if (res != G_RES_OK)
 			errors = true;
 	}
