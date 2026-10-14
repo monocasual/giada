@@ -162,11 +162,11 @@ public:
 	void loadSample(const Sample&, Scene);
 
 	/* setWave
-	Just sets the pointer to a Wave object. Used during de-serialization. The
-	ratio is used to adjust begin/end points in case of patch vs. conf sample
-	rate mismatch. If nullptr, set the wave to invalid. */
+	Just sets Wave ID. Used during de-serialization. The ratio is used to adjust
+	begin/end points in case of patch vs. conf sample rate mismatch. If invalid,
+	set the wave to invalid. */
 
-	void setWave(Wave* w, Scene, float samplerateRatio);
+	void setWave(ID waveId, Scene, float samplerateRatio);
 
 	/* kickIn
 	Starts the player right away at frame 'f'. Used when launching a loop after

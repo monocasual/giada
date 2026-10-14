@@ -281,11 +281,11 @@ void Channel::loadSample(const Sample& s, Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::setWave(Wave* w, Scene scene, float samplerateRatio)
+void Channel::setWave(ID waveId, Scene scene, float samplerateRatio)
 {
 	assert(sampleChannel);
 
-	sampleChannel->setWave(w, scene, samplerateRatio);
+	sampleChannel->setWave(waveId, scene, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
