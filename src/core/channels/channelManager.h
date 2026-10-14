@@ -110,7 +110,6 @@ public:
 	/* addTrack
 	Adds a new empty track, containing only the default Channel Group. */
 
-	void addTrack_DEPR_(int sampleRate, int bufferSize);
 	void addTrack(int sampleRate, int bufferSize);
 
 	/* removeTracks
@@ -124,7 +123,7 @@ public:
 	/* addChannel
 	Adds a new channel to the stack. */
 
-	Channel& addChannel(ChannelType, std::size_t trackIndex, int sampleRate, int bufferSize);
+	ID addChannel(ChannelType, std::size_t trackIndex, int sampleRate, int bufferSize);
 
 	/* loadSampleChannel (1)
 	Creates a new Wave from a file path and loads it inside a Sample Channel. */

@@ -91,7 +91,7 @@ void ChannelsApi::addTrack()
 {
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	m_channelManager.addTrack_DEPR_(sampleRate, bufferSize);
+	m_channelManager.addTrack(sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -110,7 +110,7 @@ void ChannelsApi::setTrackWidth(std::size_t trackIndex, int width)
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsApi::add(ChannelType type, std::size_t trackIndex)
+ID ChannelsApi::add(ChannelType type, std::size_t trackIndex)
 {
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
