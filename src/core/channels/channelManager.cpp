@@ -260,7 +260,8 @@ void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int
 		const auto    oldRange = sample.range;
 		Wave&         wave     = m_model_DEPR_.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadSample({&wave, oldRange, oldShift}, scene);
+		// TODO - new model
+		newChannelData.channel.loadSample({nullptr, wave.id, oldRange, oldShift}, scene);
 	}
 
 	newChannelData.channel.plugins = plugins;
