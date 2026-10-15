@@ -62,7 +62,7 @@ struct SampleChannel
 	SampleChannel() = delete;
 	SampleChannel(
 	    const m::model::Channel&,
-	    const m::model::Channel::Parameters*,
+	    std::shared_ptr<const m::model::Channel::Parameters>,
 	    Scene);
 
 	Frame getTracker() const;
@@ -76,7 +76,7 @@ struct SampleChannel
 	bool             overdubProtection;
 
 private:
-	const m::model::Channel::Parameters* m_params;
+	std::shared_ptr<const m::model::Channel::Parameters> m_params;
 };
 
 struct MidiChannel

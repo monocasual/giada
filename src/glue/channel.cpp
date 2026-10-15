@@ -101,9 +101,9 @@ Track makeTrack_(
 /* -------------------------------------------------------------------------- */
 
 SampleChannel::SampleChannel(
-    const m::model::Channel&             c,
-    const m::model::Channel::Parameters* params,
-    Scene                                scene)
+    const m::model::Channel&                             c,
+    std::shared_ptr<const m::model::Channel::Parameters> params,
+    Scene                                                scene)
 : waveId(c.sampleChannel->getWaveId(scene))
 , mode(c.sampleChannel->mode)
 , isLoop(c.sampleChannel->isAnyLoopMode())
@@ -156,7 +156,7 @@ Channel::Channel(
 , m_params(std::move(params))
 {
 	if (c.type == ChannelType::SAMPLE)
-		sampleChannel = std::make_optional<SampleChannel>(c, params.get(), scene);
+		sampleChannel = std::make_optional<SampleChannel>(c, m_params, scene);
 	else if (c.type == ChannelType::MIDI)
 		midiChannel = std::make_optional<MidiChannel>(c);
 }
