@@ -144,8 +144,7 @@ void SampleChannel::loadSample(const Sample& s, Scene scene)
 	if (s.waveId.isValid())
 	{
 		m_samples[scene.getIndex()].shift = s.shift == -1 ? 0 : s.shift;
-		assert(false);
-		// m_samples[scene.getIndex()].range = s.range.isValid() ? s.range : FrameRange(0, s.wave->getBuffer().countFrames());
+		m_samples[scene.getIndex()].range = s.range;
 	}
 }
 
