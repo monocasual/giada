@@ -28,6 +28,7 @@
 #include "audioFileIO.h"
 #include "src/core/const.h"
 #include "src/core/idManager.h"
+#include "src/core/model/wave.h"
 #include "src/core/patch.h"
 #include "src/core/wave.h"
 #include "src/core/waveFx.h"
@@ -64,6 +65,25 @@ bool isWavePathUnique_(const m::Wave& skip, const std::string& path,
 			return false;
 	return true;
 }
+
+/* -------------------------------------------------------------------------- */
+
+int monoToStereo_(model::Wave& w)
+{
+	if (w.getBuffer().countChannels() >= G_MAX_IO_CHANS)
+		return G_RES_OK;
+
+	mcl::AudioBuffer newData;
+	newData.alloc(w.getBuffer().countFrames(), G_MAX_IO_CHANS);
+
+	for (int i = 0; i < newData.countFrames(); i++)
+		for (int j = 0; j < newData.countChannels(); j++)
+			newData.at(i, j) = w.getBuffer().at(i, 0);
+
+	w.replaceData(std::move(newData));
+
+	return G_RES_OK;
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -97,7 +117,7 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality quality)
+Result createFromFile_DEPR_(const std::string& path, ID id, int samplerate, Resampler::Quality quality)
 {
 	auto result = audioFileIO::read(path);
 	if (!result)
@@ -125,6 +145,37 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 	u::log::print("[waveFactory::create] new Wave created, {} frames\n", wave->getBuffer().countFrames());
 
 	return {G_RES_OK, std::move(wave)};
+}
+
+Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality quality)
+{
+	auto result = audioFileIO::read(path);
+	if (!result)
+		return {.status = G_RES_ERR_IO};
+
+	const audioFileIO::Info info   = audioFileIO::getInfo(path);
+	mcl::AudioBuffer&       buffer = result.value();
+
+	waveId_.set(id);
+
+	std::shared_ptr<model::Wave> wave = std::make_shared<model::Wave>(
+	    waveId_.generate(id), std::move(buffer),
+	    info.sampleRate, info.format, path);
+
+	if (wave->getBuffer().countChannels() == 1 && !monoToStereo_(*wave))
+		return {G_RES_ERR_PROCESSING};
+
+	if (wave->getRate() != samplerate)
+	{
+		u::log::print("[waveFactory::create] file sample rate ({}) != project sample rate ({}), conversion needed\n",
+		    wave->getRate(), samplerate);
+		if (resample(*wave, quality, samplerate) != G_RES_OK)
+			return {G_RES_ERR_PROCESSING};
+	}
+
+	u::log::print("[waveFactory::create] new Wave created, {} frames\n", wave->getBuffer().countFrames());
+
+	return {G_RES_OK, nullptr, std::move(wave)};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -166,7 +217,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 
 std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality quality)
 {
-	return createFromFile(w.path, w.id, samplerate, quality).wave;
+	return createFromFile_DEPR_(w.path, w.id, samplerate, quality).wave_DEPR_;
 }
 
 const Patch::Wave serializeWave(const Wave& w)
@@ -177,6 +228,36 @@ const Patch::Wave serializeWave(const Wave& w)
 /* -------------------------------------------------------------------------- */
 
 int resample(Wave& w, Resampler::Quality quality, int samplerate)
+{
+	float ratio         = samplerate / (float)w.getRate();
+	int   newSizeFrames = static_cast<int>(ceil(w.getBuffer().countFrames() * ratio));
+
+	mcl::AudioBuffer newData;
+	newData.alloc(newSizeFrames, w.getBuffer().countChannels());
+
+	SRC_DATA src_data;
+	src_data.data_in       = w.getBuffer().getDataView().data();
+	src_data.input_frames  = w.getBuffer().countFrames();
+	src_data.data_out      = newData.getDataView().data();
+	src_data.output_frames = newSizeFrames;
+	src_data.src_ratio     = ratio;
+
+	u::log::print("[waveFactory::resample] resampling: new size={} frames\n", newSizeFrames);
+
+	int ret = src_simple(&src_data, static_cast<int>(quality), w.getBuffer().countChannels());
+	if (ret != 0)
+	{
+		u::log::print("[waveFactory::resample] resampling error: {}\n", src_strerror(ret));
+		return G_RES_ERR_PROCESSING;
+	}
+
+	w.replaceData(std::move(newData));
+	w.setRate(samplerate);
+
+	return G_RES_OK;
+}
+
+int resample(model::Wave& w, Resampler::Quality quality, int samplerate)
 {
 	float ratio         = samplerate / (float)w.getRate();
 	int   newSizeFrames = static_cast<int>(ceil(w.getBuffer().countFrames() * ratio));

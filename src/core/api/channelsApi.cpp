@@ -134,11 +134,6 @@ int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality, scene);
 }
 
-void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
-{
-	m_channelManager.loadSampleChannel(channelId, wave, m_sequencer.getCurrentScene());
-}
-
 /* -------------------------------------------------------------------------- */
 
 void ChannelsApi::remove(ID channelId)
