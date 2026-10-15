@@ -29,6 +29,7 @@
 #include "src/core/channels/channelFactory.h"
 #include "src/core/midiEvent.h"
 #include "src/core/mixer.h"
+#include "src/core/model/wave.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/rendering/midiOutput.h"
 #include "src/core/rendering/midiReactions.h"
@@ -216,7 +217,7 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 	if (res.status != G_RES_OK)
 		return res.status;
 
-	loadSampleChannel(channelId, m_model_DEPR_.addWave(std::move(res.wave)), scene);
+	loadSampleChannel(channelId, std::move(res.wave), scene);
 
 	return G_RES_OK;
 }
@@ -237,6 +238,22 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, Scene scene)
 
 	if (oldWave != nullptr)
 		m_model_DEPR_.removeWave(*oldWave);
+
+	triggerOnChannelsAltered();
+}
+
+void ChannelManager::loadSampleChannel(ID channelId, std::shared_ptr<model::Wave> newWave, Scene scene)
+{
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [this, channelId, newWave, scene](model::Document& doc, model::Assets& assets) mutable
+	{
+		model::Channel& channel   = doc.tracks.getChannel(channelId);
+		const ID        oldWaveId = channel.sampleChannel->getWaveId(scene);
+		loadSampleChannel(channel, newWave.get(), scene);
+		assets.waves.remove(oldWaveId);
+	});
+
+	m_model.flush();
 
 	triggerOnChannelsAltered();
 }
@@ -687,6 +704,15 @@ void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Scene scene) const
 {
 	ch.loadSample({w, {}}, scene);
 	ch.setName(w != nullptr ? w->getBasename(/*ext=*/false) : "", scene);
+}
+
+void ChannelManager::loadSampleChannel(model::Channel& ch, model::Wave* w, Scene scene) const
+{
+	const ID         waveId    = w != nullptr ? w->id : ID{};
+	const auto       waveName  = w != nullptr ? w->getBasename(/*ext=*/false) : "";
+	const FrameRange waveRange = w != nullptr ? FrameRange{0, w->getBuffer().countFrames()} : FrameRange{};
+	ch.loadSample({nullptr, waveId, waveRange}, scene);
+	ch.setName(waveName, scene);
 }
 
 /* -------------------------------------------------------------------------- */

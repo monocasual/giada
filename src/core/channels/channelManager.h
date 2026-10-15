@@ -134,6 +134,7 @@ public:
 	Loads an existing Wave inside a Sample Channel. */
 
 	void loadSampleChannel(ID channelId, Wave&, Scene);
+	void loadSampleChannel(ID channelId, std::shared_ptr<model::Wave>, Scene);
 
 	/* freeChannel
 	Unloads existing Wave from a Sample Channel. Pass an invalid Scene object
@@ -225,6 +226,7 @@ public:
 
 private:
 	void loadSampleChannel(Channel&, Wave*, Scene) const;
+	void loadSampleChannel(model::Channel&, model::Wave*, Scene) const;
 
 	/* setupChannelCallbacks
 	Prepares the channel with the necessary callbacks. Call this whenever a
