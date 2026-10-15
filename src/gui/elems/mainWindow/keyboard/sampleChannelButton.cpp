@@ -43,7 +43,6 @@ namespace giada::v
 geSampleChannelButton::geSampleChannelButton(const c::channel::Channel& c)
 : geChannelButton(c)
 {
-#if 0
 	switch (m_channel.getPlayStatus())
 	{
 	case ChannelStatus::MISSING:
@@ -51,10 +50,9 @@ geSampleChannelButton::geSampleChannelButton(const c::channel::Channel& c)
 		label(g_ui->getI18Text(LangMap::MAIN_CHANNEL_SAMPLENOTFOUND));
 		break;
 	default:
-		label(!m_channel.sample->waveId.isValid() ? g_ui->getI18Text(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
+		label(!m_channel.sampleChannel->waveId.isValid() ? g_ui->getI18Text(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
 		break;
 	}
-#endif
 }
 
 /* -------------------------------------------------------------------------- */

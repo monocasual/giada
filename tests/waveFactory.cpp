@@ -15,14 +15,14 @@ TEST_CASE("waveFactory")
 
 	SECTION("test creation")
 	{
-		waveFactory::Result res = waveFactory::createFromFile(TEST_WAV_PATH,
+		waveFactory::Result res = waveFactory::createFromFile_DEPR_(TEST_WAV_PATH,
 		    /*ID=*/{}, /*sampleRate=*/SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
-		REQUIRE(res.wave->getRate() == SAMPLE_RATE);
-		REQUIRE(res.wave->getBuffer().countChannels() == G_CHANNELS);
-		REQUIRE(res.wave->isLogical() == false);
-		REQUIRE(res.wave->isEdited() == false);
+		REQUIRE(res.wave_DEPR_->getRate() == SAMPLE_RATE);
+		REQUIRE(res.wave_DEPR_->getBuffer().countChannels() == G_CHANNELS);
+		REQUIRE(res.wave_DEPR_->isLogical() == false);
+		REQUIRE(res.wave_DEPR_->isEdited() == false);
 	}
 
 	SECTION("test recording")
@@ -39,16 +39,16 @@ TEST_CASE("waveFactory")
 
 	SECTION("test resampling")
 	{
-		waveFactory::Result res = waveFactory::createFromFile(TEST_WAV_PATH,
+		waveFactory::Result res = waveFactory::createFromFile_DEPR_(TEST_WAV_PATH,
 		    /*ID=*/{}, /*sampleRate=*/SAMPLE_RATE, Resampler::Quality::LINEAR);
 
-		int oldSize = res.wave->getBuffer().countFrames();
-		waveFactory::resample(*res.wave.get(), Resampler::Quality::LINEAR, SAMPLE_RATE * 2);
+		int oldSize = res.wave_DEPR_->getBuffer().countFrames();
+		waveFactory::resample(*res.wave_DEPR_.get(), Resampler::Quality::LINEAR, SAMPLE_RATE * 2);
 
-		REQUIRE(res.wave->getRate() == SAMPLE_RATE * 2);
-		REQUIRE(res.wave->getBuffer().countFrames() == oldSize * 2);
-		REQUIRE(res.wave->getBuffer().countChannels() == G_CHANNELS);
-		REQUIRE(res.wave->isLogical() == false);
-		REQUIRE(res.wave->isEdited() == false);
+		REQUIRE(res.wave_DEPR_->getRate() == SAMPLE_RATE * 2);
+		REQUIRE(res.wave_DEPR_->getBuffer().countFrames() == oldSize * 2);
+		REQUIRE(res.wave_DEPR_->getBuffer().countChannels() == G_CHANNELS);
+		REQUIRE(res.wave_DEPR_->isLogical() == false);
+		REQUIRE(res.wave_DEPR_->isEdited() == false);
 	}
 }
