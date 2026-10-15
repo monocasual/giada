@@ -35,12 +35,18 @@
 #include <memory>
 #include <string>
 
+namespace giada::m::model
+{
+class Wave;
+}
+
 namespace giada::m::waveFactory
 {
 struct Result
 {
-	int                   status;
-	std::unique_ptr<Wave> wave = nullptr;
+	int                          status;
+	std::unique_ptr<Wave>        wave_DEPR_ = nullptr;
+	std::shared_ptr<model::Wave> wave       = nullptr;
 };
 
 /* reset
@@ -53,6 +59,7 @@ void reset();
     auto-generate it. The function converts the Wave sample rate if it doesn't
     match the desired one as specified in 'samplerate'. */
 
+Result createFromFile_DEPR_(const std::string& path, ID id, int samplerate, Resampler::Quality);
 Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality);
 
 /* createEmpty
@@ -78,6 +85,7 @@ const Patch::Wave     serializeWave(const Wave& w);
     the algorithm to use for the conversion. */
 
 int resample(Wave&, Resampler::Quality, int samplerate);
+int resample(model::Wave&, Resampler::Quality, int samplerate);
 
 /* save
     Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
