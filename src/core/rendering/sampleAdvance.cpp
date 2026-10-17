@@ -33,107 +33,132 @@ namespace giada::m::rendering
 {
 namespace
 {
-void onFirstBeat_(ChannelShared& shared, Frame localFrame, bool isLoop)
+RenderInfo rewind_(Frame localFrame)
 {
-	const ChannelStatus playStatus = shared.playStatus.load();
-	const ChannelStatus recStatus  = shared.recStatus.load();
-
-	switch (playStatus)
-	{
-	case ChannelStatus::PLAY:
-		if (isLoop)
-			rewindSampleChannel(shared, localFrame);
-		break;
-
-	case ChannelStatus::WAIT:
-		playSampleChannel(shared, localFrame);
-		break;
-
-	case ChannelStatus::ENDING:
-		if (isLoop)
-			stopSampleChannel(shared, localFrame);
-		break;
-
-	default:
-		break;
-	}
-
-	switch (recStatus)
-	{
-	case ChannelStatus::WAIT:
-		shared.recStatus.store(ChannelStatus::PLAY);
-		shared.readActions.store(true);
-		break;
-
-	case ChannelStatus::ENDING:
-		shared.recStatus.store(ChannelStatus::OFF);
-		shared.readActions.store(false);
-		break;
-
-	default:
-		break;
-	}
+	return {RenderInfo::Mode::REWIND, localFrame};
 }
 
 /* -------------------------------------------------------------------------- */
 
-void onBar_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode)
+RenderInfo stop_(Frame localFrame)
 {
-	const ChannelStatus playStatus = shared.playStatus.load();
+	return {RenderInfo::Mode::STOP, localFrame};
+}
+
+/* -------------------------------------------------------------------------- */
+
+RenderInfo play_(const model::Channel::Parameters& params, Frame localFrame)
+{
+	params.setPlayStatus(ChannelStatus::PLAY);
+	return {RenderInfo::Mode::NORMAL, localFrame};
+}
+
+/* -------------------------------------------------------------------------- */
+
+RenderInfo onFirstBeat_(const model::Channel::Parameters& params, Frame localFrame, bool isLoop)
+{
+	RenderInfo info = {RenderInfo::Mode::NONE};
+
+	switch (params.getPlayStatus())
+	{
+	case ChannelStatus::PLAY:
+		if (isLoop)
+			info = rewind_(localFrame);
+		break;
+
+	case ChannelStatus::WAIT:
+		info = play_(params, localFrame);
+		break;
+
+	case ChannelStatus::ENDING:
+		if (isLoop)
+			info = stop_(localFrame);
+		break;
+
+	default:
+		break;
+	}
+
+	switch (params.getRecStatus())
+	{
+	case ChannelStatus::WAIT:
+		params.setRecStatus(ChannelStatus::PLAY);
+		params.setReadActions(true);
+		break;
+
+	case ChannelStatus::ENDING:
+		params.setRecStatus(ChannelStatus::OFF);
+		params.setReadActions(false);
+		break;
+
+	default:
+		break;
+	}
+
+	return info;
+}
+
+/* -------------------------------------------------------------------------- */
+
+RenderInfo onBar_(const model::Channel::Parameters& params, Frame localFrame, SamplePlayerMode mode)
+{
+	const ChannelStatus playStatus = params.getPlayStatus();
 
 	if (playStatus == ChannelStatus::PLAY &&
 	    (mode == SamplePlayerMode::LOOP_REPEAT || mode == SamplePlayerMode::LOOP_ONCE_BAR))
-		rewindSampleChannel(shared, localFrame);
-	else if (playStatus == ChannelStatus::WAIT && mode == SamplePlayerMode::LOOP_ONCE_BAR)
-		playSampleChannel(shared, localFrame);
+		return rewind_(localFrame);
+
+	if (playStatus == ChannelStatus::WAIT && mode == SamplePlayerMode::LOOP_ONCE_BAR)
+		return play_(params, localFrame);
+
+	return {RenderInfo::Mode::NONE};
 }
 
 /* -------------------------------------------------------------------------- */
 
-void onNoteOn_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode, float velocity)
+RenderInfo onNoteOn_(const model::Channel::Parameters& params, Frame localFrame, SamplePlayerMode mode, float velocity)
 {
-	shared.volumeInternal.store(velocity);
+	params.setVolumeInternal(velocity);
 
-	switch (shared.playStatus.load())
+	switch (params.getPlayStatus())
 	{
 	case ChannelStatus::OFF:
-		playSampleChannel(shared, localFrame);
-		break;
+		return play_(params, localFrame);
 
 	case ChannelStatus::PLAY:
-		if (mode == SamplePlayerMode::SINGLE_RETRIG)
-			rewindSampleChannel(shared, localFrame);
-		else
-			stopSampleChannel(shared, localFrame);
-		break;
+		return mode == SamplePlayerMode::SINGLE_RETRIG ? rewind_(localFrame) : stop_(localFrame);
 
 	default:
-		break;
+		return {RenderInfo::Mode::NONE};
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void parseAction_(ID channelId, Scene scene, ChannelShared& shared, const Action& a,
-    Frame localFrame, SamplePlayerMode mode)
+RenderInfo parseAction_(
+    const model::Channel::Parameters& params,
+    ID                                channelId,
+    Scene                             scene,
+    const Action&                     a,
+    Frame                             localFrame,
+    SamplePlayerMode                  mode)
 {
 	if (a.channelId != channelId || a.scene != scene)
-		return;
+		return {RenderInfo::Mode::NONE};
 
 	switch (a.event.getStatus())
 	{
 	case MidiEvent::CHANNEL_NOTE_ON:
-		onNoteOn_(shared, localFrame, mode, a.event.getVelocityFloat());
-		break;
+		return onNoteOn_(params, localFrame, mode, a.event.getVelocityFloat());
 
 	case MidiEvent::CHANNEL_NOTE_OFF:
 	case MidiEvent::CHANNEL_NOTE_KILL:
-		if (shared.playStatus.load() == ChannelStatus::PLAY)
-			stopSampleChannel(shared, localFrame);
-		break;
+		if (params.getPlayStatus() == ChannelStatus::PLAY)
+			return stop_(localFrame);
+		return {RenderInfo::Mode::NONE};
 
 	default:
-		break;
+		return {RenderInfo::Mode::NONE};
 	}
 }
 } // namespace
@@ -142,7 +167,10 @@ void parseAction_(ID channelId, Scene scene, ChannelShared& shared, const Action
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
+RenderInfo advanceSampleChannel(
+    const model::Channel&             ch,
+    const model::Channel::Parameters& params,
+    const Sequencer::Event&           e)
 {
 	const SamplePlayerMode mode   = ch.sampleChannel->mode;
 	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
@@ -150,25 +178,21 @@ void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 	switch (e.type)
 	{
 	case Sequencer::EventType::FIRST_BEAT:
-		onFirstBeat_(*ch.shared, e.delta, isLoop);
-		break;
+		return onFirstBeat_(params, e.delta, isLoop);
 
 	case Sequencer::EventType::BAR:
-		onBar_(*ch.shared, e.delta, mode);
-		break;
+		return onBar_(params, e.delta, mode);
 
 	case Sequencer::EventType::REWIND:
-		if (isLoop)
-			rewindSampleChannel(*ch.shared, e.delta);
-		break;
+		return isLoop ? rewind_(e.delta) : RenderInfo{RenderInfo::Mode::NONE};
 
 	case Sequencer::EventType::ACTIONS:
-		if (!isLoop && ch.shared->isReadingActions())
-			parseAction_(ch.id, e.scene, *ch.shared, *e.action, e.delta, mode);
-		break;
+		if (!isLoop && params.isReadingActions())
+			return parseAction_(params, ch.id, e.scene, *e.action, e.delta, mode);
+		return {RenderInfo::Mode::NONE};
 
 	default:
-		break;
+		return {RenderInfo::Mode::NONE};
 	}
 }
 } // namespace giada::m::rendering

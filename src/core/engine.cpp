@@ -69,8 +69,7 @@ Engine::Engine()
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
 	{
-		registerThread(Thread::AUDIO, /*realtime=*/true);
-		m_renderer.render(out, in, m_model_DEPR_);
+		m_renderer.render(out, in, m_model);
 		return 0;
 	};
 	m_kernelAudio.onStreamAboutToOpen = [this]()
