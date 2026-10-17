@@ -61,6 +61,7 @@ list(APPEND SOURCES
 	src/core/rendering/midiOutput.h
 	src/core/rendering/pluginRendering.cpp
 	src/core/rendering/pluginRendering.h
+	src/core/rendering/renderInfo.h
 	src/core/api/mainApi.cpp
 	src/core/api/mainApi.h
 	src/core/api/channelsApi.cpp

@@ -28,6 +28,7 @@
 #define G_RENDERING_MIDI_OUTPUT_H
 
 #include "src/core/channels/channelShared.h"
+#include "src/core/channels/channel.h"
 #include "src/core/midiEvent.h"
 #include "src/core/midiMapper.h"
 
