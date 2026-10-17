@@ -58,7 +58,7 @@ double computeCpuLoad_(const Now& startTime, unsigned int sampleRate, int buffer
 
 	return load;
 }
-}
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -125,7 +125,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 		const int        quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const FrameRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = {}; // TODO - m_sequencer.advance(sequencer, bufferSize, actions);
+		const Sequencer::EventBuffer& events = m_sequencer.advance(doc.sequencer, params.sequencer, doc.actions, bufferSize);
 		// TODO - m_sequencer.render(out, document_RT);
 		advanceTracks(events, doc.tracks, assets, renderRange, quantizerStep, m_renderCommands);
 	}
