@@ -215,11 +215,9 @@ RenderInfo Renderer::advanceChannel(const model::Channel& ch,
 
 	for (const Sequencer::Event& e : events)
 	{
-		// TODO
-		// if (ch.type == ChannelType::MIDI)
-		//	advanceMidiChannel(ch, e, m_kernelMidi);
-		// else
-		if (ch.type == ChannelType::SAMPLE)
+		if (ch.type == ChannelType::MIDI)
+			advanceMidiChannel(ch, params, e, m_kernelMidi);
+		else if (ch.type == ChannelType::SAMPLE)
 			info = advanceSampleChannel(ch, params, e);
 	}
 
