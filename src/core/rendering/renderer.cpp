@@ -124,10 +124,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
-	/* If the m_sequencer is running, advance it first (i.e. parse it for events).
-	Also advance channels (i.e. let them react to m_sequencer events), only if the
-	document is not locked: another thread might altering channel's data in the
-	meantime (e.g. Plugins or Waves). */
+	/* If the sequencer is running, advance it first (i.e. parse it for events).
+	Also advance channels (i.e. let them react to sequencer events). */
 
 	if (doc.sequencer.isRunning())
 	{
