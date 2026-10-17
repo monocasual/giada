@@ -30,6 +30,8 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/metronome.h"
 #include "src/core/midiSynchronizer.h"
+#include "src/core/model/actions.h"
+#include "src/core/model/sequencer.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/quantizer.h"
 #include "src/deps/mcl-utils/src/math.hpp"
@@ -119,6 +121,8 @@ Sequencer::Sequencer(model_DEPR_::Model& m, MidiSynchronizer& s, JackTransport& 
 , m_quantizerStep(1)
 , m_currentSampleRate(0)
 {
+	m_eventBuffer.reserve(G_MAX_SEQUENCER_EVENTS);
+
 	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta)
 	{ rawRewind(delta); });
 }
@@ -192,20 +196,23 @@ void Sequencer::setSampleRate(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-const Sequencer::EventBuffer& Sequencer::advance(const model_DEPR_::Sequencer& sequencer,
-    Frame bufferSize, const model_DEPR_::Actions& actions) const
+const Sequencer::EventBuffer& Sequencer::advance(
+    const model::Sequencer&             sequencer,
+    const model::Sequencer::Parameters& params,
+    const model::Actions&               actions,
+    Frame                               bufferSize) const
 {
 	m_eventBuffer.clear();
 
-	const Frame start        = sequencer.a_getCurrentFrame();
+	const Frame start        = params.getCurrentFrame();
 	const Frame end          = start + bufferSize;
 	const float bpm          = sequencer.getBpm();
 	const Frame framesInLoop = u::time::tickToFrame(sequencer.getTicksInLoop(), m_currentSampleRate, bpm);
 	const Frame framesInBar  = u::time::tickToFrame(sequencer.getTicksInBar(), m_currentSampleRate, bpm);
 	const Frame framesInBeat = u::time::tickToFrame(sequencer.getTicksInBeat(), m_currentSampleRate, bpm);
 
-	const Scene currentScene = sequencer.a_getCurrentScene();
-	const Scene nextScene    = sequencer.a_getNextScene();
+	const Scene currentScene = params.getCurrentScene();
+	const Scene nextScene    = params.getNextScene();
 	bool        sceneChanged = false;
 
 	/* Process events in the current block. */
@@ -224,8 +231,8 @@ const Sequencer::EventBuffer& Sequencer::advance(const model_DEPR_::Sequencer& s
 			if (currentScene != nextScene)
 			{
 				assert(onSceneChanged != nullptr);
-				sequencer.a_setCurrentScene(nextScene);
-				sequencer.a_setSceneStatus(SceneStatus::IDLE);
+				params.setCurrentScene(nextScene);
+				params.setSceneStatus(SceneStatus::IDLE);
 				sceneChanged = true;
 				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
 			}
@@ -268,7 +275,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model_DEPR_::Sequencer& s
 
 	/* Advance this and quantizer after the event parsing. */
 
-	sequencer.a_setCurrentFrame(audioBlock.nextFrame, m_currentSampleRate);
+	params.setCurrentFrame(audioBlock.nextFrame, m_currentSampleRate, bpm);
 	m_quantizer.advance({start, end}, getQuantizerStep()); // TODO - this is wrong, pass block instead raw {start, end} range
 
 	return m_eventBuffer;
