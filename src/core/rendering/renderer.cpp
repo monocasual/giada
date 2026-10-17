@@ -126,8 +126,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 		const FrameRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
 		const Sequencer::EventBuffer& events = m_sequencer.advance(doc.sequencer, params.sequencer, doc.actions, bufferSize);
-		// TODO - m_sequencer.render(out, document_RT);
 		advanceTracks(events, doc.tracks, assets, renderRange, quantizerStep, m_renderCommands);
+
+		if (doc.sequencer.metronome)
+			m_sequencer.render(out);
 	}
 	else
 		m_renderCommands.clear(); // Don't reuse stale commands from the previous block

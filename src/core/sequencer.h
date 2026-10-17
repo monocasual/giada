@@ -28,10 +28,10 @@
 #define G_SEQUENCER_H
 
 #include "src/core/actions/action.h"
-#include "src/core/model/sequencer.h"
 #include "src/core/const.h"
 #include "src/core/eventDispatcher.h"
 #include "src/core/metronome.h"
+#include "src/core/model/sequencer.h"
 #include "src/core/quantizer.h"
 #include <vector>
 
@@ -162,7 +162,7 @@ public:
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */
 
-	void render(mcl::AudioBuffer& outBuf, const model_DEPR_::Document&) const;
+	void render(mcl::AudioBuffer& outBuf) const;
 
 	void rewindForced();
 	void rewind();
