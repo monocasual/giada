@@ -50,7 +50,8 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 
 	if (ch.type == ChannelType::MIDI)
 	{
-		playMidiChannel(ch.shared->playStatus);
+		// TODO
+		// playMidiChannel(ch.shared->playStatus);
 	}
 	else if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
 	{
@@ -126,7 +127,8 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 	{
 		if (ch.isPlaying())
 		{
-			stopMidiChannel(ch.shared->playStatus);
+			// TODO
+			// stopMidiChannel(ch.shared->playStatus);
 			sendMidiAllNotesOff(ch, m_kernelMidi);
 		}
 	}
@@ -271,7 +273,9 @@ void Reactor::stopAll()
 			{
 				if (!ch.isPlaying())
 					continue;
-				stopMidiChannel(ch.shared->playStatus);
+
+				// TODO
+				// stopMidiChannel(ch.shared->playStatus);
 				sendMidiAllNotesOff(ch, m_kernelMidi);
 			}
 			else if (ch.type == ChannelType::SAMPLE)
@@ -287,11 +291,14 @@ void Reactor::stopAll()
 
 void Reactor::rewindAll()
 {
+	/*
+	TODO
 	for (const model_DEPR_::Track& track : m_model.get().tracks.getAll())
 		for (const Channel& ch : track.getChannels().getAll())
 			if (ch.type == ChannelType::MIDI)
 				rewindMidiChannel(ch.shared->playStatus);
 	m_model.swap(model_DEPR_::SwapType::SOFT);
+	*/
 }
 
 /* -------------------------------------------------------------------------- */
