@@ -27,6 +27,7 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
+#include "src/core/model/types.h"
 #include "src/core/sequencer.h"
 #include <vector>
 
@@ -54,7 +55,7 @@ namespace giada::m::model_DEPR_
 class Model;
 class Channels;
 class Tracks;
-} // namespace giada::m::model
+} // namespace giada::m::model_DEPR_
 
 namespace giada::m::rendering
 {
@@ -67,17 +68,27 @@ public:
 	Renderer(Sequencer&, Mixer&, PluginHost&, KernelMidi&);
 #endif
 
-	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model_DEPR_::Model&) const;
+	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::Model&) const;
 
 private:
 	/* advanceTracks
 	Processes Channels' static events (e.g. pre-recorded actions or sequencer
 	events) in the current audio block. Called when the sequencer is running. */
 
-	void advanceTracks(const Sequencer::EventBuffer&, const model_DEPR_::Tracks&,
-	    FrameRange, int quantizerStep) const;
+	void advanceTracks(
+	    const Sequencer::EventBuffer&,
+	    const model::Tracks&,
+	    const model::Assets&,
+	    FrameRange range,
+	    Frame      quantizerStep,
+	    RenderCommands&) const;
 
-	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, FrameRange, Frame quantizerStep) const;
+	RenderInfo advanceChannel(
+	    const model::Channel&,
+	    const model::Channel::Parameters&,
+	    const Sequencer::EventBuffer&,
+	    FrameRange,
+	    Frame quantizerStep) const;
 
 	void renderTracks(const model_DEPR_::Tracks&, mcl::AudioBuffer& masterOut,
 	    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene,
@@ -107,6 +118,14 @@ private:
 	JackSynchronizer& m_jackSynchronizer;
 	JackTransport&    m_jackTransport;
 #endif
+
+	/* m_renderCommands
+	Holds what each channel has to do in the current audio block. Filled by
+	advanceTracks(), read by renderTracks(), and emptied when the sequencer is
+	stopped. Mutable because render() is const. */
+
+	mutable RenderCommands m_renderCommands;
+
 };
 } // namespace giada::m::rendering
 
