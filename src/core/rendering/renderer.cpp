@@ -58,6 +58,16 @@ double computeCpuLoad_(const Now& startTime, unsigned int sampleRate, int buffer
 
 	return load;
 }
+
+/* -------------------------------------------------------------------------- */
+
+RenderInfo findRenderInfo_(const RenderCommands& commands, ID channelId)
+{
+	for (const auto& [id, info] : commands)
+		if (id == channelId)
+			return info;
+	return {RenderInfo::Mode::NONE};
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -152,9 +162,12 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	// if (hasInput)
 	//	renderMasterIn(masterInCh, mixer.getInBuffer());
 
-	// TODO
-	// renderTracks(tracks, masterOutCh.shared->audioBuffer, out, mixer.getInBuffer(),
-	//    scene, hasSolos, sequencer.isRunning());
+	// Render tracks
+
+	const auto masterOutRender = assets.channelsRendering.find(MASTER_OUT_CHANNEL_ID);
+
+	renderTracks(doc.tracks, assets, masterOutRender->getAudioBuffer(), out, assets.mixerRendering.getInBuffer(),
+	    scene, hasSolos, doc.sequencer.isRunning());
 
 	// TODO
 	// renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
@@ -226,53 +239,81 @@ RenderInfo Renderer::advanceChannel(const model::Channel& ch,
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderTracks(const model_DEPR_::Tracks& tracks, mcl::AudioBuffer& masterOut,
-    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene scene, bool hasSolos,
-    bool seqIsRunning) const
+void Renderer::renderTracks(
+    const model::Tracks&    tracks,
+    const model::Assets&    assets,
+    mcl::AudioBuffer&       masterOut,
+    mcl::AudioBuffer&       hardwareOut,
+    const mcl::AudioBuffer& in,
+    Scene                   scene,
+    bool                    hasSolos,
+    bool                    seqIsRunning) const
 {
 	masterOut.clear();
 
-	for (const model_DEPR_::Track& track : tracks.getAll())
+	for (const model::Track& track : tracks.getAll())
 	{
 		if (track.isInternal())
 			continue;
 
-		const Channel& group = track.getGroupChannel();
-		group.shared->audioBuffer.clear();
+		const model::Channel& group          = track.getGroupChannel();
+		const auto            groupRendering = assets.channelsRendering.find(group.id);
 
-		for (const Channel& c : track.getChannels().getAll())
+		assert(groupRendering != nullptr);
+
+		groupRendering->getAudioBuffer().clear();
+
+		for (const model::Channel& c : track.getChannels().getAll())
 		{
-			renderNormalChannel(c, in, scene, seqIsRunning);
+			const auto channelParameters = assets.channelsParameters.find(c.id);
+			const auto channelRendering  = assets.channelsRendering.find(c.id);
+			assert(channelParameters != nullptr);
+			assert(channelRendering != nullptr);
+
+			const RenderInfo renderInfo = findRenderInfo_(m_renderCommands, c.id);
+
+			renderNormalChannel(c, *channelParameters, *channelRendering, renderInfo, in, scene, seqIsRunning);
+			/* TODO
 			if (!c.isAudible(hasSolos))
-				continue;
+			    continue;
 			if (c.sendToMaster)
-				mergeChannel(c, group.shared->audioBuffer);
+			    mergeChannel(c, group.shared->audioBuffer);
 			for (const int offset : c.extraOutputs)
-				mergeChannel(c, hardwareOut, offset);
+			    mergeChannel(c, hardwareOut, offset);
+			*/
 		}
 
+		/* TODO
 		renderAudioPlugins(group, m_pluginHost);
 
 		if (!group.isAudible(hasSolos))
-			continue;
+		    continue;
 		if (group.sendToMaster)
-			mergeChannel(group, masterOut);
+		    mergeChannel(group, masterOut);
 		for (const int offset : group.extraOutputs)
-			mergeChannel(group, hardwareOut, offset);
+		    mergeChannel(group, hardwareOut, offset);
+		*/
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in,
-    Scene scene, bool seqIsRunning) const
+void Renderer::renderNormalChannel(
+    const model::Channel&             ch,
+    const model::Channel::Parameters& params,
+    const model::Channel::Rendering&  rendering,
+    RenderInfo                        renderInfo,
+    const mcl::AudioBuffer&           in,
+    Scene                             scene,
+    bool                              seqIsRunning) const
 {
-	ch.shared->audioBuffer.clear();
+	rendering.getAudioBuffer().clear();
 
 	if (ch.type == ChannelType::SAMPLE)
-		renderSampleChannel(ch, in, scene, seqIsRunning);
-	else if (ch.type == ChannelType::MIDI)
-		renderMidiChannel(ch);
+		renderSampleChannel(ch, params, rendering, renderInfo, in, scene, seqIsRunning);
+	// TODO
+	// else if (ch.type == ChannelType::MIDI)
+	//	renderMidiChannel(ch);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -294,27 +335,36 @@ void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, int cha
 
 void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 {
-	ch.shared->audioBuffer.clear();
+	// TODO
+	// ch.shared->audioBuffer.clear();
 
-	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, Scene{0}, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
+	// if (ch.isPlaying())
+	//	rendering::renderSampleChannel(ch, Scene{0}, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
 
-	out.sumAll(ch.shared->audioBuffer, ch.volume);
+	// out.sumAll(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, Scene scene, bool seqIsRunning) const
+void Renderer::renderSampleChannel(
+    const model::Channel&             ch,
+    const model::Channel::Parameters& params,
+    const model::Channel::Rendering&  render,
+    RenderInfo                        renderInfo,
+    const mcl::AudioBuffer&           in,
+    Scene scene, bool seqIsRunning) const
 {
 	assert(ch.type == ChannelType::SAMPLE);
 
-	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, scene, seqIsRunning);
+	if (params.isPlaying())
+		rendering::renderSampleChannel(ch, params, render, renderInfo, scene, seqIsRunning);
 
-	if (ch.canReceiveAudio())
-		renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
+	// TODO
+	// if (ch.canReceiveAudio())
+	//	renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
 
-	renderAudioPlugins(ch, m_pluginHost);
+	// TODO
+	// renderAudioPlugins(ch, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -330,7 +380,7 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 
 void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out) const
 {
-	out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
+	// TODO - out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
 }
 
 /* -------------------------------------------------------------------------- */

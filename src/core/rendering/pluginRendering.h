@@ -28,6 +28,7 @@
 #define G_RENDERING_PLUGIN_RENDERING_H
 
 #include "src/core/channels/channelShared.h"
+#include "src/core/channels/channel.h"
 
 namespace giada::m
 {
