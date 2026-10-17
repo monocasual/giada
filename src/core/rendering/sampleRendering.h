@@ -61,12 +61,21 @@ struct RenderInfo
 	{
 		NORMAL,
 		REWIND,
-		STOP
+		STOP,
+		NONE
 	};
 
 	Mode  mode   = Mode::NORMAL;
 	Frame offset = 0;
 };
+
+/* RenderCommands
+What each channel has to do in the current audio block (e.g. rewind, stop),
+decided by advanceTracks() and read later by renderTracks(). One entry per
+channel, identified by its ID. Reserve the capacity at startup: no allocations
+allowed on the real-time thread. */
+
+using RenderCommands = std::vector<std::pair<ID, RenderInfo>>;
 
 /* ReadResult
 A ReadResult object is returned by the readWave() function below, containing the
