@@ -90,14 +90,38 @@ private:
 	    FrameRange,
 	    Frame quantizerStep) const;
 
-	void renderTracks(const model_DEPR_::Tracks&, mcl::AudioBuffer& masterOut,
-	    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene,
-	    bool hasSolos, bool seqIsRunning) const;
-	void renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in, Scene, bool seqIsRunning) const;
+	void renderTracks(
+	    const model::Tracks&,
+	    const model::Assets&,
+	    mcl::AudioBuffer&       masterOut,
+	    mcl::AudioBuffer&       hardwareOut,
+	    const mcl::AudioBuffer& in,
+	    Scene,
+	    bool hasSolos,
+	    bool seqIsRunning) const;
+
+	void renderNormalChannel(
+	    const model::Channel&,
+	    const model::Channel::Parameters&,
+	    const model::Channel::Rendering&,
+	    RenderInfo,
+	    const mcl::AudioBuffer& in,
+	    Scene,
+	    bool seqIsRunning) const;
+
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
 	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, int channelOffset) const;
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
-	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, Scene, bool seqIsRunning) const;
+
+	void renderSampleChannel(
+	    const model::Channel&,
+	    const model::Channel::Parameters&,
+	    const model::Channel::Rendering&,
+	    RenderInfo,
+	    const mcl::AudioBuffer& in,
+	    Scene,
+	    bool seqIsRunning) const;
+
 	void renderMidiChannel(const Channel&) const;
 
 	/* mergeChannel
@@ -125,7 +149,6 @@ private:
 	stopped. Mutable because render() is const. */
 
 	mutable RenderCommands m_renderCommands;
-
 };
 } // namespace giada::m::rendering
 

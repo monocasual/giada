@@ -30,7 +30,7 @@
 #include "src/core/const.h"
 #include "src/core/midiEvent.h"
 #include "src/core/quantizer.h"
-#include "src/core/rendering/sampleRendering.h"
+#include "src/core/rendering/renderInfo.h"
 #include "src/core/resampler.h"
 #include "src/core/stretcher.h"
 #include "src/deps/concurrentqueue/concurrentqueue.h"
