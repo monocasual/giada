@@ -283,10 +283,9 @@ const Sequencer::EventBuffer& Sequencer::advance(
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::render(mcl::AudioBuffer& outBuf, const model_DEPR_::Document& document_RT) const
+void Sequencer::render(mcl::AudioBuffer& outBuf) const
 {
-	if (document_RT.sequencer.metronome)
-		m_metronome.render(outBuf);
+	m_metronome.render(outBuf);
 }
 
 /* -------------------------------------------------------------------------- */
