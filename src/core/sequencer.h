@@ -28,11 +28,11 @@
 #define G_SEQUENCER_H
 
 #include "src/core/actions/action.h"
+#include "src/core/model/sequencer.h"
 #include "src/core/const.h"
 #include "src/core/eventDispatcher.h"
 #include "src/core/metronome.h"
 #include "src/core/quantizer.h"
-#include "src/core/ringBuffer.h"
 #include <vector>
 
 namespace mcl
@@ -46,6 +46,11 @@ class Model;
 class Sequencer;
 class Actions;
 struct Document;
+} // namespace giada::m::model_DEPR_
+
+namespace giada::m::model
+{
+class Actions;
 } // namespace giada::m::model
 
 namespace giada::m
@@ -74,7 +79,7 @@ public:
 		Scene         scene  = {};
 	};
 
-	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;
+	using EventBuffer = std::vector<Event>;
 
 	Sequencer(model_DEPR_::Model&, MidiSynchronizer&, JackTransport&);
 
@@ -148,7 +153,11 @@ public:
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
-	const EventBuffer& advance(const model_DEPR_::Sequencer&, Frame bufferSize, const model_DEPR_::Actions&) const;
+	const EventBuffer& advance(
+	    const model::Sequencer&,
+	    const model::Sequencer::Parameters&,
+	    const model::Actions&,
+	    Frame bufferSize) const;
 
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */
@@ -196,9 +205,9 @@ private:
 	void rawSetBpm(float v);
 	void rawGoToBeat(int beat, int sampleRate);
 
-	model_DEPR_::Model&     m_model;
-	MidiSynchronizer& m_midiSynchronizer;
-	JackTransport&    m_jackTransport;
+	model_DEPR_::Model& m_model;
+	MidiSynchronizer&   m_midiSynchronizer;
+	JackTransport&      m_jackTransport;
 
 	/* m_eventBuffer
 	Buffer of events found in each block sent to channels for event parsing.
