@@ -162,9 +162,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	// Render tracks
 
-	const auto masterOutRender = assets.channelsRendering.find(MASTER_OUT_CHANNEL_ID);
+	const auto masterOutRendering = assets.channelsRendering.find(MASTER_OUT_CHANNEL_ID);
+	assert(masterOutRendering != nullptr);
 
-	renderTracks(doc.tracks, assets, masterOutRender->getAudioBuffer(), out, assets.mixerRendering->getInBuffer(),
+	renderTracks(doc.tracks, assets, *masterOutRendering, out, assets.mixerRendering->getInBuffer(),
 	    scene, hasSolos, doc.sequencer.isRunning());
 
 	// TODO
@@ -238,16 +239,16 @@ RenderInfo Renderer::advanceChannel(const model::Channel& ch,
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderTracks(
-    const model::Tracks&    tracks,
-    const model::Assets&    assets,
-    mcl::AudioBuffer&       masterOut,
-    mcl::AudioBuffer&       hardwareOut,
-    const mcl::AudioBuffer& in,
-    Scene                   scene,
-    bool                    hasSolos,
-    bool                    seqIsRunning) const
+    const model::Tracks&             tracks,
+    const model::Assets&             assets,
+    const model::Channel::Rendering& masterOutRendering,
+    mcl::AudioBuffer&                hardwareOut,
+    const mcl::AudioBuffer&          in,
+    Scene                            scene,
+    bool                             hasSolos,
+    bool                             seqIsRunning) const
 {
-	masterOut.clear();
+	masterOutRendering.clearAudioBuffer(0);
 
 	for (const model::Track& track : tracks.getAll())
 	{
@@ -259,7 +260,7 @@ void Renderer::renderTracks(
 
 		assert(groupRendering != nullptr);
 
-		groupRendering->getAudioBuffer().clear();
+		groupRendering->clearAudioBuffer(0);
 
 		for (const model::Channel& c : track.getChannels().getAll())
 		{
@@ -305,7 +306,7 @@ void Renderer::renderNormalChannel(
     Scene                             scene,
     bool                              seqIsRunning) const
 {
-	rendering.getAudioBuffer().clear();
+	rendering.clearAudioBuffer(0);
 
 	if (ch.type == ChannelType::SAMPLE)
 		renderSampleChannel(ch, params, rendering, renderInfo, in, scene, seqIsRunning);
