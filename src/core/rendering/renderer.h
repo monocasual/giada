@@ -93,9 +93,9 @@ private:
 	void renderTracks(
 	    const model::Tracks&,
 	    const model::Assets&,
-	    mcl::AudioBuffer&       masterOut,
-	    mcl::AudioBuffer&       hardwareOut,
-	    const mcl::AudioBuffer& in,
+	    const model::Channel::Rendering& masterOutRendering,
+	    mcl::AudioBuffer&                hardwareOut,
+	    const mcl::AudioBuffer&          in,
 	    Scene,
 	    bool hasSolos,
 	    bool seqIsRunning) const;
