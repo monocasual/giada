@@ -47,9 +47,10 @@ constexpr int CH_RIGHT = 1;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Mixer::Mixer(model_DEPR_::Model& m)
+Mixer::Mixer(model_DEPR_::Model& m_DEPR_, model::Model& m)
 : onSignalTresholdReached(nullptr)
 , onEndOfRecording(nullptr)
+, m_model_DEPR_(m_DEPR_)
 , m_model(m)
 , m_signalCbFired(false)
 , m_endOfRecCbFired(false)
@@ -60,11 +61,19 @@ Mixer::Mixer(model_DEPR_::Model& m)
 
 void Mixer::reset(int maxFramesInLoop, int framesInBuffer)
 {
+	m_model.writeAssets(model::SwapType::SOFT, [maxFramesInLoop, framesInBuffer](model::Assets& assets)
+	{
+		assets.mixerRendering = std::make_shared<model::Mixer::Rendering>(maxFramesInLoop, framesInBuffer);
+	});
+
+	m_model.flush();
+
+	// DEPR
 	/* Allocate working buffers. rec buffer has variable size: it depends on how
 	many frames there are in the current loop. */
 
-	m_model.get().mixer.getRecBuffer().alloc(maxFramesInLoop, G_MAX_IO_CHANS);
-	m_model.get().mixer.getInBuffer().alloc(framesInBuffer, G_MAX_IO_CHANS);
+	m_model_DEPR_.get().mixer.getRecBuffer().alloc(maxFramesInLoop, G_MAX_IO_CHANS);
+	m_model_DEPR_.get().mixer.getInBuffer().alloc(framesInBuffer, G_MAX_IO_CHANS);
 
 	u::log::print("[mixer::reset] buffers ready - maxFramesInLoop={}, framesInBuffer={}\n",
 	    maxFramesInLoop, framesInBuffer);
@@ -74,14 +83,14 @@ void Mixer::reset(int maxFramesInLoop, int framesInBuffer)
 
 void Mixer::enable()
 {
-	m_model.get().mixer.a_setActive(true);
+	m_model_DEPR_.get().mixer.a_setActive(true);
 	u::log::print("[mixer::enable] enabled\n");
 }
 
 void Mixer::disable()
 {
-	m_model.get().mixer.a_setActive(false);
-	while (m_model.isRtLocked())
+	m_model_DEPR_.get().mixer.a_setActive(false);
+	while (m_model_DEPR_.isRtLocked())
 		;
 	u::log::print("[mixer::disable] disabled\n");
 }
@@ -90,47 +99,47 @@ void Mixer::disable()
 
 void Mixer::allocRecBuffer(int frames)
 {
-	m_model.get().mixer.getRecBuffer().alloc(frames, G_MAX_IO_CHANS);
+	m_model_DEPR_.get().mixer.getRecBuffer().alloc(frames, G_MAX_IO_CHANS);
 }
 
 void Mixer::clearRecBuffer()
 {
-	m_model.get().mixer.getRecBuffer().clear();
+	m_model_DEPR_.get().mixer.getRecBuffer().clear();
 }
 
 const mcl::AudioBuffer& Mixer::getRecBuffer()
 {
-	return m_model.get().mixer.getRecBuffer();
+	return m_model_DEPR_.get().mixer.getRecBuffer();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::updateSoloCount(bool hasSolos)
 {
-	m_model.get().mixer.hasSolos = hasSolos;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.hasSolos = hasSolos;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::setInToOut(bool v)
 {
-	m_model.get().mixer.inToOut = v;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.inToOut = v;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::setRecTriggerMode(RecTriggerMode m)
 {
-	m_model.get().mixer.recTriggerMode = m;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.recTriggerMode = m;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 void Mixer::setInputRecMode(InputRecMode m)
 {
-	m_model.get().mixer.inputRecMode = m;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.inputRecMode = m;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -173,17 +182,17 @@ void Mixer::render(const mcl::AudioBuffer& in, const model_DEPR_::Document& docu
 
 void Mixer::startInputRec(Frame from)
 {
-	m_model.get().mixer.a_setInputTracker(from);
-	m_model.get().mixer.isRecordingInput = true;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.a_setInputTracker(from);
+	m_model_DEPR_.get().mixer.isRecordingInput = true;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 Frame Mixer::stopInputRec()
 {
-	const Frame ret = m_model.get().mixer.a_getInputTracker();
-	m_model.get().mixer.a_setInputTracker(0);
-	m_model.get().mixer.isRecordingInput = false;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	const Frame ret = m_model_DEPR_.get().mixer.a_getInputTracker();
+	m_model_DEPR_.get().mixer.a_setInputTracker(0);
+	m_model_DEPR_.get().mixer.isRecordingInput = false;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 	m_signalCbFired   = false;
 	m_endOfRecCbFired = false;
 	return ret;
@@ -193,56 +202,56 @@ Frame Mixer::stopInputRec()
 
 void Mixer::startActionRec()
 {
-	m_model.get().mixer.isRecordingActions = true;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.isRecordingActions = true;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 void Mixer::stopActionRec()
 {
-	m_model.get().mixer.isRecordingActions = false;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.isRecordingActions = false;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Peak Mixer::getPeakOut() const { return m_model.get().mixer.a_getPeakOut(); }
-Peak Mixer::getPeakIn() const { return m_model.get().mixer.a_getPeakIn(); }
+Peak Mixer::getPeakOut() const { return m_model_DEPR_.get().mixer.a_getPeakOut(); }
+Peak Mixer::getPeakIn() const { return m_model_DEPR_.get().mixer.a_getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
-bool Mixer::getInToOut() const { return m_model.get().mixer.inToOut; }
+bool Mixer::getInToOut() const { return m_model_DEPR_.get().mixer.inToOut; }
 
 /* -------------------------------------------------------------------------- */
 
 Mixer::RecordInfo Mixer::getRecordInfo() const
 {
 	return {
-	    m_model.get().mixer.a_getInputTracker(),
-	    m_model.get().mixer.getRecBuffer().countFrames()};
+	    m_model_DEPR_.get().mixer.a_getInputTracker(),
+	    m_model_DEPR_.get().mixer.getRecBuffer().countFrames()};
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Mixer::isRecordingActions() const
 {
-	return m_model.get().mixer.isRecordingActions;
+	return m_model_DEPR_.get().mixer.isRecordingActions;
 }
 
 bool Mixer::isRecordingInput() const
 {
-	return m_model.get().mixer.isRecordingInput;
+	return m_model_DEPR_.get().mixer.isRecordingInput;
 }
 
 /* -------------------------------------------------------------------------- */
 
 RecTriggerMode Mixer::getRecTriggerMode() const
 {
-	return m_model.get().mixer.recTriggerMode;
+	return m_model_DEPR_.get().mixer.recTriggerMode;
 }
 
 InputRecMode Mixer::getInputRecMode() const
 {
-	return m_model.get().mixer.inputRecMode;
+	return m_model_DEPR_.get().mixer.inputRecMode;
 }
 
 /* -------------------------------------------------------------------------- */
