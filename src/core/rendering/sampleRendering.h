@@ -78,7 +78,11 @@ Copies input buffer to channel buffer: this enables the input monitoring. */
 
 void renderSampleChannelInput(const Channel&, const mcl::AudioBuffer&);
 
-ReadResult readWave(const Sample&, mcl::AudioBuffer&, Frame start, Frame offset, const Resampler&, Stretcher&);
+ReadResult readWave(
+    const model::Channel::Rendering&,
+    const Sample&,
+    Frame start,
+    Frame offset);
 } // namespace giada::m::rendering
 
 #endif
