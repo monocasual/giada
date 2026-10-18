@@ -28,6 +28,7 @@
 #define G_MIXER_H
 
 #include "src/core/midiEvent.h"
+#include "src/core/model/types.h"
 #include "src/core/ringBuffer.h"
 #include "src/core/sequencer.h"
 #include "src/core/types.h"
@@ -45,7 +46,7 @@ namespace giada::m::model_DEPR_
 class Mixer;
 class Channels;
 struct Document;
-} // namespace giada::m::model
+} // namespace giada::m::model_DEPR_
 
 namespace giada::m
 {
@@ -63,7 +64,7 @@ public:
 		int   maxLength;
 	};
 
-	Mixer(model_DEPR_::Model&);
+	Mixer(model_DEPR_::Model&, model::Model&);
 
 	Peak getPeakOut() const;
 	Peak getPeakIn() const;
@@ -192,7 +193,8 @@ private:
 
 	void limit(mcl::AudioBuffer& outBuf) const;
 
-	model_DEPR_::Model& m_model;
+	model_DEPR_::Model& m_model_DEPR_;
+	model::Model&       m_model;
 
 	/* m_signalCbFired, m_endOfRecCbFired
 	Boolean guards to determine whether the callbacks have been fired or not,
