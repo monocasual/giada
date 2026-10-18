@@ -69,13 +69,6 @@ public:
 		const mcl::AudioBuffer& getInBuffer() const;
 
 	private:
-		// mutable std::atomic<bool>  m_active       = false;
-		// mutable std::atomic<float> m_peakOutL     = 0.0f;
-		// mutable std::atomic<float> m_peakOutR     = 0.0f;
-		// mutable std::atomic<float> m_peakInL      = 0.0f;
-		// mutable std::atomic<float> m_peakInR      = 0.0f;
-		mutable WeakAtomic<Frame> m_inputTracker = 0;
-
 		/* recBuffer
 		Working buffer for audio recording. */
 
