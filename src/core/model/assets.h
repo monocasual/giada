@@ -41,7 +41,7 @@ struct Assets
 	mcl::RealtimeAssetMap<ID, Plugin>              plugins;
 	mcl::RealtimeAssetMap<ID, Channel::Parameters> channelsParameters;
 	mcl::RealtimeAssetMap<ID, Channel::Rendering>  channelsRendering;
-	Mixer::Rendering                               mixerRendering;
+	std::shared_ptr<const Mixer::Rendering>        mixerRendering;
 };
 } // namespace giada::m::model
 

@@ -164,7 +164,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	const auto masterOutRender = assets.channelsRendering.find(MASTER_OUT_CHANNEL_ID);
 
-	renderTracks(doc.tracks, assets, masterOutRender->getAudioBuffer(), out, assets.mixerRendering.getInBuffer(),
+	renderTracks(doc.tracks, assets, masterOutRender->getAudioBuffer(), out, assets.mixerRendering->getInBuffer(),
 	    scene, hasSolos, doc.sequencer.isRunning());
 
 	// TODO
