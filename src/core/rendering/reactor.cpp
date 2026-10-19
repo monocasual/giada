@@ -33,8 +33,9 @@
 
 namespace giada::m::rendering
 {
-Reactor::Reactor(model_DEPR_::Model& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
+Reactor::Reactor(model::Model& model, model_DEPR_::Model& model_DEPR_, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
 : m_model(model)
+, m_model_DEPR_(model_DEPR_)
 , m_kernelMidi(km)
 , m_actionManager(a)
 , m_midiMapper(m)
@@ -46,114 +47,129 @@ Reactor::Reactor(model_DEPR_::Model& model, MidiMapper<KernelMidi>& m, ActionMan
 void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecordActions,
     bool canQuantize, Tick currentTickQuantized)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
-
-	if (ch.type == ChannelType::MIDI)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=, this](model::Document& doc, model::Assets& assets)
 	{
-		// TODO
-		// playMidiChannel(ch.shared->playStatus);
-	}
-	else if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
-	{
-		const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
-		const bool             velocityAsVol = ch.sampleChannel->velocityAsVol;
-		const SamplePlayerMode mode          = ch.sampleChannel->mode;
+		model::Channel& ch                = doc.tracks.getChannel(channelId);
+		const auto      channelParameters = assets.channelsParameters.find(channelId);
+		const auto      channelRendering  = assets.channelsRendering.find(channelId);
 
-		if (canRecordActions && !isAnyLoopMode)
-			recordSampleKeyPress(channelId, scene, *ch.shared, currentTickQuantized, mode, m_actionManager);
+		if (ch.type == ChannelType::MIDI)
+		{
+			// TODO
+			// playMidiChannel(ch.shared->playStatus);
+		}
+		else if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
+		{
+			const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
+			const bool             velocityAsVol = ch.sampleChannel->velocityAsVol;
+			const SamplePlayerMode mode          = ch.sampleChannel->mode;
 
-		pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
-	}
-	else if (ch.type == ChannelType::PREVIEW)
-	{
-		pressSampleChannel(channelId, *ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE,
-		    /*velocity=*/0.0f, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
-		    /*velocityAsVol=*/false);
-	}
-	else if (ch.type == ChannelType::GROUP)
-	{
-		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
-			if (child.type != ChannelType::GROUP)
-				keyPress(child.id, scene, velocity, canRecordActions, canQuantize, currentTickQuantized);
-	}
+			// TODO
+			// if (canRecordActions && !isAnyLoopMode)
+			//	recordSampleKeyPress(channelId, scene, *ch.shared, currentTickQuantized, mode, m_actionManager);
 
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+			pressSampleChannel(channelId, *channelParameters, *channelRendering,
+			    mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
+		}
+		else if (ch.type == ChannelType::PREVIEW)
+		{
+			pressSampleChannel(channelId, *channelParameters, *channelRendering,
+			    SamplePlayerMode::SINGLE_BASIC_PAUSE, /*velocity=*/0.0f,
+			    /*canQuantize=*/false, /*isAnyLoopMode=*/false,
+			    /*velocityAsVol=*/false);
+		}
+		else if (ch.type == ChannelType::GROUP)
+		{
+			// TODO recursion not allowed
+			// for (const model::Channel& child : doc.tracks.getByChannel(ch.id).getChannels().getAll())
+			//	if (child.type != ChannelType::GROUP)
+			//		keyPress(child.id, scene, velocity, canRecordActions, canQuantize, currentTickQuantized);
+		}
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick currentTickQuantized)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
-
-	if (ch.type == ChannelType::MIDI)
-		return;
-
-	if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=](model::Document& doc, model::Assets& assets)
 	{
-		const SamplePlayerMode mode = ch.sampleChannel->mode;
+		model::Channel& ch                = doc.tracks.getChannel(channelId);
+		const auto      channelParameters = assets.channelsParameters.find(channelId);
+		const auto      channelRendering  = assets.channelsRendering.find(channelId);
 
-		if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		if (ch.type == ChannelType::MIDI)
+			return;
+
+		if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
 		{
-			/* Record a stop event only if channel is SINGLE_PRESS. For any other
-		mode the key release event is meaningless. */
+			const SamplePlayerMode mode = ch.sampleChannel->mode;
 
-			recordSampleKeyRelease(channelId, scene, currentTickQuantized, m_actionManager);
+			if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+			{
+				/* Record a stop event only if channel is SINGLE_PRESS. For any other
+			mode the key release event is meaningless. */
+
+				recordSampleKeyRelease(channelId, scene, currentTickQuantized, m_actionManager);
+			}
+
+			releaseSampleChannel(*channelParameters, *channelRendering, mode);
 		}
-
-		releaseSampleChannel(*ch.shared, mode);
-	}
-	else if (ch.type == ChannelType::PREVIEW)
-	{
-		releaseSampleChannel(*ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE);
-	}
-	else if (ch.type == ChannelType::GROUP)
-	{
-		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
-			if (child.type != ChannelType::GROUP)
-				keyRelease(child.id, scene, canRecordActions, currentTickQuantized);
-	}
-
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+		else if (ch.type == ChannelType::PREVIEW)
+		{
+			releaseSampleChannel(*channelParameters, *channelRendering, SamplePlayerMode::SINGLE_BASIC_PAUSE);
+		}
+		else if (ch.type == ChannelType::GROUP)
+		{
+			// TODO recursion not allowed
+			// for (const Channel& child : m_model_DEPR_.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			//	if (child.type != ChannelType::GROUP)
+			//		keyRelease(child.id, scene, canRecordActions, currentTickQuantized);
+		}
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick currentTickQuantized)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
-
-	if (ch.type == ChannelType::MIDI)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=](model::Document& doc, model::Assets& assets)
 	{
-		if (ch.isPlaying())
+		model::Channel& ch                = doc.tracks.getChannel(channelId);
+		const auto      channelParameters = assets.channelsParameters.find(channelId);
+		const auto      channelRendering  = assets.channelsRendering.find(channelId);
+
+		if (ch.type == ChannelType::MIDI)
 		{
-			// TODO
-			// stopMidiChannel(ch.shared->playStatus);
-			sendMidiAllNotesOff(ch, m_kernelMidi);
+			if (channelParameters->isPlaying())
+			{
+				// TODO
+				// stopMidiChannel(ch.shared->playStatus);
+				// sendMidiAllNotesOff(ch, m_kernelMidi);
+			}
 		}
-	}
-	else if (ch.type == ChannelType::SAMPLE)
-	{
-		const SamplePlayerMode mode = ch.sampleChannel->mode;
-
-		if (ch.hasWave(scene) && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		else if (ch.type == ChannelType::SAMPLE)
 		{
-			/* Record a stop event only if channel is SINGLE_PRESS. For any other
-			mode the key release event is meaningless. */
+			const SamplePlayerMode mode = ch.sampleChannel->mode;
 
-			recordSampleKeyKill(channelId, scene, currentTickQuantized, m_actionManager);
+			if (ch.hasWave(scene) && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+			{
+				/* Record a stop event only if channel is SINGLE_PRESS. For any other
+				mode the key release event is meaningless. */
+
+				recordSampleKeyKill(channelId, scene, currentTickQuantized, m_actionManager);
+			}
+
+			killSampleChannel(*channelParameters, *channelRendering, mode);
 		}
-
-		killSampleChannel(*ch.shared, mode);
-	}
-	else if (ch.type == ChannelType::GROUP)
-	{
-		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
-			if (child.type != ChannelType::GROUP)
-				keyKill(child.id, scene, canRecordActions, currentTickQuantized);
-	}
-
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+		else if (ch.type == ChannelType::GROUP)
+		{
+			// TODO recursion not allowed
+			// for (const Channel& child : m_model_DEPR_.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			//	if (child.type != ChannelType::GROUP)
+			//		keyKill(child.id, scene, canRecordActions, currentTickQuantized);
+		}
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -161,14 +177,14 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
     bool canRecordActions, Tick currentTickQuantized)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
+	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 
 	assert(ch.type == ChannelType::MIDI);
 
 	if (canRecordActions)
 	{
 		recordMidiAction(channelId, scene, e, currentTickQuantized, m_actionManager);
-		m_model.swap(model_DEPR_::SwapType::HARD);
+		m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 	}
 	sendMidiEventToPlugins(ch.shared->midiQueue, e);
 	if (ch.canSendMidi())
@@ -179,8 +195,8 @@ void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
 
 void Reactor::toggleReadActions(ID channelId, bool seqIsRunning)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
-	toggleSampleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
+	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
+	toggleSampleReadActions(*ch.shared, m_model_DEPR_.get().behaviors.treatRecsAsLoops, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -190,9 +206,9 @@ void Reactor::killReadActions(ID channelId)
 	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful
 	only when the treatRecsAsLoops flag is true. */
 
-	if (!m_model.get().behaviors.treatRecsAsLoops)
+	if (!m_model_DEPR_.get().behaviors.treatRecsAsLoops)
 		return;
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
+	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 	killSampleReadActions(*ch.shared);
 }
 
@@ -200,9 +216,9 @@ void Reactor::killReadActions(ID channelId)
 
 void Reactor::toggleMute(ID channelId)
 {
-	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
-	model_DEPR_::Track& track   = m_model.get().tracks.getByChannel(ch.id);
-	const bool    newMute = !ch.isMuted();
+	Channel&            ch      = m_model_DEPR_.get().tracks.getChannel(channelId);
+	model_DEPR_::Track& track   = m_model_DEPR_.get().tracks.getByChannel(ch.id);
+	const bool          newMute = !ch.isMuted();
 
 	ch.setMute(newMute);
 
@@ -214,7 +230,7 @@ void Reactor::toggleMute(ID channelId)
 				child.setMute(newMute);
 	}
 
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 
 	if (ch.midiLightning.enabled)
 		sendMidiLightningMute(ch.id, ch.midiLightning, newMute, m_midiMapper);
@@ -224,9 +240,9 @@ void Reactor::toggleMute(ID channelId)
 
 void Reactor::toggleSolo(ID channelId)
 {
-	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
-	model_DEPR_::Track& track   = m_model.get().tracks.getByChannel(ch.id);
-	const bool    newSolo = !ch.isSoloed();
+	Channel&            ch      = m_model_DEPR_.get().tracks.getChannel(channelId);
+	model_DEPR_::Track& track   = m_model_DEPR_.get().tracks.getByChannel(ch.id);
+	const bool          newSolo = !ch.isSoloed();
 
 	ch.setSolo(newSolo);
 
@@ -255,7 +271,7 @@ void Reactor::toggleSolo(ID channelId)
 			group.setSolo(false);
 	}
 
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
 
 	if (ch.midiLightning.enabled)
 		sendMidiLightningSolo(ch.id, ch.midiLightning, newSolo, m_midiMapper);
@@ -265,26 +281,32 @@ void Reactor::toggleSolo(ID channelId)
 
 void Reactor::stopAll()
 {
-	for (const model_DEPR_::Track& track : m_model.get().tracks.getAll())
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [](model::Document& doc, model::Assets& assets)
 	{
-		for (const Channel& ch : track.getChannels().getAll())
+		for (const model::Track& track : doc.tracks.getAll())
 		{
-			if (ch.type == ChannelType::MIDI)
+			for (const model::Channel& ch : track.getChannels().getAll())
 			{
-				if (!ch.isPlaying())
-					continue;
+				const auto channelParameters = assets.channelsParameters.find(ch.id);
+				const auto channelRendering  = assets.channelsRendering.find(ch.id);
 
-				// TODO
-				// stopMidiChannel(ch.shared->playStatus);
-				sendMidiAllNotesOff(ch, m_kernelMidi);
-			}
-			else if (ch.type == ChannelType::SAMPLE)
-			{
-				stopSampleChannelBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+				if (ch.type == ChannelType::MIDI)
+				{
+					if (!channelParameters->isPlaying())
+						continue;
+
+					// TODO
+					// stopMidiChannel(ch.shared->playStatus);
+					// sendMidiAllNotesOff(ch, m_kernelMidi);
+				}
+				else if (ch.type == ChannelType::SAMPLE)
+				{
+					stopSampleChannelBySeq(*channelParameters, *channelRendering,
+					    doc.behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+				}
 			}
 		}
-	}
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -294,9 +316,9 @@ void Reactor::rewindAll()
 	/*
 	TODO
 	for (const model_DEPR_::Track& track : m_model.get().tracks.getAll())
-		for (const Channel& ch : track.getChannels().getAll())
-			if (ch.type == ChannelType::MIDI)
-				rewindMidiChannel(ch.shared->playStatus);
+	    for (const Channel& ch : track.getChannels().getAll())
+	        if (ch.type == ChannelType::MIDI)
+	            rewindMidiChannel(ch.shared->playStatus);
 	m_model.swap(model_DEPR_::SwapType::SOFT);
 	*/
 }
@@ -305,11 +327,18 @@ void Reactor::rewindAll()
 
 void Reactor::killEmptySampleChannels(Scene scene)
 {
-	m_model.get().tracks.forEachChannel([scene](Channel& ch)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [scene](model::Document& doc, model::Assets& assets)
 	{
-		if (!ch.isInternal() && ch.type == ChannelType::SAMPLE && !ch.hasWave(scene) && ch.isPlaying())
-			killSampleChannel(*ch.shared, ch.sampleChannel->mode);
-		return true;
+		doc.tracks.forEachChannel([&assets, scene](model::Channel& ch)
+		{
+			const auto channelParameters = assets.channelsParameters.find(ch.id);
+			const auto channelRendering  = assets.channelsRendering.find(ch.id);
+
+			if (!ch.isInternal() && ch.type == ChannelType::SAMPLE && !ch.hasWave(scene) && channelParameters->isPlaying())
+				killSampleChannel(*channelParameters, *channelRendering, ch.sampleChannel->mode);
+
+			return true;
+		});
 	});
 }
 } // namespace giada::m::rendering
