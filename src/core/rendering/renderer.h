@@ -111,7 +111,13 @@ private:
 	    bool seqIsRunning) const;
 
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
-	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, int channelOffset) const;
+
+	void renderMasterOut(
+	    const model::Channel&            ch,
+	    const model::Channel::Rendering& src,
+	    mcl::AudioBuffer&                out,
+	    int                              channelOffset) const;
+
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
 
 	void renderSampleChannel(
@@ -127,14 +133,22 @@ private:
 	void renderMidiChannel(const Channel&) const;
 
 	/* mergeChannel
-	Merges the Channel's audio buffer with 'out'. */
+	Merges the 'dest' audio buffer with 'src'. */
 
-	void mergeChannel(const Channel&, mcl::AudioBuffer& out) const;
+	void mergeChannel(
+	    const model::Channel&,
+	    const model::Channel::Parameters&,
+	    const model::Channel::Rendering& src,
+	    const model::Channel::Rendering& dest) const;
 
 	/* mergeChannel (2)
 	Same as above, with a channel offset for the destination buffer 'out'. */
 
-	void mergeChannel(const Channel&, mcl::AudioBuffer& out, int destChannelOffset) const;
+	void mergeChannel(
+	    const model::Channel&            ch,
+	    const model::Channel::Rendering& src,
+	    mcl::AudioBuffer&                out,
+	    int                              destChannelOffset) const;
 
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;
