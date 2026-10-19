@@ -728,23 +728,23 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 
 	shared.playStatus.onChange = [this, id = ch.id](ChannelStatus status)
 	{
-		onChannelPlayStatusChanged(id, status);
+	    onChannelPlayStatusChanged(id, status);
 	};
 
 	if (ch.type == ChannelType ::SAMPLE)
 	{
-		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id.getValue(), [&shared](Frame delta)
-		{
-			rendering::playSampleChannel(shared, delta);
-		});
-		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id.getValue(), [&shared](Frame delta)
-		{
-			const ChannelStatus status = shared.playStatus.load();
-			if (status == ChannelStatus::OFF)
-				rendering::playSampleChannel(shared, delta);
-			else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-				rendering::rewindSampleChannel(shared, delta);
-		});
+	    shared.quantizer->schedule(Q_ACTION_PLAY + ch.id.getValue(), [&shared](Frame delta)
+	    {
+	        rendering::playSampleChannel(shared, delta);
+	    });
+	    shared.quantizer->schedule(Q_ACTION_REWIND + ch.id.getValue(), [&shared](Frame delta)
+	    {
+	        const ChannelStatus status = shared.playStatus.load();
+	        if (status == ChannelStatus::OFF)
+	            rendering::playSampleChannel(shared, delta);
+	        else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
+	            rendering::rewindSampleChannel(shared, delta);
+	    });
 	}
 	*/
 }
