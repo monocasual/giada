@@ -271,7 +271,7 @@ void Renderer::renderTracks(
 
 			const RenderInfo renderInfo = findRenderInfo_(m_renderCommands, c.id);
 
-			renderNormalChannel(c, *channelParameters, *channelRendering, renderInfo, in, scene, seqIsRunning);
+			renderNormalChannel(c, *channelParameters, *channelRendering, assets, renderInfo, in, scene, seqIsRunning);
 			/* TODO
 			if (!c.isAudible(hasSolos))
 			    continue;
@@ -301,6 +301,7 @@ void Renderer::renderNormalChannel(
     const model::Channel&             ch,
     const model::Channel::Parameters& params,
     const model::Channel::Rendering&  rendering,
+    const model::Assets&              assets,
     RenderInfo                        renderInfo,
     const mcl::AudioBuffer&           in,
     Scene                             scene,
@@ -309,7 +310,10 @@ void Renderer::renderNormalChannel(
 	rendering.clearAudioBuffer(0);
 
 	if (ch.type == ChannelType::SAMPLE)
-		renderSampleChannel(ch, params, rendering, renderInfo, in, scene, seqIsRunning);
+	{
+		const auto wave = assets.waves.find(ch.sampleChannel->getSample(scene).waveId);
+		renderSampleChannel(ch, params, rendering, wave.get(), renderInfo, in, scene, seqIsRunning);
+	}
 	// TODO
 	// else if (ch.type == ChannelType::MIDI)
 	//	renderMidiChannel(ch);
@@ -349,6 +353,7 @@ void Renderer::renderSampleChannel(
     const model::Channel&             ch,
     const model::Channel::Parameters& params,
     const model::Channel::Rendering&  render,
+    const model::Wave*                wave,
     RenderInfo                        renderInfo,
     const mcl::AudioBuffer&           in,
     Scene scene, bool seqIsRunning) const
@@ -356,7 +361,7 @@ void Renderer::renderSampleChannel(
 	assert(ch.type == ChannelType::SAMPLE);
 
 	if (params.isPlaying())
-		rendering::renderSampleChannel(ch, params, render, renderInfo, scene, seqIsRunning);
+		rendering::renderSampleChannel(ch, params, render, wave, renderInfo, scene, seqIsRunning);
 
 	// TODO
 	// if (ch.canReceiveAudio())
