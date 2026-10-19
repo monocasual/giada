@@ -69,6 +69,7 @@ void renderSampleChannel(
     const model::Channel&,
     const model::Channel::Parameters&,
     const model::Channel::Rendering&,
+    const model::Wave*,
     RenderInfo,
     Scene,
     bool seqIsRunning);
@@ -80,6 +81,7 @@ void renderSampleChannelInput(const Channel&, const mcl::AudioBuffer&);
 
 ReadResult readWave(
     const model::Channel::Rendering&,
+    const model::Wave&,
     const Sample&,
     Frame start,
     Frame offset);
