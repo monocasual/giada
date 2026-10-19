@@ -26,6 +26,7 @@
 
 #include "src/core/rendering/sampleRendering.h"
 #include "src/core/channels/channel.h"
+#include "src/core/model/wave.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/rendering/sampleAdvance.h"
 #include "src/core/resampler.h"
@@ -40,14 +41,13 @@ namespace
 {
 ReadResult readResampled_(
     const model::Channel::Rendering& rendering,
+    const model::Wave&               wave,
     const Sample&                    sample,
     Frame                            start,
     Frame                            offset)
 {
-	assert(sample.wave != nullptr);
-
 	const Resampler::Result res = rendering.resampleToAudioBufferFrom(
-	    sample.wave->getBuffer(), start, sample.range.getB(), offset, sample.pitch);
+	    wave.getBuffer(), start, sample.range.getB(), offset, sample.pitch);
 
 	return {
 	    static_cast<Frame>(res.used),
@@ -59,14 +59,13 @@ ReadResult readResampled_(
 
 ReadResult readStretched_(
     const model::Channel::Rendering& rendering,
+    const model::Wave&               wave,
     const Sample&                    sample,
     Frame                            start,
     Frame                            offset)
 {
-	assert(sample.wave != nullptr);
-
 	const Stretcher::Result res = rendering.stretchToAudioBufferFrom(
-	    sample.wave->getBuffer(), start, sample.range.getB(), offset, sample.time, sample.pitch);
+	    wave.getBuffer(), start, sample.range.getB(), offset, sample.time, sample.pitch);
 
 	return {
 	    static_cast<Frame>(res.used),
@@ -78,17 +77,16 @@ ReadResult readStretched_(
 
 ReadResult readCopy_(
     const model::Channel::Rendering& rendering,
+    const model::Wave&               wave,
     const Sample&                    sample,
     Frame                            start,
     Frame                            offset)
 {
-	assert(sample.wave != nullptr);
-
 	Frame used = rendering.getAudioBuffer().countFrames() - offset;
 	if (used > sample.range.getB() - start)
 		used = sample.range.getB() - start;
 
-	rendering.copyToAudioBufferFrom(sample.wave->getBuffer(), used, start, offset);
+	rendering.copyToAudioBufferFrom(wave.getBuffer(), used, start, offset);
 
 	return {used, used, true};
 }
@@ -156,20 +154,21 @@ Frame render_(
     const model::Channel&             ch,
     const model::Channel::Parameters& params,
     const model::Channel::Rendering&  rendering,
+    const model::Wave*                wave,
     Scene                             scene,
     Frame                             tracker,
     Frame                             offset,
     bool                              seqIsRunning,
     bool                              testEnd)
 {
-	const Sample& sample = ch.sampleChannel->getSample(scene);
-
-	if (sample.wave == nullptr)
+	if (wave == nullptr)
 		return tracker;
+
+	const Sample& sample = ch.sampleChannel->getSample(scene);
 
 	while (true)
 	{
-		ReadResult res = readWave(rendering, sample, tracker, offset);
+		ReadResult res = readWave(rendering, *wave, sample, tracker, offset);
 		tracker += res.used;
 		offset += res.generated;
 
@@ -205,6 +204,7 @@ void renderSampleChannel(
     const model::Channel&             ch,
     const model::Channel::Parameters& params,
     const model::Channel::Rendering&  rendering,
+    const model::Wave*                wave,
     RenderInfo                        localRenderInfo,
     Scene                             scene,
     bool                              seqIsRunning)
@@ -234,7 +234,7 @@ void renderSampleChannel(
 
 	if (renderInfo.mode == RenderInfo::Mode::NORMAL)
 	{
-		tracker = render_(ch, params, rendering, scene, tracker, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+		tracker = render_(ch, params, rendering, wave, scene, tracker, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 	}
 	else
 	{
@@ -243,7 +243,7 @@ void renderSampleChannel(
 		complex logic on sample end (testEnd=false), we just want to fill the buffer
 		as much as possible here. */
 
-		render_(ch, params, rendering, scene, tracker, 0, seqIsRunning, /*testEnd=*/false);
+		render_(ch, params, rendering, wave, scene, tracker, 0, seqIsRunning, /*testEnd=*/false);
 		rendering.notifyLastChunk();
 
 		/* Mode::REWIND: fill buffer from offset:  [abcdefghi|abcdfefg]
@@ -251,7 +251,7 @@ void renderSampleChannel(
 
 		if (renderInfo.mode == RenderInfo::Mode::REWIND)
 		{
-			tracker = render_(ch, params, rendering, scene, range.getA(), renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+			tracker = render_(ch, params, rendering, wave, scene, range.getA(), renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 		}
 		else
 		{
@@ -275,23 +275,23 @@ void renderSampleChannelInput(const Channel& ch, const mcl::AudioBuffer& in)
 
 ReadResult readWave(
     const model::Channel::Rendering& rendering,
+    const model::Wave&               wave,
     const Sample&                    sample,
     Frame                            start,
     Frame                            offset)
 {
-	assert(sample.wave != nullptr);
-	assert(start >= 0);
-	assert(sample.range.getB() <= sample.wave->getBuffer().countFrames());
+		assert(start >= 0);
+	assert(sample.range.getB() <= wave.getBuffer().countFrames());
 	assert(offset < rendering.getAudioBuffer().countFrames());
 
 	if (sample.playbackMode == PlaybackMode::TAPE)
 	{
 		if (sample.pitch == 1.0f)
-			return readCopy_(rendering, sample, start, offset);
+			return readCopy_(rendering, wave, sample, start, offset);
 		else
-			return readResampled_(rendering, sample, start, offset);
+			return readResampled_(rendering, wave, sample, start, offset);
 	}
 	else // PlaybackMode::ELASTIC
-		return readStretched_(rendering, sample, start, offset);
+		return readStretched_(rendering, wave, sample, start, offset);
 }
 } // namespace giada::m::rendering
