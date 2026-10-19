@@ -175,8 +175,10 @@ void ChannelManager::removeTrack(std::size_t trackIndex)
 
 void ChannelManager::setTrackWidth(std::size_t trackIndex, int width)
 {
-	m_model_DEPR_.get().tracks.get(trackIndex).width = width;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [trackIndex, width](model::Document& doc)
+	{
+		doc.tracks.get(trackIndex).width = width;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
