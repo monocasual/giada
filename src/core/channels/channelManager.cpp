@@ -164,11 +164,14 @@ void ChannelManager::removeTrack(std::size_t trackIndex)
 {
 	assert(canRemoveTrack(trackIndex));
 
-	const Channel& ch = m_model_DEPR_.get().tracks.get(trackIndex).getGroupChannel();
+	m_model.writeDocumentAndAssets(model::SwapType::HARD, [trackIndex](model::Document& doc, model::Assets& assets)
+	{
+		const ID groupId = doc.tracks.get(trackIndex).getGroupChannel().id;
 
-	m_model_DEPR_.removeChannelShared(*ch.shared);
-	m_model_DEPR_.get().tracks.remove(trackIndex);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+		doc.tracks.remove(trackIndex);
+		assets.channelsParameters.remove(groupId);
+		assets.channelsRendering.remove(groupId);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
