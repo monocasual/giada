@@ -168,8 +168,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	renderTracks(doc.tracks, assets, *masterOutRendering, out, assets.mixerRendering->getInBuffer(),
 	    scene, hasSolos, doc.sequencer.isRunning());
 
+	renderMasterOut(masterOutCh, *masterOutRendering, out, doc.kernelAudio.deviceOut.channelsStart);
 	// TODO
-	// renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
 	// if (mixer.renderPreview)
 	//	renderPreview(previewCh, out);
 
@@ -255,9 +255,11 @@ void Renderer::renderTracks(
 		if (track.isInternal())
 			continue;
 
-		const model::Channel& group          = track.getGroupChannel();
-		const auto            groupRendering = assets.channelsRendering.find(group.id);
+		const model::Channel& group           = track.getGroupChannel();
+		const auto            groupParameters = assets.channelsParameters.find(group.id);
+		const auto            groupRendering  = assets.channelsRendering.find(group.id);
 
+		assert(groupParameters != nullptr);
 		assert(groupRendering != nullptr);
 
 		groupRendering->clearAudioBuffer(0);
@@ -272,26 +274,23 @@ void Renderer::renderTracks(
 			const RenderInfo renderInfo = findRenderInfo_(m_renderCommands, c.id);
 
 			renderNormalChannel(c, *channelParameters, *channelRendering, assets, renderInfo, in, scene, seqIsRunning);
-			/* TODO
 			if (!c.isAudible(hasSolos))
-			    continue;
+				continue;
 			if (c.sendToMaster)
-			    mergeChannel(c, group.shared->audioBuffer);
+				mergeChannel(c, *channelParameters, *channelRendering, *groupRendering);
 			for (const int offset : c.extraOutputs)
-			    mergeChannel(c, hardwareOut, offset);
-			*/
+				mergeChannel(c, *channelRendering, hardwareOut, offset);
 		}
 
-		/* TODO
-		renderAudioPlugins(group, m_pluginHost);
+		// TODO
+		// renderAudioPlugins(group, m_pluginHost);
 
 		if (!group.isAudible(hasSolos))
-		    continue;
+			continue;
 		if (group.sendToMaster)
-		    mergeChannel(group, masterOut);
+			mergeChannel(group, *groupParameters, *groupRendering, masterOutRendering);
 		for (const int offset : group.extraOutputs)
-		    mergeChannel(group, hardwareOut, offset);
-		*/
+			mergeChannel(group, *groupRendering, hardwareOut, offset);
 	}
 }
 
@@ -328,10 +327,15 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, int channelOffset) const
+void Renderer::renderMasterOut(
+    const model::Channel&            ch,
+    const model::Channel::Rendering& src,
+    mcl::AudioBuffer&                out,
+    int                              channelOffset) const
 {
-	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	mergeChannel(ch, out, channelOffset);
+	// TODO
+	// m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+	mergeChannel(ch, src, out, channelOffset);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -382,19 +386,29 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out) const
+void Renderer::mergeChannel(
+    const model::Channel&             ch,
+    const model::Channel::Parameters& params,
+    const model::Channel::Rendering&  src,
+    const model::Channel::Rendering&  dest) const
 {
-	// TODO - out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
+	dest.sumToAudioBufferFrom(src.getAudioBuffer(), ch.pan, ch.volume * params.getVolumeInternal());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out, int destChannelOffset) const
+void Renderer::mergeChannel(
+    const model::Channel&            ch,
+    const model::Channel::Rendering& src,
+    mcl::AudioBuffer&                out,
+    int                              destChannelOffset) const
 {
-	assert(ch.shared->audioBuffer.countChannels() == static_cast<int>(ch.pan.get().size()));
+	const mcl::AudioBuffer& buf = src.getAudioBuffer();
 
-	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
+	assert(buf.countChannels() == static_cast<int>(ch.pan.get().size()));
+
+	for (int i = 0; i < buf.countChannels(); i++)
 		if (destChannelOffset < out.countChannels())
-			out.sum(ch.shared->audioBuffer, i, i + destChannelOffset, ch.volume * ch.pan.get()[i]);
+			out.sum(buf, i, i + destChannelOffset, ch.volume * ch.pan.get()[i]);
 }
 } // namespace giada::m::rendering
