@@ -320,9 +320,8 @@ void addTrack()
 
 void deleteTrack(std::size_t index)
 {
-	if (g_engine->getChannelsApi().getTracks().getAll().size() == 1) // One track must stay
-		return;
-	g_engine->getChannelsApi().removeTrack(index);
+	if (g_engine->getChannelsApi().canRemoveTrack(index)) // One track must stay
+		g_engine->getChannelsApi().removeTrack(index);
 }
 
 /* -------------------------------------------------------------------------- */
