@@ -194,9 +194,9 @@ void Renderer::advanceTracks(
     const model::Assets&          assets,
     FrameRange                    block,
     Frame                         quantizerStep,
-    RenderCommands&               out) const
+    RenderCommands&               renderCommands) const
 {
-	out.clear(); // Keeps the capacity, no reallocation
+	renderCommands.clear(); // Keeps the capacity, no reallocation
 
 	for (const model::Track& track : tracks.getAll())
 	{
@@ -206,7 +206,7 @@ void Renderer::advanceTracks(
 				continue;
 			const auto params = assets.channelsParameters.find(c.id);
 			assert(params != nullptr);
-			out.push_back({c.id, advanceChannel(c, *params, events, block, quantizerStep)});
+			renderCommands.push_back({c.id, advanceChannel(c, *params, events, block, quantizerStep)});
 		}
 	}
 }
