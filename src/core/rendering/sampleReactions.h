@@ -27,6 +27,7 @@
 #ifndef G_RENDERING_SAMPLE_REACTIONS_H
 #define G_RENDERING_SAMPLE_REACTIONS_H
 
+#include "src/core/model/channel.h"
 #include "src/core/types.h"
 #include "src/scene.h"
 #include "src/types.h"
@@ -48,14 +49,39 @@ void toggleSampleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRu
 /* [...]SampleChannel
 Actions manually performed on a Sample channel. */
 
-void stopSampleChannelBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop);
-void stopSampleChannel(ChannelShared&, Frame localFrame);
-void pressSampleChannel(ID channelId, ChannelShared&, SamplePlayerMode, float velocity, bool canQuantize, bool isLoop, bool velocityAsVol);
-void releaseSampleChannel(ChannelShared&, SamplePlayerMode);
-void killSampleChannel(ChannelShared&, SamplePlayerMode);
-void rewindSampleChannel(ChannelShared&, Frame localFrame);
-void playSampleChannel(ChannelShared&, Frame localFrame);
+void stopSampleChannelBySeq(
+    const model::Channel::Parameters&,
+    const model::Channel::Rendering&,
+    bool chansStopOnSeqHalt,
+    bool isLoop);
 
+void stopSampleChannel(const model::Channel::Rendering&, Frame localFrame);
+
+void pressSampleChannel(
+    ID channelId,
+    const model::Channel::Parameters&,
+    const model::Channel::Rendering&,
+    SamplePlayerMode,
+    float velocity,
+    bool  canQuantize,
+    bool  isLoop,
+    bool  velocityAsVol);
+
+void releaseSampleChannel(
+    const model::Channel::Parameters&,
+    const model::Channel::Rendering&,
+    SamplePlayerMode);
+
+void killSampleChannel(
+    const model::Channel::Parameters&,
+    const model::Channel::Rendering&,
+    SamplePlayerMode);
+
+void rewindSampleChannel(const model::Channel::Rendering&, Frame localFrame);
+
+void playSampleChannel(
+    const model::Channel::Parameters&,
+    const model::Channel::Rendering&);
 } // namespace giada::m::rendering
 
 #endif

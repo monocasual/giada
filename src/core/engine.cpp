@@ -57,7 +57,7 @@ Engine::Engine()
 #else
 , m_renderer(m_sequencer, m_mixer, m_pluginHost, m_kernelMidi)
 #endif
-, m_reactor(m_model_DEPR_, m_midiMapper, m_actionManager, m_kernelMidi)
+, m_reactor(m_model, m_model_DEPR_, m_midiMapper, m_actionManager, m_kernelMidi)
 , m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder, m_actionManager, m_reactor)
 , m_channelsApi(m_model_DEPR_, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionManager, m_pluginHost, m_pluginManager, m_reactor)
 , m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model_DEPR_)

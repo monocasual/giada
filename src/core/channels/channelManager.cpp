@@ -721,6 +721,8 @@ void ChannelManager::loadSampleChannel(model::Channel& ch, model::Wave* w, Scene
 
 void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& shared) const
 {
+	/*
+	TODO
 	assert(onChannelPlayStatusChanged != nullptr);
 
 	shared.playStatus.onChange = [this, id = ch.id](ChannelStatus status)
@@ -743,6 +745,7 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 				rendering::rewindSampleChannel(shared, delta);
 		});
 	}
+	*/
 }
 
 /* -------------------------------------------------------------------------- */
