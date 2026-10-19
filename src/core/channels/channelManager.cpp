@@ -250,6 +250,7 @@ void ChannelManager::loadSampleChannel(ID channelId, std::shared_ptr<model::Wave
 		model::Channel& channel   = doc.tracks.getChannel(channelId);
 		const ID        oldWaveId = channel.sampleChannel->getWaveId(scene);
 		loadSampleChannel(channel, newWave.get(), scene);
+		assets.waves.set(newWave->id, std::move(newWave));
 		assets.waves.remove(oldWaveId);
 	});
 
