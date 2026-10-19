@@ -83,15 +83,13 @@ void Mixer::reset(int maxFramesInLoop, int framesInBuffer)
 
 void Mixer::enable()
 {
-	m_model_DEPR_.get().mixer.a_setActive(true);
+	m_model.getParameters().mixer.setActive(true);
 	u::log::print("[mixer::enable] enabled\n");
 }
 
 void Mixer::disable()
 {
-	m_model_DEPR_.get().mixer.a_setActive(false);
-	while (m_model_DEPR_.isRtLocked())
-		;
+	m_model.getParameters().mixer.setActive(false);
 	u::log::print("[mixer::disable] disabled\n");
 }
 
