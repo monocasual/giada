@@ -138,13 +138,19 @@ public:
 	Last touches after the output has been rendered: apply inToOut if any, apply
 	output volume. */
 
-	void finalizeOutput(const model_DEPR_::Mixer&, mcl::AudioBuffer&, bool inToOut,
-	    bool limit, float vol) const;
+	void finalizeOutput(
+	    const mcl::AudioBuffer& mixerIn,
+	    mcl::AudioBuffer&       hardwareOut,
+	    bool                    inToOut,
+	    bool                    limit,
+	    float                   vol) const;
 
 	/* updateOutputPeak
 	Reads the maximum peak in the given buffer and updates the value in model::Mixer. */
 
-	void updateOutputPeak(const model_DEPR_::Mixer&, const mcl::AudioBuffer&) const;
+	void updateOutputPeak(
+	    const model::Mixer::Parameters&,
+	    const mcl::AudioBuffer&) const;
 
 	void setRecTriggerMode(RecTriggerMode);
 	void setInputRecMode(InputRecMode);
