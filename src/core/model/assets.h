@@ -29,8 +29,8 @@
 
 #include "src/core/model/channel.h"
 #include "src/core/model/mixer.h"
+#include "src/core/model/wave.h"
 #include "src/core/plugins/plugin.h"
-#include "src/core/wave.h"
 #include "src/deps/realtime-model/RealtimeAssetMap.hpp"
 
 namespace giada::m::model
