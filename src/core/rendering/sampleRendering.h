@@ -28,7 +28,7 @@
 #define G_RENDERING_SAMPLE_RENDERING_H
 
 #include "src/core/channels/channel.h"
-#include "src/core/model/channel.h"
+#include "src/core/model/channelView.h"
 #include "src/core/rendering/renderInfo.h"
 #include "src/scene.h"
 #include "src/types.h"
@@ -66,12 +66,8 @@ struct ReadResult
 };
 
 void renderSampleChannel(
-    const model::Channel&,
-    const model::Channel::Parameters&,
-    const model::Channel::Rendering&,
-    const model::Wave*,
+    const model::SampleChannelView&,
     RenderInfo,
-    Scene,
     bool seqIsRunning);
 
 /* renderSampleChannelInput
@@ -80,9 +76,7 @@ Copies input buffer to channel buffer: this enables the input monitoring. */
 void renderSampleChannelInput(const Channel&, const mcl::AudioBuffer&);
 
 ReadResult readWave(
-    const model::Channel::Rendering&,
-    const model::Wave&,
-    const Sample&,
+    const model::SampleChannelView&,
     Frame start,
     Frame offset);
 } // namespace giada::m::rendering

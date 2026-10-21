@@ -27,6 +27,7 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
+#include "src/core/model/channelView.h"
 #include "src/core/model/types.h"
 #include "src/core/sequencer.h"
 #include <vector>
@@ -84,8 +85,7 @@ private:
 	    RenderCommands&) const;
 
 	RenderInfo advanceChannel(
-	    const model::Channel&,
-	    const model::Channel::Parameters&,
+	    const model::ChannelView&,
 	    const Sequencer::EventBuffer&,
 	    FrameRange,
 	    Frame quantizerStep) const;
@@ -93,42 +93,33 @@ private:
 	void renderTracks(
 	    const model::Tracks&,
 	    const model::Assets&,
-	    const model::Channel::Rendering& masterOutRendering,
-	    mcl::AudioBuffer&                hardwareOut,
-	    const mcl::AudioBuffer&          in,
+	    const model::ChannelView& masterOut,
+	    mcl::AudioBuffer&         hardwareOut,
+	    const mcl::AudioBuffer&   in,
 	    Scene,
 	    bool hasSolos,
 	    bool seqIsRunning) const;
 
 	void renderNormalChannel(
-	    const model::Channel&,
-	    const model::Channel::Parameters&,
-	    const model::Channel::Rendering&,
-	    const model::Assets&,
+	    const model::SampleChannelView&,
 	    RenderInfo,
 	    const mcl::AudioBuffer& in,
-	    Scene,
-	    bool seqIsRunning) const;
+	    bool                    seqIsRunning) const;
 
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
 
 	void renderMasterOut(
-	    const model::Channel&            ch,
-	    const model::Channel::Rendering& src,
-	    mcl::AudioBuffer&                out,
-	    int                              channelOffset) const;
+	    const model::ChannelView& channelView,
+	    mcl::AudioBuffer&         out,
+	    int                       channelOffset) const;
 
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
 
 	void renderSampleChannel(
-	    const model::Channel&,
-	    const model::Channel::Parameters&,
-	    const model::Channel::Rendering&,
-	    const model::Wave*,
+	    const model::SampleChannelView&,
 	    RenderInfo,
 	    const mcl::AudioBuffer& in,
-	    Scene,
-	    bool seqIsRunning) const;
+	    bool                    seqIsRunning) const;
 
 	void renderMidiChannel(const Channel&) const;
 
@@ -136,19 +127,16 @@ private:
 	Merges the 'dest' audio buffer with 'src'. */
 
 	void mergeChannel(
-	    const model::Channel&,
-	    const model::Channel::Parameters&,
-	    const model::Channel::Rendering& src,
-	    const model::Channel::Rendering& dest) const;
+	    const model::ChannelView& src,
+	    const model::ChannelView& dest) const;
 
 	/* mergeChannel (2)
 	Same as above, with a channel offset for the destination buffer 'out'. */
 
 	void mergeChannel(
-	    const model::Channel&            ch,
-	    const model::Channel::Rendering& src,
-	    mcl::AudioBuffer&                out,
-	    int                              destChannelOffset) const;
+	    const model::ChannelView& channelView,
+	    mcl::AudioBuffer&         out,
+	    int                       destChannelOffset) const;
 
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;

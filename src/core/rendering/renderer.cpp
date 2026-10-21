@@ -144,14 +144,15 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int             sampleRate     = doc.kernelAudio.samplerate;
-	const int             maxFramesToRec = doc.mixer.inputRecMode == InputRecMode::FREE ? doc.sequencer.getMaxFramesInLoop(sampleRate) : doc.sequencer.getFramesInLoop(sampleRate);
-	const Scene           scene          = params.sequencer.getCurrentScene();
-	const bool            hasSolos       = doc.mixer.hasSolos;
-	const bool            hasInput       = in.isAllocd();
-	const model::Channel& masterOutCh    = doc.tracks.getChannel(MASTER_OUT_CHANNEL_ID);
-	const model::Channel& masterInCh     = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
-	const model::Channel& previewCh      = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const int                sampleRate     = doc.kernelAudio.samplerate;
+	const int                maxFramesToRec = doc.mixer.inputRecMode == InputRecMode::FREE ? doc.sequencer.getMaxFramesInLoop(sampleRate) : doc.sequencer.getFramesInLoop(sampleRate);
+	const Scene              scene          = params.sequencer.getCurrentScene();
+	const bool               hasSolos       = doc.mixer.hasSolos;
+	const bool               hasInput       = in.isAllocd();
+	const model::Channel&    masterOutCh    = doc.tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const model::ChannelView masterOutView  = model::makeChannelView(masterOutCh, assets);
+	const model::Channel&    masterInCh     = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
+	const model::Channel&    previewCh      = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	// TODO
 	// m_mixer.render(in, document_RT, maxFramesToRec);
@@ -162,24 +163,20 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	// Render tracks
 
-	const auto masterOutRendering = assets.channelsRendering.find(MASTER_OUT_CHANNEL_ID);
-	const auto mixerRendering     = assets.mixerRendering;
-	assert(masterOutRendering != nullptr);
-
-	renderTracks(doc.tracks, assets, *masterOutRendering, out, assets.mixerRendering->getInBuffer(),
+	renderTracks(doc.tracks, assets, masterOutView, out, assets.mixerRendering->getInBuffer(),
 	    scene, hasSolos, doc.sequencer.isRunning());
 
-	renderMasterOut(masterOutCh, *masterOutRendering, out, doc.kernelAudio.deviceOut.channelsStart);
+	renderMasterOut(masterOutView, out, doc.kernelAudio.deviceOut.channelsStart);
 
 	// TODO
 	// if (mixer.renderPreview)
 	//	renderPreview(previewCh, out);
 
-	m_mixer.updateOutputPeak(params.mixer, masterOutRendering->getAudioBuffer());
+	m_mixer.updateOutputPeak(params.mixer, masterOutView.getRendering().getAudioBuffer());
 
 	/* Post processing. */
 
-	m_mixer.finalizeOutput(mixerRendering->getInBuffer(), out, doc.mixer.inToOut,
+	m_mixer.finalizeOutput(assets.mixerRendering->getInBuffer(), out, doc.mixer.inToOut,
 	    doc.kernelAudio.limitOutput, masterOutCh.volume);
 
 	/* CPU load computation. */
@@ -205,21 +202,21 @@ void Renderer::advanceTracks(
 		{
 			if (c.isInternal())
 				continue;
-			const auto params = assets.channelsParameters.find(c.id);
-			assert(params != nullptr);
-			renderCommands.push_back({c.id, advanceChannel(c, *params, events, block, quantizerStep)});
+			const model::ChannelView channelView = model::makeChannelView(c, assets);
+			renderCommands.push_back({c.id, advanceChannel(channelView, events, block, quantizerStep)});
 		}
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-RenderInfo Renderer::advanceChannel(const model::Channel& ch,
-    const model::Channel::Parameters&                     params,
-    const Sequencer::EventBuffer&                         events,
-    FrameRange                                            block,
-    Frame                                                 quantizerStep) const
+RenderInfo Renderer::advanceChannel(const model::ChannelView& channelView,
+    const Sequencer::EventBuffer&                             events,
+    FrameRange                                                block,
+    Frame                                                     quantizerStep) const
 {
+	const model::Channel& ch = channelView.getChannel();
+
 	// TODO
 	// if (ch.shared->quantizer)
 	//	ch.shared->quantizer->advance(block, quantizerStep);
@@ -229,9 +226,9 @@ RenderInfo Renderer::advanceChannel(const model::Channel& ch,
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-			advanceMidiChannel(ch, params, e, m_kernelMidi);
+			advanceMidiChannel(channelView, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			info = advanceSampleChannel(ch, params, e);
+			info = advanceSampleChannel(channelView, e);
 	}
 
 	return info;
@@ -240,15 +237,17 @@ RenderInfo Renderer::advanceChannel(const model::Channel& ch,
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderTracks(
-    const model::Tracks&             tracks,
-    const model::Assets&             assets,
-    const model::Channel::Rendering& masterOutRendering,
-    mcl::AudioBuffer&                hardwareOut,
-    const mcl::AudioBuffer&          in,
-    Scene                            scene,
-    bool                             hasSolos,
-    bool                             seqIsRunning) const
+    const model::Tracks&      tracks,
+    const model::Assets&      assets,
+    const model::ChannelView& masterOut,
+    mcl::AudioBuffer&         hardwareOut,
+    const mcl::AudioBuffer&   in,
+    Scene                     scene,
+    bool                      hasSolos,
+    bool                      seqIsRunning) const
 {
+	const model::Channel::Rendering& masterOutRendering = masterOut.getRendering();
+
 	masterOutRendering.clearAudioBuffer(0);
 
 	for (const model::Track& track : tracks.getAll())
@@ -256,31 +255,31 @@ void Renderer::renderTracks(
 		if (track.isInternal())
 			continue;
 
-		const model::Channel& group           = track.getGroupChannel();
-		const auto            groupParameters = assets.channelsParameters.find(group.id);
-		const auto            groupRendering  = assets.channelsRendering.find(group.id);
+		const model::Channel&    group     = track.getGroupChannel();
+		const model::ChannelView groupView = model::makeChannelView(group, assets);
 
-		assert(groupParameters != nullptr);
-		assert(groupRendering != nullptr);
-
-		groupRendering->clearAudioBuffer(0);
+		groupView.getRendering().clearAudioBuffer(0);
 
 		for (const model::Channel& c : track.getChannels().getAll())
 		{
-			const auto channelParameters = assets.channelsParameters.find(c.id);
-			const auto channelRendering  = assets.channelsRendering.find(c.id);
-			assert(channelParameters != nullptr);
-			assert(channelRendering != nullptr);
+			const model::ChannelView channelView = model::makeChannelView(c, assets);
 
 			const RenderInfo renderInfo = findRenderInfo_(m_renderCommands, c.id);
 
-			renderNormalChannel(c, *channelParameters, *channelRendering, assets, renderInfo, in, scene, seqIsRunning);
+			if (c.type == ChannelType::SAMPLE)
+			{
+				const model::SampleChannelView sampleView = model::makeSampleChannelView(channelView, assets, scene);
+				renderNormalChannel(sampleView, renderInfo, in, seqIsRunning);
+			}
+			else
+				channelView.getRendering().clearAudioBuffer(0);
+
 			if (!c.isAudible(hasSolos))
 				continue;
 			if (c.sendToMaster)
-				mergeChannel(c, *channelParameters, *channelRendering, *groupRendering);
+				mergeChannel(channelView, groupView);
 			for (const int offset : c.extraOutputs)
-				mergeChannel(c, *channelRendering, hardwareOut, offset);
+				mergeChannel(channelView, hardwareOut, offset);
 		}
 
 		// TODO
@@ -289,34 +288,25 @@ void Renderer::renderTracks(
 		if (!group.isAudible(hasSolos))
 			continue;
 		if (group.sendToMaster)
-			mergeChannel(group, *groupParameters, *groupRendering, masterOutRendering);
+			mergeChannel(groupView, masterOut);
 		for (const int offset : group.extraOutputs)
-			mergeChannel(group, *groupRendering, hardwareOut, offset);
+			mergeChannel(groupView, hardwareOut, offset);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderNormalChannel(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    const model::Assets&              assets,
-    RenderInfo                        renderInfo,
-    const mcl::AudioBuffer&           in,
-    Scene                             scene,
-    bool                              seqIsRunning) const
+    const model::SampleChannelView& sampleView,
+    RenderInfo                      renderInfo,
+    const mcl::AudioBuffer&         in,
+    bool                            seqIsRunning) const
 {
+	const model::Channel::Rendering& rendering = sampleView.getRendering();
+
 	rendering.clearAudioBuffer(0);
 
-	if (ch.type == ChannelType::SAMPLE)
-	{
-		const auto wave = assets.waves.find(ch.sampleChannel->getSample(scene).waveId);
-		renderSampleChannel(ch, params, rendering, wave.get(), renderInfo, in, scene, seqIsRunning);
-	}
-	// TODO
-	// else if (ch.type == ChannelType::MIDI)
-	//	renderMidiChannel(ch);
+	renderSampleChannel(sampleView, renderInfo, in, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -329,14 +319,13 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderMasterOut(
-    const model::Channel&            ch,
-    const model::Channel::Rendering& src,
-    mcl::AudioBuffer&                out,
-    int                              channelOffset) const
+    const model::ChannelView& channelView,
+    mcl::AudioBuffer&         out,
+    int                       channelOffset) const
 {
 	// TODO
 	// m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	mergeChannel(ch, src, out, channelOffset);
+	mergeChannel(channelView, out, channelOffset);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -355,18 +344,15 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderSampleChannel(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  render,
-    const model::Wave*                wave,
-    RenderInfo                        renderInfo,
-    const mcl::AudioBuffer&           in,
-    Scene scene, bool seqIsRunning) const
+    const model::SampleChannelView& sampleView,
+    RenderInfo                      renderInfo,
+    const mcl::AudioBuffer&         in,
+    bool                            seqIsRunning) const
 {
-	assert(ch.type == ChannelType::SAMPLE);
+	assert(sampleView.getChannel().type == ChannelType::SAMPLE);
 
-	if (params.isPlaying())
-		rendering::renderSampleChannel(ch, params, render, wave, renderInfo, scene, seqIsRunning);
+	if (sampleView.getParameters().isPlaying())
+		rendering::renderSampleChannel(sampleView, renderInfo, seqIsRunning);
 
 	// TODO
 	// if (ch.canReceiveAudio())
@@ -388,28 +374,32 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 /* -------------------------------------------------------------------------- */
 
 void Renderer::mergeChannel(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  src,
-    const model::Channel::Rendering&  dest) const
+    const model::ChannelView& src,
+    const model::ChannelView& dest) const
 {
-	dest.sumToAudioBufferFrom(src.getAudioBuffer(), ch.pan, ch.volume * params.getVolumeInternal());
+	const model::Channel& channel = src.getChannel();
+
+	dest.getRendering().sumToAudioBufferFrom(
+	    src.getRendering().getAudioBuffer(),
+	    channel.pan,
+	    channel.volume * src.getParameters().getVolumeInternal());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Renderer::mergeChannel(
-    const model::Channel&            ch,
-    const model::Channel::Rendering& src,
-    mcl::AudioBuffer&                out,
-    int                              destChannelOffset) const
+    const model::ChannelView& channelView,
+    mcl::AudioBuffer&         out,
+    int                       destChannelOffset) const
 {
-	const mcl::AudioBuffer& buf = src.getAudioBuffer();
+	const model::Channel&            channel = channelView.getChannel();
+	const model::Channel::Rendering& src     = channelView.getRendering();
+	const mcl::AudioBuffer&          buf     = src.getAudioBuffer();
 
-	assert(buf.countChannels() == static_cast<int>(ch.pan.get().size()));
+	assert(buf.countChannels() == static_cast<int>(channel.pan.get().size()));
 
 	for (int i = 0; i < buf.countChannels(); i++)
 		if (destChannelOffset < out.countChannels())
-			out.sum(buf, i, i + destChannelOffset, ch.volume * ch.pan.get()[i]);
+			out.sum(buf, i, i + destChannelOffset, channel.volume * channel.pan.get()[i]);
 }
 } // namespace giada::m::rendering
