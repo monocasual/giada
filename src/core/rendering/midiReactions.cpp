@@ -24,17 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/channel.h"
 #include "src/core/rendering/midiReactions.h"
 #include "src/core/actions/ActionManager.h"
 #include "src/core/kernelMidi.h"
+#include "src/core/model/channel.h"
 #include <cassert>
 
 namespace giada::m::rendering
 {
-void playMidiChannel(const model::Channel::Parameters& params)
+void playMidiChannel(const model::ChannelView& channelView)
 {
-	ChannelStatus playStatus = params.getPlayStatus();
+	const model::Channel::Parameters& params     = channelView.getParameters();
+	ChannelStatus                     playStatus = params.getPlayStatus();
 
 	switch (playStatus)
 	{
@@ -61,20 +62,19 @@ void playMidiChannel(const model::Channel::Parameters& params)
 	params.setPlayStatus(playStatus);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-void stopMidiChannel(const model::Channel::Parameters& params)
+void stopMidiChannel(const model::ChannelView& channelView)
 {
-	params.setPlayStatus(ChannelStatus::OFF);
+	channelView.getParameters().setPlayStatus(ChannelStatus::OFF);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-void rewindMidiChannel(const model::Channel::Parameters& params)
+void rewindMidiChannel(const model::ChannelView& channelView)
 {
-	ChannelStatus playStatus = params.getPlayStatus();
+	const model::Channel::Parameters& params     = channelView.getParameters();
+	ChannelStatus                     playStatus = params.getPlayStatus();
 
 	if (playStatus == ChannelStatus::ENDING)
 		playStatus = ChannelStatus::OFF;

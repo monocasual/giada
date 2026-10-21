@@ -49,9 +49,8 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 {
 	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=, this](model::Document& doc, model::Assets& assets)
 	{
-		model::Channel& ch                = doc.tracks.getChannel(channelId);
-		const auto      channelParameters = assets.channelsParameters.find(channelId);
-		const auto      channelRendering  = assets.channelsRendering.find(channelId);
+		model::Channel&    ch          = doc.tracks.getChannel(channelId);
+		model::ChannelView channelView = model::makeChannelView(ch, assets);
 
 		if (ch.type == ChannelType::MIDI)
 		{
@@ -68,12 +67,12 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 			// if (canRecordActions && !isAnyLoopMode)
 			//	recordSampleKeyPress(channelId, scene, *ch.shared, currentTickQuantized, mode, m_actionManager);
 
-			pressSampleChannel(channelId, *channelParameters, *channelRendering,
+			pressSampleChannel(channelView,
 			    mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
 		}
 		else if (ch.type == ChannelType::PREVIEW)
 		{
-			pressSampleChannel(channelId, *channelParameters, *channelRendering,
+			pressSampleChannel(channelView,
 			    SamplePlayerMode::SINGLE_BASIC_PAUSE, /*velocity=*/0.0f,
 			    /*canQuantize=*/false, /*isAnyLoopMode=*/false,
 			    /*velocityAsVol=*/false);
@@ -94,9 +93,8 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick 
 {
 	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=](model::Document& doc, model::Assets& assets)
 	{
-		model::Channel& ch                = doc.tracks.getChannel(channelId);
-		const auto      channelParameters = assets.channelsParameters.find(channelId);
-		const auto      channelRendering  = assets.channelsRendering.find(channelId);
+		model::Channel&    ch          = doc.tracks.getChannel(channelId);
+		model::ChannelView channelView = model::makeChannelView(ch, assets);
 
 		if (ch.type == ChannelType::MIDI)
 			return;
@@ -113,11 +111,11 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick 
 				recordSampleKeyRelease(channelId, scene, currentTickQuantized, m_actionManager);
 			}
 
-			releaseSampleChannel(*channelParameters, *channelRendering, mode);
+			releaseSampleChannel(channelView, mode);
 		}
 		else if (ch.type == ChannelType::PREVIEW)
 		{
-			releaseSampleChannel(*channelParameters, *channelRendering, SamplePlayerMode::SINGLE_BASIC_PAUSE);
+			releaseSampleChannel(channelView, SamplePlayerMode::SINGLE_BASIC_PAUSE);
 		}
 		else if (ch.type == ChannelType::GROUP)
 		{
@@ -135,13 +133,12 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 {
 	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=](model::Document& doc, model::Assets& assets)
 	{
-		model::Channel& ch                = doc.tracks.getChannel(channelId);
-		const auto      channelParameters = assets.channelsParameters.find(channelId);
-		const auto      channelRendering  = assets.channelsRendering.find(channelId);
+		model::Channel&    ch          = doc.tracks.getChannel(channelId);
+		model::ChannelView channelView = model::makeChannelView(ch, assets);
 
 		if (ch.type == ChannelType::MIDI)
 		{
-			if (channelParameters->isPlaying())
+			if (channelView.getParameters().isPlaying())
 			{
 				// TODO
 				// stopMidiChannel(ch.shared->playStatus);
@@ -160,7 +157,7 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 				recordSampleKeyKill(channelId, scene, currentTickQuantized, m_actionManager);
 			}
 
-			killSampleChannel(*channelParameters, *channelRendering, mode);
+			killSampleChannel(channelView, mode);
 		}
 		else if (ch.type == ChannelType::GROUP)
 		{
@@ -291,12 +288,11 @@ void Reactor::stopAll()
 		{
 			for (const model::Channel& ch : track.getChannels().getAll())
 			{
-				const auto channelParameters = assets.channelsParameters.find(ch.id);
-				const auto channelRendering  = assets.channelsRendering.find(ch.id);
+				const model::ChannelView channelView = model::makeChannelView(ch, assets);
 
 				if (ch.type == ChannelType::MIDI)
 				{
-					if (!channelParameters->isPlaying())
+					if (!channelView.getParameters().isPlaying())
 						continue;
 
 					// TODO
@@ -305,7 +301,7 @@ void Reactor::stopAll()
 				}
 				else if (ch.type == ChannelType::SAMPLE)
 				{
-					stopSampleChannelBySeq(*channelParameters, *channelRendering,
+					stopSampleChannelBySeq(channelView,
 					    doc.behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
 				}
 			}
@@ -335,11 +331,10 @@ void Reactor::killEmptySampleChannels(Scene scene)
 	{
 		doc.tracks.forEachChannel([&assets, scene](model::Channel& ch)
 		{
-			const auto channelParameters = assets.channelsParameters.find(ch.id);
-			const auto channelRendering  = assets.channelsRendering.find(ch.id);
+			const model::ChannelView channelView = model::makeChannelView(ch, assets);
 
-			if (!ch.isInternal() && ch.type == ChannelType::SAMPLE && !ch.hasWave(scene) && channelParameters->isPlaying())
-				killSampleChannel(*channelParameters, *channelRendering, ch.sampleChannel->mode);
+			if (!ch.isInternal() && ch.type == ChannelType::SAMPLE && !ch.hasWave(scene) && channelView.getParameters().isPlaying())
+				killSampleChannel(channelView, ch.sampleChannel->mode);
 
 			return true;
 		});

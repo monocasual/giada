@@ -28,10 +28,8 @@
 #define G_RENDERING_MIDI_REACTIONS_H
 
 #include "src/core/midiEvent.h"
-#include "src/core/midiMapper.h"
 #include "src/core/model/channel.h"
-#include "src/core/types.h"
-#include "src/core/weakAtomic.h"
+#include "src/core/model/channelView.h"
 #include "src/scene.h"
 #include "src/types.h"
 
@@ -48,9 +46,9 @@ namespace giada::m::rendering
 /* [play|stop|rewind]MidiChannel
 Actions manually performed on a MIDI channel. */
 
-void playMidiChannel(const model::Channel::Parameters&);
-void stopMidiChannel(const model::Channel::Parameters&);
-void rewindMidiChannel(const model::Channel::Parameters&);
+void playMidiChannel(const model::ChannelView&);
+void stopMidiChannel(const model::ChannelView&);
+void rewindMidiChannel(const model::ChannelView&);
 
 /* recordMidiAction
 Records a new Action for a MIDI channel. */

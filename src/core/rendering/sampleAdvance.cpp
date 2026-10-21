@@ -47,17 +47,18 @@ RenderInfo stop_(Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
-RenderInfo play_(const model::Channel::Parameters& params, Frame localFrame)
+RenderInfo play_(const model::ChannelView& channelView, Frame localFrame)
 {
-	params.setPlayStatus(ChannelStatus::PLAY);
+	channelView.getParameters().setPlayStatus(ChannelStatus::PLAY);
 	return {RenderInfo::Mode::NORMAL, localFrame};
 }
 
 /* -------------------------------------------------------------------------- */
 
-RenderInfo onFirstBeat_(const model::Channel::Parameters& params, Frame localFrame, bool isLoop)
+RenderInfo onFirstBeat_(const model::ChannelView& channelView, Frame localFrame, bool isLoop)
 {
-	RenderInfo info = {RenderInfo::Mode::NONE};
+	const model::Channel::Parameters& params = channelView.getParameters();
+	RenderInfo                        info   = {RenderInfo::Mode::NONE};
 
 	switch (params.getPlayStatus())
 	{
@@ -67,7 +68,7 @@ RenderInfo onFirstBeat_(const model::Channel::Parameters& params, Frame localFra
 		break;
 
 	case ChannelStatus::WAIT:
-		info = play_(params, localFrame);
+		info = play_(channelView, localFrame);
 		break;
 
 	case ChannelStatus::ENDING:
@@ -100,30 +101,33 @@ RenderInfo onFirstBeat_(const model::Channel::Parameters& params, Frame localFra
 
 /* -------------------------------------------------------------------------- */
 
-RenderInfo onBar_(const model::Channel::Parameters& params, Frame localFrame, SamplePlayerMode mode)
+RenderInfo onBar_(const model::ChannelView& channelView, Frame localFrame, SamplePlayerMode mode)
 {
-	const ChannelStatus playStatus = params.getPlayStatus();
+	const model::Channel::Parameters& params     = channelView.getParameters();
+	const ChannelStatus               playStatus = params.getPlayStatus();
 
 	if (playStatus == ChannelStatus::PLAY &&
 	    (mode == SamplePlayerMode::LOOP_REPEAT || mode == SamplePlayerMode::LOOP_ONCE_BAR))
 		return rewind_(localFrame);
 
 	if (playStatus == ChannelStatus::WAIT && mode == SamplePlayerMode::LOOP_ONCE_BAR)
-		return play_(params, localFrame);
+		return play_(channelView, localFrame);
 
 	return {RenderInfo::Mode::NONE};
 }
 
 /* -------------------------------------------------------------------------- */
 
-RenderInfo onNoteOn_(const model::Channel::Parameters& params, Frame localFrame, SamplePlayerMode mode, float velocity)
+RenderInfo onNoteOn_(const model::ChannelView& channelView, Frame localFrame, SamplePlayerMode mode, float velocity)
 {
+	const model::Channel::Parameters& params = channelView.getParameters();
+
 	params.setVolumeInternal(velocity);
 
 	switch (params.getPlayStatus())
 	{
 	case ChannelStatus::OFF:
-		return play_(params, localFrame);
+		return play_(channelView, localFrame);
 
 	case ChannelStatus::PLAY:
 		return mode == SamplePlayerMode::SINGLE_RETRIG ? rewind_(localFrame) : stop_(localFrame);
@@ -136,20 +140,22 @@ RenderInfo onNoteOn_(const model::Channel::Parameters& params, Frame localFrame,
 /* -------------------------------------------------------------------------- */
 
 RenderInfo parseAction_(
-    const model::Channel::Parameters& params,
-    ID                                channelId,
-    Scene                             scene,
-    const Action&                     a,
-    Frame                             localFrame,
-    SamplePlayerMode                  mode)
+    const model::ChannelView& channelView,
+    ID                        channelId,
+    Scene                     scene,
+    const Action&             a,
+    Frame                     localFrame,
+    SamplePlayerMode          mode)
 {
+	const model::Channel::Parameters& params = channelView.getParameters();
+
 	if (a.channelId != channelId || a.scene != scene)
 		return {RenderInfo::Mode::NONE};
 
 	switch (a.event.getStatus())
 	{
 	case MidiEvent::CHANNEL_NOTE_ON:
-		return onNoteOn_(params, localFrame, mode, a.event.getVelocityFloat());
+		return onNoteOn_(channelView, localFrame, mode, a.event.getVelocityFloat());
 
 	case MidiEvent::CHANNEL_NOTE_OFF:
 	case MidiEvent::CHANNEL_NOTE_KILL:
@@ -168,27 +174,27 @@ RenderInfo parseAction_(
 /* -------------------------------------------------------------------------- */
 
 RenderInfo advanceSampleChannel(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    const Sequencer::Event&           e)
+    const model::ChannelView& channelView,
+    const Sequencer::Event&   e)
 {
+	const model::Channel&  ch     = channelView.getChannel();
 	const SamplePlayerMode mode   = ch.sampleChannel->mode;
 	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
 
 	switch (e.type)
 	{
 	case Sequencer::EventType::FIRST_BEAT:
-		return onFirstBeat_(params, e.delta, isLoop);
+		return onFirstBeat_(channelView, e.delta, isLoop);
 
 	case Sequencer::EventType::BAR:
-		return onBar_(params, e.delta, mode);
+		return onBar_(channelView, e.delta, mode);
 
 	case Sequencer::EventType::REWIND:
 		return isLoop ? rewind_(e.delta) : RenderInfo{RenderInfo::Mode::NONE};
 
 	case Sequencer::EventType::ACTIONS:
-		if (!isLoop && params.isReadingActions())
-			return parseAction_(params, ch.id, e.scene, *e.action, e.delta, mode);
+		if (!isLoop && channelView.getParameters().isReadingActions())
+			return parseAction_(channelView, ch.id, e.scene, *e.action, e.delta, mode);
 		return {RenderInfo::Mode::NONE};
 
 	default:
