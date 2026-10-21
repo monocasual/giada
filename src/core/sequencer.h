@@ -205,7 +205,7 @@ private:
 	void rawSetBpm(float v);
 	void rawGoToBeat(int beat, int sampleRate);
 
-	model_DEPR_::Model& m_model;
+	model_DEPR_::Model& m_model_DEPR_;
 	MidiSynchronizer&   m_midiSynchronizer;
 	JackTransport&      m_jackTransport;
 
