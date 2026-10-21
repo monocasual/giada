@@ -40,14 +40,15 @@ namespace giada::m::rendering
 namespace
 {
 ReadResult readResampled_(
-    const model::Channel::Rendering& rendering,
-    const model::Wave&               wave,
-    const Sample&                    sample,
-    Frame                            start,
-    Frame                            offset)
+    const model::SampleChannelView& view,
+    Frame                           start,
+    Frame                           offset)
 {
-	const Resampler::Result res = rendering.resampleToAudioBufferFrom(
-	    wave.getBuffer(), start, sample.range.getB(), offset, sample.pitch);
+	const model::Channel::Rendering& rendering = view.getRendering();
+	const model::Wave&               wave      = *view.getWave();
+	const Sample&                    sample    = view.getSample();
+	const Resampler::Result          res       = rendering.resampleToAudioBufferFrom(
+        wave.getBuffer(), start, sample.range.getB(), offset, sample.pitch);
 
 	return {
 	    static_cast<Frame>(res.used),
@@ -58,14 +59,15 @@ ReadResult readResampled_(
 /* -------------------------------------------------------------------------- */
 
 ReadResult readStretched_(
-    const model::Channel::Rendering& rendering,
-    const model::Wave&               wave,
-    const Sample&                    sample,
-    Frame                            start,
-    Frame                            offset)
+    const model::SampleChannelView& view,
+    Frame                           start,
+    Frame                           offset)
 {
-	const Stretcher::Result res = rendering.stretchToAudioBufferFrom(
-	    wave.getBuffer(), start, sample.range.getB(), offset, sample.time, sample.pitch);
+	const model::Channel::Rendering& rendering = view.getRendering();
+	const model::Wave&               wave      = *view.getWave();
+	const Sample&                    sample    = view.getSample();
+	const Stretcher::Result          res       = rendering.stretchToAudioBufferFrom(
+        wave.getBuffer(), start, sample.range.getB(), offset, sample.time, sample.pitch);
 
 	return {
 	    static_cast<Frame>(res.used),
@@ -76,13 +78,14 @@ ReadResult readStretched_(
 /* -------------------------------------------------------------------------- */
 
 ReadResult readCopy_(
-    const model::Channel::Rendering& rendering,
-    const model::Wave&               wave,
-    const Sample&                    sample,
-    Frame                            start,
-    Frame                            offset)
+    const model::SampleChannelView& view,
+    Frame                           start,
+    Frame                           offset)
 {
-	Frame used = rendering.getAudioBuffer().countFrames() - offset;
+	const model::Channel::Rendering& rendering = view.getRendering();
+	const model::Wave&               wave      = *view.getWave();
+	const Sample&                    sample    = view.getSample();
+	Frame                            used      = rendering.getAudioBuffer().countFrames() - offset;
 	if (used > sample.range.getB() - start)
 		used = sample.range.getB() - start;
 
@@ -100,14 +103,16 @@ rendering has ended because the end of the sample has been reached.
 RenderInfo::Mode::STOP type). Returns whether the sample should loop or not. */
 
 bool onSampleEnd_(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    bool seqIsRunning, bool natural)
+    const model::SampleChannelView& view,
+    bool                            seqIsRunning,
+    bool                            natural)
 {
-	const bool isLoop         = ch.sampleChannel->isAnyLoopMode();
-	const bool isLoopOnce     = ch.sampleChannel->isAnyLoopOnceMode();
-	const bool isSingleNoLoop = ch.sampleChannel->isAnyNonLoopingSingleMode();
-	bool       shouldLoop     = false;
+	const model::Channel&             ch             = view.getChannel();
+	const model::Channel::Parameters& params         = view.getParameters();
+	const bool                        isLoop         = ch.sampleChannel->isAnyLoopMode();
+	const bool                        isLoopOnce     = ch.sampleChannel->isAnyLoopOnceMode();
+	const bool                        isSingleNoLoop = ch.sampleChannel->isAnyNonLoopingSingleMode();
+	bool                              shouldLoop     = false;
 
 	switch (params.getPlayStatus())
 	{
@@ -137,13 +142,12 @@ bool onSampleEnd_(
 /* -------------------------------------------------------------------------- */
 
 void stop_(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    Frame                             offset,
-    bool                              seqIsRunning)
+    const model::SampleChannelView& view,
+    Frame                           offset,
+    bool                            seqIsRunning)
 {
-	onSampleEnd_(ch, params, seqIsRunning, /*natural=*/false);
+	onSampleEnd_(view, seqIsRunning, /*natural=*/false);
+	const model::Channel::Rendering& rendering = view.getRendering();
 	if (offset != 0)
 		rendering.clearAudioBuffer(offset);
 }
@@ -151,24 +155,21 @@ void stop_(
 /* -------------------------------------------------------------------------- */
 
 Frame render_(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    const model::Wave*                wave,
-    Scene                             scene,
-    Frame                             tracker,
-    Frame                             offset,
-    bool                              seqIsRunning,
-    bool                              testEnd)
+    const model::SampleChannelView& view,
+    Frame                           tracker,
+    Frame                           offset,
+    bool                            seqIsRunning,
+    bool                            testEnd)
 {
-	if (wave == nullptr)
+	if (!view.hasWave())
 		return tracker;
 
-	const Sample& sample = ch.sampleChannel->getSample(scene);
+	const Sample&                    sample    = view.getSample();
+	const model::Channel::Rendering& rendering = view.getRendering();
 
 	while (true)
 	{
-		ReadResult res = readWave(rendering, *wave, sample, tracker, offset);
+		ReadResult res = readWave(view, tracker, offset);
 		tracker += res.used;
 		offset += res.generated;
 
@@ -179,7 +180,7 @@ Frame render_(
 
 			if (testEnd)
 			{
-				const bool shouldLoop = onSampleEnd_(ch, params, seqIsRunning, /*natural=*/true);
+				const bool shouldLoop = onSampleEnd_(view, seqIsRunning, /*natural=*/true);
 				if (!shouldLoop)
 					break;
 			}
@@ -201,13 +202,9 @@ Frame render_(
 /* -------------------------------------------------------------------------- */
 
 void renderSampleChannel(
-    const model::Channel&             ch,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    const model::Wave*                wave,
-    RenderInfo                        localRenderInfo,
-    Scene                             scene,
-    bool                              seqIsRunning)
+    const model::SampleChannelView& view,
+    RenderInfo                      localRenderInfo,
+    bool                            seqIsRunning)
 {
 	/* Each audio block, a sample channel can receive a "render command" (play
 	normally, rewind, stop) from two places:
@@ -223,18 +220,20 @@ void renderSampleChannel(
 	runs only once. If there is no command from anywhere, just play normally
 	from the start of the block. */
 
-	const RenderInfo::Mode externalRenderMode = rendering.getPendingRenderMode();
+	const model::Channel::Rendering&  rendering          = view.getRendering();
+	const model::Channel::Parameters& params             = view.getParameters();
+	const RenderInfo::Mode            externalRenderMode = rendering.getPendingRenderMode();
 
 	RenderInfo renderInfo = externalRenderMode != RenderInfo::Mode::NONE ? RenderInfo{externalRenderMode, 0} : localRenderInfo;
 	if (renderInfo.mode == RenderInfo::Mode::NONE)
 		renderInfo.mode = RenderInfo::Mode::NORMAL;
 
-	const auto range   = ch.sampleChannel->getRange(scene);
+	const auto range   = view.getSample().range;
 	Frame      tracker = std::clamp(params.getTracker(), range.getA(), range.getB()); /* Make sure tracker stays within begin-end range. */
 
 	if (renderInfo.mode == RenderInfo::Mode::NORMAL)
 	{
-		tracker = render_(ch, params, rendering, wave, scene, tracker, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+		tracker = render_(view, tracker, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 	}
 	else
 	{
@@ -243,7 +242,7 @@ void renderSampleChannel(
 		complex logic on sample end (testEnd=false), we just want to fill the buffer
 		as much as possible here. */
 
-		render_(ch, params, rendering, wave, scene, tracker, 0, seqIsRunning, /*testEnd=*/false);
+		render_(view, tracker, 0, seqIsRunning, /*testEnd=*/false);
 		rendering.notifyLastChunk();
 
 		/* Mode::REWIND: fill buffer from offset:  [abcdefghi|abcdfefg]
@@ -251,11 +250,11 @@ void renderSampleChannel(
 
 		if (renderInfo.mode == RenderInfo::Mode::REWIND)
 		{
-			tracker = render_(ch, params, rendering, wave, scene, range.getA(), renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+			tracker = render_(view, range.getA(), renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 		}
 		else
 		{
-			stop_(ch, params, rendering, renderInfo.offset, seqIsRunning);
+			stop_(view, renderInfo.offset, seqIsRunning);
 			tracker = range.getA();
 		}
 	}
@@ -274,24 +273,28 @@ void renderSampleChannelInput(const Channel& ch, const mcl::AudioBuffer& in)
 /* -------------------------------------------------------------------------- */
 
 ReadResult readWave(
-    const model::Channel::Rendering& rendering,
-    const model::Wave&               wave,
-    const Sample&                    sample,
-    Frame                            start,
-    Frame                            offset)
+    const model::SampleChannelView& view,
+    Frame                           start,
+    Frame                           offset)
 {
-		assert(start >= 0);
+	assert(view.hasWave());
+
+	const model::Channel::Rendering& rendering = view.getRendering();
+	const model::Wave&               wave      = *view.getWave();
+	const Sample&                    sample    = view.getSample();
+
+	assert(start >= 0);
 	assert(sample.range.getB() <= wave.getBuffer().countFrames());
 	assert(offset < rendering.getAudioBuffer().countFrames());
 
 	if (sample.playbackMode == PlaybackMode::TAPE)
 	{
 		if (sample.pitch == 1.0f)
-			return readCopy_(rendering, wave, sample, start, offset);
+			return readCopy_(view, start, offset);
 		else
-			return readResampled_(rendering, wave, sample, start, offset);
+			return readResampled_(view, start, offset);
 	}
 	else // PlaybackMode::ELASTIC
-		return readStretched_(rendering, wave, sample, start, offset);
+		return readStretched_(view, start, offset);
 }
 } // namespace giada::m::rendering

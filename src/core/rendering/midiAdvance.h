@@ -27,7 +27,7 @@
 #ifndef G_RENDERING_MIDI_ADVANCE_H
 #define G_RENDERING_MIDI_ADVANCE_H
 
-#include "src/core/model/channel.h"
+#include "src/core/model/channelView.h"
 #include "src/core/sequencer.h"
 
 namespace giada::m
@@ -38,8 +38,7 @@ class KernelMidi;
 namespace giada::m::rendering
 {
 void advanceMidiChannel(
-    const model::Channel&,
-    const model::Channel::Parameters&,
+    const model::ChannelView&,
     const Sequencer::Event&,
     KernelMidi&);
 } // namespace giada::m::rendering
