@@ -80,11 +80,9 @@ void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
 /* -------------------------------------------------------------------------- */
 
 ChannelStatus pressWhileOff_(
-    ID                                channelId,
-    const model::Channel::Parameters& params,
-    float                             velocity,
-    bool                              canQuantize,
-    bool                              velocityAsVol)
+    float velocity,
+    bool  canQuantize,
+    bool  velocityAsVol)
 {
 	/* Reset internal volume to default (1.0) if no velocity as volume. This is
 	important in case the channel has actions and some of them have velocity
@@ -107,11 +105,9 @@ ChannelStatus pressWhileOff_(
 /* -------------------------------------------------------------------------- */
 
 ChannelStatus pressWhilePlay_(
-    ID                                channelId,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    SamplePlayerMode                  mode,
-    bool                              canQuantize)
+    const model::ChannelView& channelView,
+    SamplePlayerMode          mode,
+    bool                      canQuantize)
 {
 	switch (mode)
 	{
@@ -120,14 +116,14 @@ ChannelStatus pressWhilePlay_(
 		// if (canQuantize)
 		//	shared.quantizer->trigger(Q_ACTION_REWIND + channelId.getValue());
 		// else
-		rewindSampleChannel(rendering, /*localFrame=*/0);
+		rewindSampleChannel(channelView, /*localFrame=*/0);
 		return ChannelStatus::PLAY;
 
 	case SamplePlayerMode::SINGLE_ENDLESS:
 		return ChannelStatus::ENDING;
 
 	case SamplePlayerMode::SINGLE_BASIC:
-		stopSampleChannel(rendering, 0);
+		stopSampleChannel(channelView, 0);
 		return ChannelStatus::PLAY; // Let SamplePlayer stop it once done
 
 	default:
@@ -198,13 +194,13 @@ void toggleSampleReadActions(ChannelShared& shared, bool treatRecsAsLoops, bool 
 /* -------------------------------------------------------------------------- */
 
 void stopSampleChannelBySeq(
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    bool                              chansStopOnSeqHalt,
-    bool                              isLoop)
+    const model::ChannelView& channelView,
+    bool                      chansStopOnSeqHalt,
+    bool                      isLoop)
 {
-	const ChannelStatus playStatus       = params.getPlayStatus();
-	const bool          isReadingActions = params.isReadingActions();
+	const model::Channel::Parameters& params           = channelView.getParameters();
+	const ChannelStatus               playStatus       = params.getPlayStatus();
+	const bool                        isReadingActions = params.isReadingActions();
 
 	switch (playStatus)
 	{
@@ -216,7 +212,7 @@ void stopSampleChannelBySeq(
 
 	case ChannelStatus::PLAY:
 		if (chansStopOnSeqHalt && (isLoop || isReadingActions))
-			stopSampleChannel(rendering, 0);
+			stopSampleChannel(channelView, 0);
 		break;
 
 	default:
@@ -226,24 +222,23 @@ void stopSampleChannelBySeq(
 
 /* -------------------------------------------------------------------------- */
 
-void stopSampleChannel(const model::Channel::Rendering& rendering, Frame localFrame)
+void stopSampleChannel(const model::ChannelView& channelView, Frame localFrame)
 {
-	rendering.setPendingRenderMode(RenderInfo::Mode::STOP);
+	channelView.getRendering().setPendingRenderMode(RenderInfo::Mode::STOP);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void pressSampleChannel(
-    ID                                channelId,
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    SamplePlayerMode                  mode,
-    float                             velocity,
-    bool                              canQuantize,
-    bool                              isLoop,
-    bool                              velocityAsVol)
+    const model::ChannelView& channelView,
+    SamplePlayerMode          mode,
+    float                     velocity,
+    bool                      canQuantize,
+    bool                      isLoop,
+    bool                      velocityAsVol)
 {
-	ChannelStatus playStatus = params.getPlayStatus();
+	const model::Channel::Parameters& params     = channelView.getParameters();
+	ChannelStatus                     playStatus = params.getPlayStatus();
 
 	switch (playStatus)
 	{
@@ -251,14 +246,14 @@ void pressSampleChannel(
 		if (isLoop)
 			playStatus = ChannelStatus::WAIT;
 		else
-			playStatus = pressWhileOff_(channelId, params, velocity, canQuantize, velocityAsVol);
+			playStatus = pressWhileOff_(velocity, canQuantize, velocityAsVol);
 		break;
 
 	case ChannelStatus::PLAY:
 		if (isLoop)
 			playStatus = ChannelStatus::ENDING;
 		else
-			playStatus = pressWhilePlay_(channelId, params, rendering, mode, canQuantize);
+			playStatus = pressWhilePlay_(channelView, mode, canQuantize);
 		break;
 
 	case ChannelStatus::WAIT:
@@ -279,10 +274,10 @@ void pressSampleChannel(
 /* -------------------------------------------------------------------------- */
 
 void releaseSampleChannel(
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    SamplePlayerMode                  mode)
+    const model::ChannelView& channelView,
+    SamplePlayerMode          mode)
 {
+	const model::Channel::Parameters& params = channelView.getParameters();
 	/* Key release is meaningful only for SINGLE_PRESS modes. */
 
 	if (mode != SamplePlayerMode::SINGLE_PRESS)
@@ -293,7 +288,7 @@ void releaseSampleChannel(
 	disable it. */
 
 	if (params.getPlayStatus() == ChannelStatus::PLAY)
-		stopSampleChannel(rendering, 0); // Let SamplePlayer stop it once done
+		stopSampleChannel(channelView, 0); // Let SamplePlayer stop it once done
 
 	// TODO
 	// else if (shared.quantizer->hasBeenTriggered())
@@ -303,31 +298,30 @@ void releaseSampleChannel(
 /* -------------------------------------------------------------------------- */
 
 void killSampleChannel(
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering,
-    SamplePlayerMode                  mode)
+    const model::ChannelView& channelView,
+    SamplePlayerMode          mode)
 {
-	const ChannelStatus playStatus = params.getPlayStatus();
+	const model::Channel::Parameters& params     = channelView.getParameters();
+	const ChannelStatus               playStatus = params.getPlayStatus();
+
 	if (playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING)
-		stopSampleChannel(rendering, 0);
+		stopSampleChannel(channelView, 0);
 	if (mode == SamplePlayerMode::SINGLE_BASIC_PAUSE)
 		params.setTracker(0); // Hard rewind
 }
 
 /* -------------------------------------------------------------------------- */
 
-void rewindSampleChannel(const model::Channel::Rendering& rendering, Frame localFrame)
+void rewindSampleChannel(const model::ChannelView& channelView, Frame localFrame)
 {
-	rendering.setPendingRenderMode(RenderInfo::Mode::REWIND);
+	channelView.getRendering().setPendingRenderMode(RenderInfo::Mode::REWIND);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void playSampleChannel(
-    const model::Channel::Parameters& params,
-    const model::Channel::Rendering&  rendering)
+void playSampleChannel(const model::ChannelView& channelView)
 {
-	params.setPlayStatus(ChannelStatus::PLAY);
-	rendering.setPendingRenderMode(RenderInfo::Mode::NORMAL);
+	channelView.getParameters().setPlayStatus(ChannelStatus::PLAY);
+	channelView.getRendering().setPendingRenderMode(RenderInfo::Mode::NORMAL);
 }
 } // namespace giada::m::rendering

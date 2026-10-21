@@ -25,21 +25,20 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/rendering/midiAdvance.h"
-#include "src/core/model/channel.h"
+#include "src/core/model/channelView.h"
 #include "src/core/rendering/midiOutput.h"
 #include "src/core/rendering/midiReactions.h"
 
 namespace giada::m::rendering
 {
-void advanceMidiChannel(const model::Channel& ch,
-    const model::Channel::Parameters&         params,
-    const Sequencer::Event&                   e,
-    KernelMidi&                               kernelMidi)
+void advanceMidiChannel(const model::ChannelView& channelView,
+    const Sequencer::Event&                       e,
+    KernelMidi&                                   kernelMidi)
 {
 	switch (e.type)
 	{
 	case Sequencer::EventType::FIRST_BEAT:
-		rewindMidiChannel(params);
+		rewindMidiChannel(channelView);
 		break;
 
 	case Sequencer::EventType::ACTIONS:
