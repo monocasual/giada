@@ -163,23 +163,24 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	// Render tracks
 
 	const auto masterOutRendering = assets.channelsRendering.find(MASTER_OUT_CHANNEL_ID);
+	const auto mixerRendering     = assets.mixerRendering;
 	assert(masterOutRendering != nullptr);
 
 	renderTracks(doc.tracks, assets, *masterOutRendering, out, assets.mixerRendering->getInBuffer(),
 	    scene, hasSolos, doc.sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, *masterOutRendering, out, doc.kernelAudio.deviceOut.channelsStart);
+
 	// TODO
 	// if (mixer.renderPreview)
 	//	renderPreview(previewCh, out);
 
-	// TODO
-	// m_mixer.updateOutputPeak(mixer, masterOutCh.shared->audioBuffer);
+	m_mixer.updateOutputPeak(params.mixer, masterOutRendering->getAudioBuffer());
 
 	/* Post processing. */
 
-	// TODO
-	// m_mixer.finalizeOutput(mixer, out, mixer.inToOut, kernelAudio.limitOutput, masterOutCh.volume);
+	m_mixer.finalizeOutput(mixerRendering->getInBuffer(), out, doc.mixer.inToOut,
+	    doc.kernelAudio.limitOutput, masterOutCh.volume);
 
 	/* CPU load computation. */
 
