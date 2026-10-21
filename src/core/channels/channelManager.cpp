@@ -323,30 +323,30 @@ void ChannelManager::copyAllChannelsToScene(Scene srcScene, Scene dstScene)
 
 void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 {
-	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
-
-	assert(ch.sampleChannel);
-
-	std::vector<const Wave*> wavesToRemove;
-	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [this, channelId, sceneToFree](model::Document& doc, model::Assets& assets) mutable
 	{
-		if (sceneToFree.isValid() && sceneToFree.getIndex() != sceneIndex)
-			continue;
+		model::Channel& ch = doc.tracks.getChannel(channelId);
 
-		const Wave* wave = ch.sampleChannel->getWave(Scene{sceneIndex});
-		if (wave == nullptr)
-			continue;
-		wavesToRemove.push_back(wave);
-		loadSampleChannel(ch, nullptr, Scene{sceneIndex});
-	}
+		assert(ch.sampleChannel);
 
-	/* Prevent unnecessary swap + callback if there's nothing to free. */
-	if (wavesToRemove.empty())
-		return;
+		std::vector<ID> wavesToRemove;
+		for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
+		{
+			if (sceneToFree.isValid() && sceneToFree.getIndex() != sceneIndex)
+				continue;
+			const ID waveId = ch.sampleChannel->getWaveId(Scene{sceneIndex});
+			if (!waveId.isValid())
+				continue;
+			wavesToRemove.push_back(waveId);
+			loadSampleChannel(ch, nullptr, Scene{sceneIndex});
+		}
 
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
-	for (const Wave* w : wavesToRemove)
-		m_model_DEPR_.removeWave(*w);
+		for (const ID waveId : wavesToRemove)
+			assets.waves.remove(waveId);
+	});
+
+	m_model.flush();
 
 	triggerOnChannelsAltered();
 }
