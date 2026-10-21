@@ -448,8 +448,10 @@ void ChannelManager::setInputMonitor(ID channelId, bool value)
 
 void ChannelManager::setVolume(ID channelId, float value)
 {
-	m_model_DEPR_.get().tracks.getChannel(channelId).volume = std::clamp(value, 0.0f, G_MAX_VOLUME);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, value](model::Document& doc)
+	{
+		doc.tracks.getChannel(channelId).volume = std::clamp(value, 0.0f, G_MAX_VOLUME);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -591,8 +593,10 @@ void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 void ChannelManager::setHeight(ID channelId, int height)
 {
-	m_model_DEPR_.get().tracks.getChannel(channelId).height = height;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, height](model::Document& doc)
+	{
+		doc.tracks.getChannel(channelId).height = height;
+	});
 }
 
 /* -------------------------------------------------------------------------- */

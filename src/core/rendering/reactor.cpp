@@ -216,65 +216,69 @@ void Reactor::killReadActions(ID channelId)
 
 void Reactor::toggleMute(ID channelId)
 {
-	Channel&            ch      = m_model_DEPR_.get().tracks.getChannel(channelId);
-	model_DEPR_::Track& track   = m_model_DEPR_.get().tracks.getByChannel(ch.id);
-	const bool          newMute = !ch.isMuted();
-
-	ch.setMute(newMute);
-
-	if (ch.type == ChannelType::GROUP)
+	m_model.writeDocument(model::SwapType::SOFT, [channelId](model::Document& doc)
 	{
-		/* Toggling mute on a group will toggle mute on all its children too. */
-		for (Channel& child : track.getChannels().getAll())
-			if (child.type != ChannelType::GROUP)
-				child.setMute(newMute);
-	}
+		model::Channel& ch      = doc.tracks.getChannel(channelId);
+		model::Track&   track   = doc.tracks.getByChannel(ch.id);
+		const bool      newMute = !ch.isMuted();
 
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+		ch.setMute(newMute);
 
-	if (ch.midiLightning.enabled)
-		sendMidiLightningMute(ch.id, ch.midiLightning, newMute, m_midiMapper);
+		if (ch.type == ChannelType::GROUP)
+		{
+			/* Toggling mute on a group will toggle mute on all its children too. */
+			for (model::Channel& child : track.getChannels().getAll())
+				if (child.type != ChannelType::GROUP)
+					child.setMute(newMute);
+		}
+	});
+
+	// TODO
+	// if (ch.midiLightning.enabled)
+	//	sendMidiLightningMute(ch.id, ch.midiLightning, newMute, m_midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Reactor::toggleSolo(ID channelId)
 {
-	Channel&            ch      = m_model_DEPR_.get().tracks.getChannel(channelId);
-	model_DEPR_::Track& track   = m_model_DEPR_.get().tracks.getByChannel(ch.id);
-	const bool          newSolo = !ch.isSoloed();
-
-	ch.setSolo(newSolo);
-
-	if (ch.type == ChannelType::GROUP)
+	m_model.writeDocument(model::SwapType::SOFT, [channelId](model::Document& doc)
 	{
-		/* Toggling a solo on a group will toggle solo on all its children too. */
-		for (Channel& child : track.getChannels().getAll())
-			if (child.type != ChannelType::GROUP)
-				child.setSolo(newSolo);
-	}
-	else
-	{
-		const auto noChildrenSoloed = [](const model_DEPR_::Track& track)
+		model::Channel& ch      = doc.tracks.getChannel(channelId);
+		model::Track&   track   = doc.tracks.getByChannel(ch.id);
+		const bool      newSolo = !ch.isSoloed();
+
+		ch.setSolo(newSolo);
+
+		if (ch.type == ChannelType::GROUP)
 		{
-			for (const Channel& child : track.getChannels().getAll())
-				if (child.type != ChannelType::GROUP && child.isSoloed())
-					return false;
-			return true;
-		};
-		/* Turn group solo on if one of the children has been soloed. Turn group solo off
-		if no children are soloed instead. */
-		Channel& group = track.getGroupChannel();
-		if (newSolo)
-			group.setSolo(true);
-		else if (noChildrenSoloed(track))
-			group.setSolo(false);
-	}
+			/* Toggling a solo on a group will toggle solo on all its children too. */
+			for (model::Channel& child : track.getChannels().getAll())
+				if (child.type != ChannelType::GROUP)
+					child.setSolo(newSolo);
+		}
+		else
+		{
+			const auto noChildrenSoloed = [](const model::Track& track)
+			{
+				for (const model::Channel& child : track.getChannels().getAll())
+					if (child.type != ChannelType::GROUP && child.isSoloed())
+						return false;
+				return true;
+			};
+			/* Turn group solo on if one of the children has been soloed. Turn group solo off
+			if no children are soloed instead. */
+			model::Channel& group = track.getGroupChannel();
+			if (newSolo)
+				group.setSolo(true);
+			else if (noChildrenSoloed(track))
+				group.setSolo(false);
+		}
+	});
 
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
-
-	if (ch.midiLightning.enabled)
-		sendMidiLightningSolo(ch.id, ch.midiLightning, newSolo, m_midiMapper);
+	// TODO
+	// if (ch.midiLightning.enabled)
+	//	sendMidiLightningSolo(ch.id, ch.midiLightning, newSolo, m_midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
