@@ -212,8 +212,8 @@ void Mixer::stopActionRec()
 
 /* -------------------------------------------------------------------------- */
 
-Peak Mixer::getPeakOut() const { return m_model_DEPR_.get().mixer.a_getPeakOut(); }
-Peak Mixer::getPeakIn() const { return m_model_DEPR_.get().mixer.a_getPeakIn(); }
+Peak Mixer::getPeakOut() const { return m_model.getParameters().mixer.getPeakOut(); }
+Peak Mixer::getPeakIn() const { return m_model.getParameters().mixer.getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
