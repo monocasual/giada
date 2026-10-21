@@ -328,22 +328,28 @@ void Mixer::limit(mcl::AudioBuffer& outBuf) const
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::finalizeOutput(const model_DEPR_::Mixer& mixer, mcl::AudioBuffer& buf,
-    bool inToOut, bool shouldLimit, float vol) const
+void Mixer::finalizeOutput(
+    const mcl::AudioBuffer& mixerIn,
+    mcl::AudioBuffer&       hardwareOut,
+    bool                    inToOut,
+    bool                    shouldLimit,
+    float                   vol) const
 {
 	if (inToOut)
-		buf.sumAll(mixer.getInBuffer(), vol);
+		hardwareOut.sumAll(mixerIn, vol);
 	else
-		buf.applyGain(vol);
+		hardwareOut.applyGain(vol);
 
 	if (shouldLimit)
-		limit(buf);
+		limit(hardwareOut);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::updateOutputPeak(const model_DEPR_::Mixer& mixer, const mcl::AudioBuffer& buf) const
+void Mixer::updateOutputPeak(
+    const model::Mixer::Parameters& params,
+    const mcl::AudioBuffer&         buf) const
 {
-	mixer.a_setPeakOut({buf.getPeak(CH_LEFT), buf.getPeak(CH_RIGHT)});
+	params.setPeakOut({buf.getPeak(CH_LEFT), buf.getPeak(CH_RIGHT)});
 }
 } // namespace giada::m
