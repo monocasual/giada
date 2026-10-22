@@ -414,18 +414,6 @@ void ChannelManager::renameChannel(ID channelId, const std::string& name, Scene 
 
 /* -------------------------------------------------------------------------- */
 
-float ChannelManager::getMasterInVol() const
-{
-	return m_model_DEPR_.get().tracks.getChannel(MASTER_IN_CHANNEL_ID).volume;
-}
-
-float ChannelManager::getMasterOutVol() const
-{
-	return m_model_DEPR_.get().tracks.getChannel(MASTER_OUT_CHANNEL_ID).volume;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame, Scene scene)
 {
 	for (Channel* ch : getRecordableChannels(scene))
