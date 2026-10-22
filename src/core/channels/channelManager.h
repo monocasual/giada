@@ -92,9 +92,6 @@ public:
 
 	bool canRemoveTrack(std::size_t trackIndex) const;
 
-	float getMasterInVol() const;
-	float getMasterOutVol() const;
-
 	/* reset
 	Brings channels configuration back to the initial state: two I/O master
 	channels, one preview channel. */
