@@ -42,7 +42,7 @@ class Channel;
 
 namespace giada::m::model
 {
-struct Assets;
+class ModelView;
 }
 
 namespace giada::m::model_DEPR_
@@ -56,7 +56,7 @@ namespace giada::c::main
 struct Timer
 {
 	Timer();
-	Timer(const m::model::Document&);
+	Timer(const m::model::ModelView&);
 
 	float         bpm;
 	TimeSignature timeSignature;
@@ -119,7 +119,7 @@ struct Scenes
 struct Main
 {
 	Main() = default;
-	Main(const m::model::Document&, const m::model::Assets&, Scene);
+	Main(const m::model::ModelView&);
 
 	std::vector<channel::Track> tracks;
 	Timer                       timer;
@@ -128,7 +128,7 @@ struct Main
 /* get*
 Returns viewModel objects filled with data. */
 
-Main      getMain(const m::model::Document&, const m::model::Parameters&, const m::model::Assets&);
+Main      getMain(const m::model::ModelView&);
 Timer     getTimer();
 IO        getIO();
 Sequencer getSequencer();
