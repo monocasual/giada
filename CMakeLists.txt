@@ -197,6 +197,8 @@ list(APPEND SOURCES
 	src/core/model/midiLightningParams.h
 	src/core/model/mixer.cpp
 	src/core/model/mixer.h
+	src/core/model/modelView.cpp
+	src/core/model/modelView.h
 	src/core/model/parameters.h
 	src/core/model/sampleChannel.cpp
 	src/core/model/sampleChannel.h
