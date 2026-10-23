@@ -281,19 +281,9 @@ model::SwapType Engine::pollAssetsChanges()
 
 /* -------------------------------------------------------------------------- */
 
-const model::Document& Engine::getCurrentDocument() const
+model::ModelView Engine::getModelView() const
 {
-	return *m_model.getCurrentDocument().get();
-}
-
-const model::Assets& Engine::getCurrentAssets() const
-{
-	return *m_model.getCurrentAssets().get();
-}
-
-const model::Parameters& Engine::getParameters() const
-{
-	return m_model.getParameters();
+	return model::makeModelView(m_model);
 }
 
 /* -------------------------------------------------------------------------- */
