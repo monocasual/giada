@@ -30,6 +30,7 @@
 #include "src/glue/main.h"
 #include "src/gui/dialogs/progress.h"
 #include "src/gui/dialogs/window.h"
+#include <optional>
 #include <string>
 
 namespace giada::v
@@ -92,7 +93,7 @@ private:
 
 	void resize(int x, int y, int w, int h) override;
 
-	c::main::Main m_main;
+	std::optional<c::main::Main> m_main;
 
 	gdProgress m_progress;
 	geBox*     m_projectTitle;

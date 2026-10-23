@@ -221,8 +221,8 @@ void gdMainWindow::rebuild()
 
 void gdMainWindow::rebuild(const c::main::Main& main)
 {
-	m_main = main;
-	keyboard->rebuild(m_main.tracks);
+	m_main.emplace(main);
+	keyboard->rebuild(m_main->tracks);
 }
 
 /* -------------------------------------------------------------------------- */
