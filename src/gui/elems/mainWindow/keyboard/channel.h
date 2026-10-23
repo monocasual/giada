@@ -98,9 +98,10 @@ protected:
 	void        cb_changeVol();
 
 	/* m_channel
-	Channel's data. */
+	Channel's data. We store a copy here, and sub-widgets will take a reference
+	to it. */
 
-	const c::channel::Channel& m_channel;
+	c::channel::Channel m_channel;
 };
 } // namespace giada::v
 
