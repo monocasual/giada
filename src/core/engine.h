@@ -47,6 +47,7 @@
 #include "src/core/midiMapper.h"
 #include "src/core/midiSynchronizer.h"
 #include "src/core/mixer.h"
+#include "src/core/model/modelView.h"
 #include "src/core/model/types.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/pluginHost.h"
@@ -77,9 +78,7 @@ public:
 	model::SwapType pollDocumentChanges();
 	model::SwapType pollAssetsChanges();
 
-	const model::Document&   getCurrentDocument() const;
-	const model::Assets&     getCurrentAssets() const;
-	const model::Parameters& getParameters() const;
+	model::ModelView getModelView() const;
 
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process

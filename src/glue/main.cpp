@@ -29,6 +29,7 @@
 #include "src/core/init.h"
 #include "src/core/kernelMidi.h"
 #include "src/core/mixer.h"
+#include "src/core/model/modelView.h"
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/keyboard/sampleChannel.h"
@@ -53,12 +54,12 @@ Timer::Timer()
 {
 }
 
-Timer::Timer(const m::model::Document& doc)
-: bpm(doc.sequencer.getBpm())
-, timeSignature(doc.sequencer.getTimeSignature())
-, quantize(doc.sequencer.quantize)
-, isUsingJack(doc.kernelAudio.api == RtAudio::Api::UNIX_JACK)
-, isRecordingInput(doc.mixer.isRecordingInput)
+Timer::Timer(const m::model::ModelView& view)
+: bpm(view.getDocument().sequencer.getBpm())
+, timeSignature(view.getDocument().sequencer.getTimeSignature())
+, quantize(view.getDocument().sequencer.quantize)
+, isUsingJack(view.getDocument().kernelAudio.api == RtAudio::Api::UNIX_JACK)
+, isRecordingInput(view.getDocument().mixer.isRecordingInput)
 {
 }
 
@@ -127,9 +128,9 @@ SceneStatus Scenes::getStatus() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Main::Main(const m::model::Document& doc, const m::model::Assets& assets, Scene scene)
-: tracks(channel::getTracks(doc, assets, scene))
-, timer(doc)
+Main::Main(const m::model::ModelView& view)
+: tracks(channel::getTracks(view.getDocument(), view.getAssets(), view.getParameters().sequencer.getCurrentScene()))
+, timer(view)
 {
 }
 
@@ -160,12 +161,9 @@ bool Transport::canEnableRecOnSignal() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Main getMain(
-    const m::model::Document&   doc,
-    const m::model::Parameters& params,
-    const m::model::Assets&     assets)
+Main getMain(const m::model::ModelView& view)
 {
-	return Main(doc, assets, params.sequencer.getCurrentScene());
+	return Main(view);
 }
 
 /* -------------------------------------------------------------------------- */
