@@ -65,7 +65,6 @@ geMainOutput::geMainOutput()
 		c::main::setMasterOutVolume(v, Thread::MAIN);
 	};
 
-	m_masterFxOut->forceValue(m_io.masterOutHasPlugins);
 	m_masterFxOut->onClick = []
 	{ c::layout::openMasterOutPluginListWindow(); };
 }
@@ -76,22 +75,20 @@ void geMainOutput::setOutVol(float v) { m_outVol->value(v); }
 
 /* -------------------------------------------------------------------------- */
 
-void geMainOutput::refresh()
+void geMainOutput::refresh(const c::main::IO& io)
 {
-	m_outMeter->peak  = m_io.getMasterOutPeak();
-	m_outMeter->ready = m_io.isKernelReady();
+	m_outMeter->peak  = io.getMasterOutPeak();
+	m_outMeter->ready = io.isKernelReady();
 	m_outMeter->redraw();
 	m_midiOut->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geMainOutput::rebuild()
+void geMainOutput::rebuild(const c::main::IO& io)
 {
-	m_io = c::main::getIO();
-
-	m_outVol->value(m_io.masterOutVol);
-	m_masterFxOut->setValue(m_io.masterOutHasPlugins);
+	m_outVol->value(io.masterOutVol);
+	m_masterFxOut->setValue(io.masterOutHasPlugins);
 }
 
 /* -------------------------------------------------------------------------- */

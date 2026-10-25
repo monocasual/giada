@@ -27,6 +27,8 @@
 #ifndef G_MAIN_H
 #define G_MAIN_H
 
+#include "src/core/model/mixer.h"
+#include "src/core/model/sequencer.h"
 #include "src/core/types.h"
 #include "src/glue/channel.h"
 #include "src/scene.h"
@@ -65,10 +67,10 @@ struct Timer
 	bool          isRecordingInput;
 };
 
-struct IO
+class IO
 {
-	IO() = default;
-	IO(const m::Channel& out, const m::Channel& in);
+public:
+	IO(const m::model::ModelView&);
 
 	float masterOutVol;
 	float masterInVol;
@@ -76,9 +78,12 @@ struct IO
 	bool  masterInHasPlugins;
 	bool  inToOut;
 
-	Peak getMasterOutPeak();
-	Peak getMasterInPeak();
-	bool isKernelReady();
+	Peak getMasterOutPeak() const;
+	Peak getMasterInPeak() const;
+	bool isKernelReady() const;
+
+private:
+	const m::model::Mixer::Parameters& m_params;
 };
 
 struct Sequencer
@@ -116,13 +121,14 @@ struct Scenes
 	SceneStatus getStatus() const;
 };
 
-struct Main
+class Main
 {
-	Main() = default;
+public:
 	Main(const m::model::ModelView&);
 
 	std::vector<channel::Track> tracks;
 	Timer                       timer;
+	IO                          io;
 };
 
 /* get*
@@ -130,7 +136,6 @@ Returns viewModel objects filled with data. */
 
 Main      getMain(const m::model::ModelView&);
 Timer     getTimer();
-IO        getIO();
 Sequencer getSequencer();
 Transport getTransport();
 Scenes    getScenes();

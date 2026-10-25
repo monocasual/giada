@@ -189,7 +189,6 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 	setTitle(G_APP_NAME);
-	refresh();
 	show();
 }
 
@@ -202,8 +201,8 @@ void gdMainWindow::refresh()
 	mainTransport->refresh();
 	sequencer->refresh();
 	keyboard->refresh();
-	mainInput->refresh();
-	mainOutput->refresh();
+	mainInput->refresh(m_main->io);
+	mainOutput->refresh(m_main->io);
 	scenes->refresh();
 }
 
@@ -212,8 +211,8 @@ void gdMainWindow::refresh()
 void gdMainWindow::rebuild()
 {
 	mainTimer->rebuild();
-	mainInput->rebuild();
-	mainOutput->rebuild();
+	//mainInput->rebuild();
+	//mainOutput->rebuild();
 	scenes->rebuild();
 }
 
@@ -222,7 +221,10 @@ void gdMainWindow::rebuild()
 void gdMainWindow::rebuild(const c::main::Main& main)
 {
 	m_main.emplace(main);
+
 	keyboard->rebuild(m_main->tracks);
+	mainInput->rebuild(m_main->io);
+	mainOutput->rebuild(m_main->io);
 }
 
 /* -------------------------------------------------------------------------- */
