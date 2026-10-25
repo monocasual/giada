@@ -30,6 +30,7 @@
 #include "src/core/types.h"
 #include "src/types.h"
 #include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -45,6 +46,12 @@ class Plugin;
 class PluginParameter;
 } // namespace giada::m
 
+namespace giada::m::model
+{
+class Plugin;
+class ModelView;
+} // namespace giada::m::model
+
 namespace giada::c::plugin
 {
 struct Program
@@ -53,8 +60,9 @@ struct Program
 	std::string name;
 };
 
-struct Param
+class Param
 {
+public:
 	Param(const m::PluginParameter&, ID pluginId, ID channelId);
 
 	std::string getValueAsText() const;
@@ -70,9 +78,10 @@ private:
 	const m::PluginParameter& m_parameter;
 };
 
-struct Plugin
+class Plugin
 {
-	Plugin(m::Plugin&, ID channelId);
+public:
+	Plugin(std::shared_ptr<const m::model::Plugin>, ID channelId);
 
 	juce::AudioProcessorEditor* createEditor() const;
 	bool                        hasEditor() const;
@@ -92,22 +101,19 @@ struct Plugin
 	std::vector<Param>   parameters;
 
 private:
-	m::Plugin& m_plugin;
+	std::shared_ptr<const m::model::Plugin> m_plugin;
 };
 
-struct Plugins
+class Plugins
 {
-	Plugins() = default;
-	Plugins(const m::Channel&);
+public:
+	Plugins(const m::model::ModelView&, ID channelId);
 
 	ID                  channelId;
 	std::vector<Plugin> plugins;
 };
 
-/* getPlugins
-Returns ViewModel objects. */
-
-Plugins getPlugins(ID channelId);
+Plugins getPlugins(const m::model::ModelView&, ID channelId);
 
 std::vector<PluginInfo> getPluginsInfo();
 

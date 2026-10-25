@@ -27,8 +27,12 @@
 #ifndef GD_PLUGINLIST_H
 #define GD_PLUGINLIST_H
 
-#include "src/glue/plugin.h"
 #include "src/gui/dialogs/window.h"
+
+namespace giada::c::plugin
+{
+class Plugins;
+}
 
 namespace giada::v
 {
@@ -42,6 +46,7 @@ public:
 	~gdPluginList();
 
 	void rebuild() override;
+	void rebuild(const c::plugin::Plugins&);
 
 	const gePluginElement& getNextElement(const gePluginElement& curr) const;
 	const gePluginElement& getPrevElement(const gePluginElement& curr) const;
@@ -51,7 +56,6 @@ private:
 	geLiquidScroll* list;
 
 	ID                 m_channelId;
-	c::plugin::Plugins m_plugins;
 };
 } // namespace giada::v
 
