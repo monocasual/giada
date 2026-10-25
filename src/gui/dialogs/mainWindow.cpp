@@ -197,13 +197,13 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 void gdMainWindow::refresh()
 {
 	cpuLoad->refresh();
-	sequencer->refresh();
 	keyboard->refresh();
 	scenes->refresh();
 
 	if (!m_main)
 		return;
 
+	sequencer->refresh(m_main->sequencer);
 	mainTimer->refresh(m_main->timer);
 	mainInput->refresh(m_main->io);
 	mainOutput->refresh(m_main->io);
