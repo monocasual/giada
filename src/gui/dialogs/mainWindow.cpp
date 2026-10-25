@@ -196,23 +196,26 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 void gdMainWindow::refresh()
 {
-	mainTimer->refresh();
 	cpuLoad->refresh();
 	mainTransport->refresh();
 	sequencer->refresh();
 	keyboard->refresh();
+	scenes->refresh();
+
+	if (!m_main)
+		return;
+
+	mainTimer->refresh(m_main->timer);
 	mainInput->refresh(m_main->io);
 	mainOutput->refresh(m_main->io);
-	scenes->refresh();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdMainWindow::rebuild()
 {
-	mainTimer->rebuild();
-	//mainInput->rebuild();
-	//mainOutput->rebuild();
+	// mainInput->rebuild();
+	// mainOutput->rebuild();
 	scenes->rebuild();
 }
 
@@ -223,6 +226,7 @@ void gdMainWindow::rebuild(const c::main::Main& main)
 	m_main.emplace(main);
 
 	keyboard->rebuild(m_main->tracks);
+	mainTimer->rebuild(m_main->timer);
 	mainInput->rebuild(m_main->io);
 	mainOutput->rebuild(m_main->io);
 }

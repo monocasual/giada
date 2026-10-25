@@ -45,15 +45,6 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::main
 {
-Timer::Timer()
-: bpm(g_engine->getMainApi().getBpm())
-, timeSignature(g_engine->getMainApi().getTimeSignature())
-, quantize(g_engine->getMainApi().getQuantizerValue())
-, isUsingJack(g_engine->getConfigApi().audio_getAPI() == RtAudio::Api::UNIX_JACK)
-, isRecordingInput(g_engine->getMainApi().isRecordingInput())
-{
-}
-
 Timer::Timer(const m::model::ModelView& view)
 : bpm(view.getDocument().sequencer.getBpm())
 , timeSignature(view.getDocument().sequencer.getTimeSignature())
@@ -159,13 +150,6 @@ bool Transport::canEnableRecOnSignal() const
 Main getMain(const m::model::ModelView& view)
 {
 	return Main(view);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Timer getTimer()
-{
-	return Timer();
 }
 
 /* -------------------------------------------------------------------------- */
