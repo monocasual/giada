@@ -198,11 +198,11 @@ void gdMainWindow::refresh()
 {
 	cpuLoad->refresh();
 	keyboard->refresh();
-	scenes->refresh();
 
 	if (!m_main)
 		return;
 
+	scenes->refresh(m_main->scenes);
 	sequencer->refresh(m_main->sequencer);
 	mainTimer->refresh(m_main->timer);
 	mainInput->refresh(m_main->io);
@@ -214,7 +214,6 @@ void gdMainWindow::refresh()
 
 void gdMainWindow::rebuild()
 {
-	scenes->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

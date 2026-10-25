@@ -84,30 +84,27 @@ bool IO::isKernelReady() const { return g_engine->isAudioReady(); }
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Scenes::Scenes()
+Scenes::Scenes(const m::model::ModelView& view)
+: m_params(view.getParameters().sequencer)
 {
+	const m::model::Document& document = view.getDocument();
+
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
-		activeScenes[sceneIndex] = g_engine->getMainApi().isSceneActive(Scene{sceneIndex});
+	{
+		const Scene scene{sceneIndex};
+		activeScenes[sceneIndex] = document.actions.hasActions(scene) || document.tracks.hasSampleChannelsWithWaves(scene);
+	}
 }
 
-Scene Scenes::getCurrentScene() const
-{
-	return g_engine->getMainApi().getCurrentScene();
-}
+Scene Scenes::getCurrentScene() const { return m_params.getCurrentScene(); }
 
 /* -------------------------------------------------------------------------- */
 
-Scene Scenes::getNextScene() const
-{
-	return g_engine->getMainApi().getNextScene();
-}
+Scene Scenes::getNextScene() const { return m_params.getNextScene(); }
 
 /* -------------------------------------------------------------------------- */
 
-SceneStatus Scenes::getStatus() const
-{
-	return g_engine->getMainApi().getSceneStatus();
-}
+SceneStatus Scenes::getStatus() const { return m_params.getSceneStatus(); }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -119,6 +116,7 @@ Main::Main(const m::model::ModelView& view)
 , io(view)
 , transport(view)
 , sequencer(view)
+, scenes(view)
 {
 }
 
@@ -193,13 +191,6 @@ bool Transport::canEnableRecOnSignal() const
 Main getMain(const m::model::ModelView& view)
 {
 	return Main(view);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Scenes getScenes()
-{
-	return Scenes();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -39,22 +39,6 @@
 /* giada::c::main
 Functions to interact with the tools in the main window. */
 
-namespace giada::m
-{
-class Channel;
-}
-
-namespace giada::m::model
-{
-class ModelView;
-}
-
-namespace giada::m::model_DEPR_
-{
-class Sequencer;
-class Mixer;
-} // namespace giada::m::model_DEPR_
-
 namespace giada::c::main
 {
 class Timer
@@ -105,7 +89,7 @@ public:
 	Frame getRecPosition() const;
 
 private:
-	bool                       m_isWaiting;
+	bool                        m_isWaiting;
 	const m::model::Parameters& m_params;
 };
 
@@ -129,15 +113,19 @@ private:
 	m::model::ModelView m_view;
 };
 
-struct Scenes
+class Scenes
 {
-	Scenes();
+public:
+	Scenes(const m::model::ModelView&);
 
 	SceneArray<bool> activeScenes;
 
 	Scene       getCurrentScene() const;
 	Scene       getNextScene() const;
 	SceneStatus getStatus() const;
+
+private:
+	const m::model::Sequencer::Parameters& m_params;
 };
 
 class Main
@@ -150,13 +138,13 @@ public:
 	IO                          io;
 	Transport                   transport;
 	Sequencer                   sequencer;
+	Scenes                      scenes;
 };
 
 /* get*
 Returns viewModel objects filled with data. */
 
-Main      getMain(const m::model::ModelView&);
-Scenes    getScenes();
+Main getMain(const m::model::ModelView&);
 
 void setTimeSignature(TimeSignature);
 void quantize(int val);
