@@ -40,8 +40,8 @@ class geMainTimer : public geFlex
 public:
 	geMainTimer();
 
-	void refresh();
-	void rebuild();
+	void refresh(const c::main::Timer&);
+	void rebuild(const c::main::Timer&);
 
 	void setBpm(const char* v);
 	void setBpm(float v);
@@ -54,8 +54,6 @@ public:
 	void setLock(bool v);
 
 private:
-	c::main::Timer m_timer;
-
 	geTextButton*  m_bpm;
 	geTextButton*  m_timeSignature;
 	geChoice*      m_quantizer;

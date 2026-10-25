@@ -33,6 +33,7 @@
 #include "src/glue/channel.h"
 #include "src/glue/config.h"
 #include "src/glue/io.h"
+#include "src/glue/main.h"
 #include "src/glue/storage.h"
 #include "src/gui/dialogs/about.h"
 #include "src/gui/dialogs/actionEditor/midiActionEditor.h"
@@ -108,16 +109,18 @@ void openKeyGrabberWindow(int key, std::function<bool(int)> f)
 
 /* -------------------------------------------------------------------------- */
 
-void openBpmWindow(float bpm)
+void openBpmWindow()
 {
+	const float bpm = g_engine->getModelView().getDocument().sequencer.getBpm();
 	g_ui->openSubWindow(new v::gdBpmInput(bpm));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void openBeatsWindow(TimeSignature t)
+void openBeatsWindow()
 {
-	g_ui->openSubWindow(new v::gdBeatsInput(t));
+	const TimeSignature sig = g_engine->getModelView().getDocument().sequencer.getTimeSignature();
+	g_ui->openSubWindow(new v::gdBeatsInput(sig));
 }
 
 /* -------------------------------------------------------------------------- */
