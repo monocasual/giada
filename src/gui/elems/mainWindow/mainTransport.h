@@ -29,6 +29,11 @@
 
 #include "src/gui/elems/basics/flex.h"
 
+namespace giada::c::main
+{
+class Transport;
+}
+
 namespace giada::v
 {
 class geImageButton;
@@ -37,7 +42,7 @@ class geMainTransport : public geFlex
 public:
 	geMainTransport();
 
-	void refresh();
+	void refresh(const c::main::Transport&);
 
 private:
 	geImageButton* m_rewind;

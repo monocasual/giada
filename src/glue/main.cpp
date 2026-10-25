@@ -117,6 +117,7 @@ Main::Main(const m::model::ModelView& view)
 : tracks(channel::getTracks(view.getDocument(), view.getAssets(), view.getParameters().sequencer.getCurrentScene()))
 , timer(view)
 , io(view)
+, transport(view)
 {
 }
 
@@ -124,23 +125,41 @@ Main::Main(const m::model::ModelView& view)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+Transport::Transport(const m::model::ModelView& view)
+: isRunning(view.getDocument().sequencer.isRunning())
+, isRecordingActions(view.getDocument().mixer.isRecordingActions)
+, isRecordingInput(view.getDocument().mixer.isRecordingInput)
+, isMetronomeOn(view.getDocument().sequencer.metronome)
+, recTriggerMode(view.getDocument().mixer.recTriggerMode)
+, inputRecMode(view.getDocument().mixer.inputRecMode)
+, m_view(view)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Transport::canRecordInput() const
 {
-	return g_engine->getMainApi().canRecordInput();
+	const m::model::Document& document = m_view.getDocument();
+	const Scene               scene    = m_view.getParameters().sequencer.getCurrentScene();
+
+	return document.kernelAudio.deviceIn.id != 0 && document.tracks.hasInputRecordableChannels(scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Transport::canEnableFreeInputRec() const
 {
-	return g_engine->getMainApi().canEnableFreeInputRec();
+	const Scene scene = m_view.getParameters().sequencer.getCurrentScene();
+
+	return !m_view.getDocument().tracks.hasSampleChannelsWithWaves(scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Transport::canEnableRecOnSignal() const
 {
-	return g_engine->getMainApi().canEnableRecOnSignal();
+	return !m_view.getDocument().sequencer.isRunning();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -168,20 +187,6 @@ Sequencer getSequencer()
 	out.recMaxLength       = recInfo.maxLength;
 
 	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Transport getTransport()
-{
-	Transport transport;
-	transport.isRunning         = g_engine->getMainApi().isSequencerRunning();
-	transport.isRecordingAction = g_engine->getMainApi().isRecordingActions();
-	transport.isRecordingInput  = g_engine->getMainApi().isRecordingInput();
-	transport.isMetronomeOn     = g_engine->getMainApi().isMetronomeOn();
-	transport.recTriggerMode    = g_engine->getMainApi().getRecTriggerMode();
-	transport.inputRecMode      = g_engine->getMainApi().getInputRecMode();
-	return transport;
 }
 
 /* -------------------------------------------------------------------------- */

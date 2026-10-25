@@ -197,7 +197,6 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 void gdMainWindow::refresh()
 {
 	cpuLoad->refresh();
-	mainTransport->refresh();
 	sequencer->refresh();
 	keyboard->refresh();
 	scenes->refresh();
@@ -208,14 +207,13 @@ void gdMainWindow::refresh()
 	mainTimer->refresh(m_main->timer);
 	mainInput->refresh(m_main->io);
 	mainOutput->refresh(m_main->io);
+	mainTransport->refresh(m_main->transport);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdMainWindow::rebuild()
 {
-	// mainInput->rebuild();
-	// mainOutput->rebuild();
 	scenes->rebuild();
 }
 

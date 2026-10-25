@@ -671,24 +671,17 @@ void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 
 bool ChannelManager::hasInputRecordableChannels(Scene scene) const
 {
-	return m_model_DEPR_.get().tracks.anyChannelOf([scene](const Channel& ch)
-	{ return ch.canInputRec(scene); });
+	return m_model.getCurrentDocument()->tracks.hasInputRecordableChannels(scene);
 }
 
 bool ChannelManager::hasAudioData(Scene scene) const
 {
-	return m_model_DEPR_.get().tracks.anyChannelOf([scene](const Channel& ch)
-	{
-		return ch.sampleChannel && ch.sampleChannel->hasWave(scene);
-	});
+	return m_model.getCurrentDocument()->tracks.hasSampleChannelsWithWaves(scene);
 }
 
 bool ChannelManager::hasSolos() const
 {
-	return m_model.getCurrentDocument()->tracks.anyChannelOf([](const model::Channel& ch)
-	{
-		return !ch.isInternal() && ch.isSoloed();
-	});
+	return m_model.getCurrentDocument()->tracks.hasSoloedChannels();
 }
 
 /* -------------------------------------------------------------------------- */
