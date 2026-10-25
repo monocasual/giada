@@ -44,6 +44,7 @@
 #include <FL/fl_draw.H>
 #include <cassert>
 #include <fmt/core.h>
+#include <fmt/format.h>
 #include <limits>
 #include <string>
 

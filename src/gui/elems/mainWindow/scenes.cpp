@@ -32,6 +32,7 @@
 #include "src/gui/elems/playButton.h"
 #include "src/gui/ui.h"
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 extern giada::v::Ui* g_ui;
 

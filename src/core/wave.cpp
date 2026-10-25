@@ -28,6 +28,7 @@
 #include "src/deps/mcl-utils/src/fs.hpp"
 #include <cassert>
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 namespace utils = mcl::utils;
 

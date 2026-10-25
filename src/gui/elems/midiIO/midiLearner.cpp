@@ -31,6 +31,7 @@
 #include "src/gui/ui.h"
 #include <cassert>
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 extern giada::v::Ui* g_ui;
 
