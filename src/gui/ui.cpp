@@ -299,9 +299,9 @@ void Ui::stopJuceDispatchLoop()
 
 void Ui::rebuildStaticWidgets()
 {
-	mainWindow->mainInput->rebuild();
-	mainWindow->mainOutput->rebuild();
-	mainWindow->mainTimer->rebuild();
+	//mainWindow->mainInput->rebuild();
+	//mainWindow->mainOutput->rebuild();
+	//mainWindow->mainTimer->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

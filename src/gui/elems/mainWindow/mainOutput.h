@@ -42,15 +42,13 @@ class geMainOutput : public geFlex
 public:
 	geMainOutput();
 
-	void refresh();
-	void rebuild();
+	void refresh(const c::main::IO&);
+	void rebuild(const c::main::IO&);
 
 	void setOutVol(float v);
 	void setMidiOutActivity();
 
 private:
-	c::main::IO m_io;
-
 	geSoundMeter*  m_outMeter;
 	geDial*        m_outVol;
 	geImageButton* m_masterFxOut;

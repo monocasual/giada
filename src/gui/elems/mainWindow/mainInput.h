@@ -41,15 +41,13 @@ class geMainInput : public geFlex
 public:
 	geMainInput();
 
-	void refresh();
-	void rebuild();
+	void refresh(const c::main::IO&);
+	void rebuild(const c::main::IO&);
 
 	void setInVol(float v);
 	void setMidiInActivity();
 
 private:
-	c::main::IO m_io;
-
 	geSoundMeter*  m_inMeter;
 	geDial*        m_inVol;
 	geImageButton* m_inToOut;
