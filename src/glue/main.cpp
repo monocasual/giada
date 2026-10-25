@@ -67,33 +67,27 @@ Timer::Timer(const m::model::ModelView& view)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-IO::IO(const m::Channel& out, const m::Channel& in)
-: masterOutVol(out.volume)
-, masterInVol(in.volume)
-, masterOutHasPlugins(out.plugins.size() > 0)
-, masterInHasPlugins(in.plugins.size() > 0)
-, inToOut(g_engine->getMainApi().getInToOut())
+IO::IO(const m::model::ModelView& view)
+: m_params(view.getParameters().mixer)
 {
+	const m::model::Channel& masterOut = view.getDocument().tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const m::model::Channel& masterIn  = view.getDocument().tracks.getChannel(MASTER_IN_CHANNEL_ID);
+
+	masterOutVol        = masterOut.volume;
+	masterOutHasPlugins = !masterOut.plugins.empty();
+	masterInVol         = masterIn.volume;
+	masterInHasPlugins  = !masterIn.plugins.empty();
+	inToOut             = view.getDocument().mixer.inToOut;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Peak IO::getMasterOutPeak()
-{
-	return g_engine->getMainApi().getPeakOut();
-}
-
-Peak IO::getMasterInPeak()
-{
-	return g_engine->getMainApi().getPeakIn();
-}
+Peak IO::getMasterOutPeak() const { return m_params.getPeakOut(); }
+Peak IO::getMasterInPeak() const { return m_params.getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
-bool IO::isKernelReady()
-{
-	return g_engine->isAudioReady();
-}
+bool IO::isKernelReady() const { return g_engine->isAudioReady(); }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -131,6 +125,7 @@ SceneStatus Scenes::getStatus() const
 Main::Main(const m::model::ModelView& view)
 : tracks(channel::getTracks(view.getDocument(), view.getAssets(), view.getParameters().sequencer.getCurrentScene()))
 , timer(view)
+, io(view)
 {
 }
 
@@ -171,14 +166,6 @@ Main getMain(const m::model::ModelView& view)
 Timer getTimer()
 {
 	return Timer();
-}
-
-/* -------------------------------------------------------------------------- */
-
-IO getIO()
-{
-	return IO(g_engine->getChannelsApi().get(MASTER_OUT_CHANNEL_ID),
-	    g_engine->getChannelsApi().get(MASTER_IN_CHANNEL_ID));
 }
 
 /* -------------------------------------------------------------------------- */
