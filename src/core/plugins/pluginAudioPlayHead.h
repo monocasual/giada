@@ -39,14 +39,16 @@ namespace giada::m
 class PluginAudioPlayHead final : public juce::AudioPlayHead
 {
 public:
+	PluginAudioPlayHead() = default;
 	PluginAudioPlayHead(const model_DEPR_::Sequencer&, int sampleRate);
 
 	juce::Optional<juce::AudioPlayHead::PositionInfo> getPosition() const override;
 	bool                                              canControlTransport() override;
 
+	void setPositionInfo(const juce::AudioPlayHead::PositionInfo&);
+
 private:
-	const model_DEPR_::Sequencer& m_sequencer;
-	int                     m_sampleRate;
+	juce::AudioPlayHead::PositionInfo m_positionInfo;
 };
 } // namespace giada::m
 

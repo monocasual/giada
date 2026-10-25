@@ -120,7 +120,7 @@ private:
 
 	void processPlugin(Plugin*, juce::MidiBuffer& events);
 
-	model_DEPR_::Model& m_model;
+	model_DEPR_::Model& m_model_DEPR_;
 
 	juce::AudioBuffer<float> m_audioBuffer;
 };

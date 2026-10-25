@@ -109,11 +109,13 @@ LoadState Shared::load(const Patch& patch, PluginManager& pluginManager, const S
 
 	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
+		/*
 		std::unique_ptr<juce::AudioPluginInstance> pi = pluginManager.makeJucePlugin(pplugin.juceId, sampleRate, bufferSize);
 		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), sequencer, sampleRate, bufferSize);
 		if (!p->valid)
 			state.missingPlugins.emplace(pplugin.juceId);
 		getAllPlugins().push_back(std::move(p));
+		*/
 	}
 
 	for (const Patch::Wave& pwave : patch.waves)

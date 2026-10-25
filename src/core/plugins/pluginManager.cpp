@@ -124,19 +124,19 @@ bool PluginManager::loadList(const std::string& filepath)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& juceId,
-    int sampleRate, int bufferSize, const model_DEPR_::Sequencer& sequencer, ID id)
+std::shared_ptr<Plugin> PluginManager::makePlugin(const std::string& juceId,
+    int sampleRate, int bufferSize, ID id)
 {
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(juceId, sampleRate, bufferSize);
-	return pluginFactory::create(id, juceId, std::move(pi), sequencer, sampleRate, bufferSize);
+	return pluginFactory::create(id, juceId, std::move(pi), sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
-    int bufferSize, const model_DEPR_::Sequencer& sequencer)
+std::shared_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
+    int bufferSize)
 {
-	std::unique_ptr<Plugin> p = makePlugin(src.getJuceId(), sampleRate, bufferSize, sequencer);
+	std::shared_ptr<Plugin> p = makePlugin(src.getJuceId(), sampleRate, bufferSize);
 	if (src.getState().getSize() != 0)
 		p->setState(src.getState());
 	return p;
@@ -148,8 +148,9 @@ std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& sou
     int sampleRate, int bufferSize, model_DEPR_::Model& model)
 {
 	std::vector<Plugin*> clones;
-	for (const Plugin* plugin : source)
-		clones.push_back(&model.addPlugin(makePlugin(*plugin, sampleRate, bufferSize, model.get().sequencer)));
+	// TODO
+	// for (const Plugin* plugin : source)
+	//	clones.push_back(&model.addPlugin(makePlugin(*plugin, sampleRate, bufferSize)));
 
 	return clones;
 }
