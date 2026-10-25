@@ -28,6 +28,7 @@
 #define G_MAIN_H
 
 #include "src/core/model/mixer.h"
+#include "src/core/model/modelView.h"
 #include "src/core/model/sequencer.h"
 #include "src/core/types.h"
 #include "src/glue/channel.h"
@@ -96,10 +97,13 @@ struct Sequencer
 	Frame         recMaxLength;
 };
 
-struct Transport
+class Transport
 {
+public:
+	Transport(const m::model::ModelView&);
+
 	bool           isRunning;
-	bool           isRecordingAction;
+	bool           isRecordingActions;
 	bool           isRecordingInput;
 	bool           isMetronomeOn;
 	RecTriggerMode recTriggerMode;
@@ -108,6 +112,9 @@ struct Transport
 	bool canRecordInput() const;
 	bool canEnableFreeInputRec() const;
 	bool canEnableRecOnSignal() const;
+
+private:
+	m::model::ModelView m_view;
 };
 
 struct Scenes
@@ -129,6 +136,7 @@ public:
 	std::vector<channel::Track> tracks;
 	Timer                       timer;
 	IO                          io;
+	Transport                   transport;
 };
 
 /* get*
@@ -136,7 +144,6 @@ Returns viewModel objects filled with data. */
 
 Main      getMain(const m::model::ModelView&);
 Sequencer getSequencer();
-Transport getTransport();
 Scenes    getScenes();
 
 void setTimeSignature(TimeSignature);
