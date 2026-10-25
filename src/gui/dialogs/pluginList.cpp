@@ -64,13 +64,13 @@ gdPluginList::~gdPluginList()
 
 /* -------------------------------------------------------------------------- */
 
-void gdPluginList::rebuild()
-{
-	m_plugins = c::plugin::getPlugins(m_channelId);
+void gdPluginList::rebuild() {}
 
-	if (m_plugins.channelId == MASTER_OUT_CHANNEL_ID)
+void gdPluginList::rebuild(const c::plugin::Plugins& plugins)
+{
+	if (plugins.channelId == MASTER_OUT_CHANNEL_ID)
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTEROUT));
-	else if (m_plugins.channelId == MASTER_IN_CHANNEL_ID)
+	else if (plugins.channelId == MASTER_IN_CHANNEL_ID)
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTERIN));
 	else
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_CHANNEL));
@@ -80,14 +80,14 @@ void gdPluginList::rebuild()
 	list->removeAllChildren();
 	list->scroll_to(0, 0);
 
-	for (const c::plugin::Plugin& plugin : m_plugins.plugins)
+	for (const c::plugin::Plugin& plugin : plugins.plugins)
 		list->addWidget(new gePluginElement(0, 0, w(), G_GUI_UNIT, plugin));
 
 	addPlugin = new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui->getI18Text(LangMap::PLUGINLIST_ADDPLUGIN));
 
-	addPlugin->onClick = [this]()
+	addPlugin->onClick = [channelId = plugins.channelId]()
 	{
-		c::layout::openPluginChooser(m_plugins.channelId);
+		c::layout::openPluginChooser(channelId);
 	};
 
 	list->addWidget(addPlugin);

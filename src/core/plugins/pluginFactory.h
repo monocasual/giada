@@ -33,6 +33,11 @@
 #include <memory>
 #include <string>
 
+namespace giada::m::model
+{
+class Plugin;
+}
+
 namespace giada::m
 {
 class Plugin;
@@ -50,16 +55,16 @@ Resets internal ID generator. */
 
 void reset();
 
-std::shared_ptr<Plugin> createInvalid(ID id, const std::string& juceId);
+std::shared_ptr<model::Plugin> createInvalid(ID id, const std::string& juceId);
 
-std::shared_ptr<Plugin> create(
+std::shared_ptr<model::Plugin> create(
     ID                 id,
     const std::string& juceId,
     std::unique_ptr<juce::AudioPluginInstance>,
     int sampleRate,
     int bufferSize);
 
-std::shared_ptr<Plugin> deserializePlugin(const Patch::Plugin&, std::unique_ptr<juce::AudioPluginInstance>,
+std::shared_ptr<model::Plugin> deserializePlugin(const Patch::Plugin&, std::unique_ptr<juce::AudioPluginInstance>,
     const model_DEPR_::Sequencer&, int sampleRate, int bufferSize);
 
 Patch::Plugin serializePlugin(const Plugin&);

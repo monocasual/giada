@@ -27,6 +27,7 @@
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/patch.h"
+#include "src/core/model/plugin.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/deps/mcl-utils/src/fs.hpp"
@@ -124,7 +125,7 @@ bool PluginManager::loadList(const std::string& filepath)
 
 /* -------------------------------------------------------------------------- */
 
-std::shared_ptr<Plugin> PluginManager::makePlugin(const std::string& juceId,
+std::shared_ptr<model::Plugin> PluginManager::makePlugin(const std::string& juceId,
     int sampleRate, int bufferSize, ID id)
 {
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(juceId, sampleRate, bufferSize);
@@ -133,10 +134,10 @@ std::shared_ptr<Plugin> PluginManager::makePlugin(const std::string& juceId,
 
 /* -------------------------------------------------------------------------- */
 
-std::shared_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
+std::shared_ptr<model::Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
     int bufferSize)
 {
-	std::shared_ptr<Plugin> p = makePlugin(src.getJuceId(), sampleRate, bufferSize);
+	std::shared_ptr<model::Plugin> p = makePlugin(src.getJuceId(), sampleRate, bufferSize);
 	if (src.getState().getSize() != 0)
 		p->setState(src.getState());
 	return p;

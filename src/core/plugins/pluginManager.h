@@ -45,6 +45,10 @@ class Sequencer;
 
 namespace giada::m
 {
+namespace model
+{
+class Plugin;
+}
 class PluginManager final
 {
 public:
@@ -78,8 +82,8 @@ public:
 	bool saveList(const std::string& path) const;
 	bool loadList(const std::string& path);
 
-	std::shared_ptr<Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, ID id = {});
-	std::shared_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize);
+	std::shared_ptr<model::Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, ID id = {});
+	std::shared_ptr<model::Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize);
 
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& juceId, int sampleRate, int bufferSize);
 

@@ -28,6 +28,7 @@
 #include "src/core/engine.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/mixer.h"
+#include "src/core/model/plugin.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginManager.h"
@@ -85,62 +86,65 @@ float       Param::getValue() const { return m_parameter.getValue(); }
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Plugin::Plugin(m::Plugin& p, ID channelId)
-: id(p.id)
+Plugin::Plugin(std::shared_ptr<const m::model::Plugin> plugin, ID channelId)
+: id(plugin->id)
 , channelId(channelId)
-, valid(p.valid)
-, isBypassed(p.isBypassed())
-, name(p.getName())
-, juceId(p.getJuceId())
-, currentProgram(p.getCurrentProgram())
+, valid(plugin->valid)
+, isBypassed(plugin->isBypassed())
+, name(plugin->getName())
+, juceId(plugin->getJuceId())
+, currentProgram(plugin->getCurrentProgram())
 , uiScaling(g_ui->getScaling())
-, m_plugin(p)
+, m_plugin(std::move(plugin))
 {
-	for (int i = 0; i < p.getNumPrograms(); i++)
-		programs.push_back({i, p.getProgramName(i)});
-	for (const m::PluginParameter& param : p.getParameters())
-		parameters.emplace_back(param, p.id, channelId);
+	assert(m_plugin != nullptr);
+
+	for (int i = 0; i < m_plugin->getNumPrograms(); i++)
+		programs.push_back({i, m_plugin->getProgramName(i)});
+	for (const m::PluginParameter& param : m_plugin->getParameters())
+		parameters.emplace_back(param, m_plugin->id, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 juce::AudioProcessorEditor* Plugin::createEditor() const
 {
-	return m_plugin.createEditor();
+	return m_plugin->createEditor();
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Plugin::hasEditor() const
 {
-	return m_plugin.hasEditor();
+	return m_plugin->hasEditor();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Plugin::setResizeCallback(std::function<void(int, int)> f)
 {
-	m_plugin.onEditorResize = f;
+	m_plugin->onEditorResize = f;
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Plugins::Plugins(const m::Channel& c)
-: channelId(c.id)
+Plugins::Plugins(const m::model::ModelView& view, ID channelId)
+: channelId(channelId)
 {
-	for (m::Plugin* plugin : c.plugins)
-		plugins.emplace_back(*plugin, c.id);
+	const m::model::Channel& ch = view.getDocument().tracks.getChannel(channelId);
+	for (const ID pluginId : ch.plugins)
+		plugins.emplace_back(view.getAssets().plugins.find(pluginId), ch.id);
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Plugins getPlugins(ID channelId)
+Plugins getPlugins(const m::model::ModelView& view, ID channelId)
 {
-	return Plugins(g_engine->getChannelsApi().get(channelId));
+	return Plugins(view, channelId);
 }
 
 std::vector<PluginInfo> getPluginsInfo()
