@@ -42,13 +42,10 @@ class geScenes : public geFlex
 public:
 	geScenes();
 
-	void rebuild();
-	void refresh();
+	void refresh(const c::main::Scenes&);
 
 private:
 	gePlayButton* makeButton(Scene);
-
-	c::main::Scenes m_scenes;
 
 	SceneArray<gePlayButton*> m_buttons;
 };
