@@ -77,8 +77,8 @@ void PluginsApi::add(const std::string& juceId, ID channelId)
 		const int sampleRate = doc.kernelAudio.samplerate;
 		const int bufferSize = doc.kernelAudio.buffersize;
 
-		std::shared_ptr<m::Plugin> plugin   = m_pluginManager.makePlugin(juceId, sampleRate, bufferSize);
-		const ID                   pluginId = plugin->id;
+		std::shared_ptr<m::model::Plugin> plugin   = m_pluginManager.makePlugin(juceId, sampleRate, bufferSize);
+		const ID                          pluginId = plugin->id;
 		if (pluginId.isValid())
 			assets.plugins.set(pluginId, std::move(plugin));
 

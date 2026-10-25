@@ -26,6 +26,7 @@
 
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/idManager.h"
+#include "src/core/model/plugin.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/deps/mcl-utils/src/container.hpp"
@@ -50,14 +51,14 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-std::shared_ptr<Plugin> createInvalid(ID id, const std::string& juceId)
+std::shared_ptr<model::Plugin> createInvalid(ID id, const std::string& juceId)
 {
-	return std::make_shared<Plugin>(pluginId_.generate(id), juceId);
+	return std::make_shared<model::Plugin>(pluginId_.generate(id), juceId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::shared_ptr<Plugin> create(
+std::shared_ptr<model::Plugin> create(
     ID                                         id,
     const std::string&                         juceId,
     std::unique_ptr<juce::AudioPluginInstance> pi,
@@ -71,7 +72,7 @@ std::shared_ptr<Plugin> create(
 	if (pi == nullptr)
 		return pluginFactory::createInvalid(id, juceId);
 
-	return std::make_shared<Plugin>(
+	return std::make_shared<model::Plugin>(
 	    pluginId_.generate(id),
 	    juceId,
 	    std::move(pi),
@@ -81,7 +82,7 @@ std::shared_ptr<Plugin> create(
 
 /* -------------------------------------------------------------------------- */
 
-std::shared_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::unique_ptr<juce::AudioPluginInstance> pi,
+std::shared_ptr<model::Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::unique_ptr<juce::AudioPluginInstance> pi,
     const model_DEPR_::Sequencer& sequencer, int sampleRate, int bufferSize)
 {
 	/* If the original juce::AudioPluginInstance is invalid, just return an
@@ -91,7 +92,7 @@ std::shared_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::uni
 	if (pi == nullptr)
 		return pluginFactory::createInvalid(pplugin.id, pplugin.juceId);
 
-	std::shared_ptr<Plugin> plugin = create(pplugin.id, pplugin.juceId, std::move(pi), sampleRate, bufferSize);
+	std::shared_ptr<model::Plugin> plugin = create(pplugin.id, pplugin.juceId, std::move(pi), sampleRate, bufferSize);
 
 	plugin->setBypass(pplugin.bypass);
 	plugin->setState(PluginState(pplugin.state));
