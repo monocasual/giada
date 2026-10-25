@@ -109,12 +109,10 @@ geMainTransport::geMainTransport()
 
 /* -------------------------------------------------------------------------- */
 
-void geMainTransport::refresh()
+void geMainTransport::refresh(const c::main::Transport& transport)
 {
-	c::main::Transport transport = c::main::getTransport();
-
 	m_play->setValue(transport.isRunning);
-	m_recAction->setValue(transport.isRecordingAction);
+	m_recAction->setValue(transport.isRecordingActions);
 	m_recInput->setValue(transport.isRecordingInput);
 	m_metronome->setValue(transport.isMetronomeOn);
 	m_recTriggerMode->setValue(transport.recTriggerMode == RecTriggerMode::SIGNAL);
