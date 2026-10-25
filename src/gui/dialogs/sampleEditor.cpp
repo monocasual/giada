@@ -55,6 +55,7 @@
 #include <cassert>
 #include <cmath>
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 #if G_OS_WINDOWS
 #undef IN

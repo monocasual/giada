@@ -34,6 +34,7 @@
 #include "src/utils/string.h"
 #include <FL/Fl.H>
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 extern giada::v::Ui* g_ui;
 

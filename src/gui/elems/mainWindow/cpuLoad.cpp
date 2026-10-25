@@ -31,6 +31,7 @@
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/progress.h"
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 namespace giada::v
 {

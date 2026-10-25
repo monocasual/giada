@@ -43,6 +43,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 extern giada::v::Ui* g_ui;
 

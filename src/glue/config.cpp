@@ -38,6 +38,7 @@
 #include "src/gui/ui.h"
 #include "src/utils/fs.h"
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;

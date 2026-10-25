@@ -39,6 +39,7 @@
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 extern giada::v::Ui* g_ui;
 
