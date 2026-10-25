@@ -42,7 +42,7 @@ namespace utils = mcl::utils;
 namespace giada::m
 {
 PluginHost::PluginHost(model_DEPR_::Model& m)
-: m_model(m)
+: m_model_DEPR_(m)
 {
 }
 
@@ -88,14 +88,14 @@ void PluginHost::processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin
 
 const Plugin& PluginHost::addPlugin(std::unique_ptr<Plugin> p)
 {
-	return m_model.addPlugin(std::move(p));
+	return m_model_DEPR_.addPlugin(std::move(p));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::freePlugin(ID pluginId)
 {
-	m_model.removePlugin(*m_model.findPlugin(pluginId));
+	m_model_DEPR_.removePlugin(*m_model_DEPR_.findPlugin(pluginId));
 }
 
 void PluginHost::freePlugins(const std::vector<ID> ids)
@@ -108,28 +108,28 @@ void PluginHost::freePlugins(const std::vector<ID> ids)
 
 void PluginHost::freeAllPlugins()
 {
-	m_model.clearPlugins();
+	m_model_DEPR_.clearPlugins();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::setPluginParameter(ID pluginId, int paramIndex, float value)
 {
-	m_model.findPlugin(pluginId)->setParameter(paramIndex, value);
+	m_model_DEPR_.findPlugin(pluginId)->setParameter(paramIndex, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::setPluginProgram(ID pluginId, int programIndex)
 {
-	m_model.findPlugin(pluginId)->setCurrentProgram(programIndex);
+	m_model_DEPR_.findPlugin(pluginId)->setCurrentProgram(programIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::toggleBypass(ID pluginId)
 {
-	Plugin& plugin = *m_model.findPlugin(pluginId);
+	Plugin& plugin = *m_model_DEPR_.findPlugin(pluginId);
 	plugin.setBypass(!plugin.isBypassed());
 }
 
