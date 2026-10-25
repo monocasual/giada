@@ -55,9 +55,9 @@ class Mixer;
 
 namespace giada::c::main
 {
-struct Timer
+class Timer
 {
-	Timer();
+public:
 	Timer(const m::model::ModelView&);
 
 	float         bpm;
@@ -135,7 +135,6 @@ public:
 Returns viewModel objects filled with data. */
 
 Main      getMain(const m::model::ModelView&);
-Timer     getTimer();
 Sequencer getSequencer();
 Transport getTransport();
 Scenes    getScenes();
