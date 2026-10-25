@@ -38,11 +38,11 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginsApi::PluginsApi(KernelAudio& ka, PluginManager& pm, PluginHost& ph, model_DEPR_::Model& m)
-: m_kernelAudio(ka)
+PluginsApi::PluginsApi(model::Model& m, PluginManager& pm, PluginHost& ph, model_DEPR_::Model& m_DEPR_)
+: m_model(m)
 , m_pluginManager(pm)
 , m_pluginHost(ph)
-, m_model(m)
+, m_model_DEPR_(m_DEPR_)
 {
 }
 
@@ -50,7 +50,7 @@ PluginsApi::PluginsApi(KernelAudio& ka, PluginManager& pm, PluginHost& ph, model
 
 const Plugin* PluginsApi::get(ID pluginId) const
 {
-	return m_model.findPlugin(pluginId);
+	return m_model_DEPR_.findPlugin(pluginId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -71,35 +71,32 @@ int PluginsApi::countAvailablePlugins() const
 
 void PluginsApi::add(const std::string& juceId, ID channelId)
 {
-	/* Plug-in creation must be done in the main thread, due to JUCE and VST3
-	internal workings. */
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [this, juceId, channelId](model::Document& doc, model::Assets& assets)
+	{
+		const int sampleRate = doc.kernelAudio.samplerate;
+		const int bufferSize = doc.kernelAudio.buffersize;
 
-	const int sampleRate = m_kernelAudio.getSampleRate();
-	const int bufferSize = m_kernelAudio.getBufferSize();
+		std::shared_ptr<m::Plugin> plugin   = m_pluginManager.makePlugin(juceId, sampleRate, bufferSize);
+		const ID                   pluginId = plugin->id;
+		if (pluginId.isValid())
+			assets.plugins.set(pluginId, std::move(plugin));
 
-	std::unique_ptr<m::Plugin> plugin    = m_pluginManager.makePlugin(juceId, sampleRate, bufferSize, m_model.get().sequencer);
-	const Plugin*              pluginPtr = plugin.get();
-	if (plugin != nullptr)
-		m_pluginHost.addPlugin(std::move(plugin));
-
-	/* TODO - unfortunately JUCE wants mutable plugin objects due to the
-	    presence of the non-const processBlock() method. Why not const_casting
-	    only in the Plugin class? */
-	m_model.get().tracks.getChannel(channelId).plugins.push_back(const_cast<Plugin*>(pluginPtr));
-	m_model.swap(model_DEPR_::SwapType::HARD);
+		doc.tracks.getChannel(channelId).plugins.push_back(pluginId);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginsApi::swap(ID pluginId1, ID pluginId2, ID channelId)
 {
-	auto&             plugins = m_model.get().tracks.getChannel(channelId).plugins;
+	auto&             plugins = m_model_DEPR_.get().tracks.getChannel(channelId).plugins;
 	const std::size_t index1  = utils::container::indexOfIf(plugins, [pluginId1](const Plugin* p)
 	 { return p->id == pluginId1; });
 	const std::size_t index2  = utils::container::indexOfIf(plugins, [pluginId2](const Plugin* p)
 	 { return p->id == pluginId2; });
 	std::swap(plugins.at(index1), plugins.at(index2));
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -113,11 +110,11 @@ void PluginsApi::sort(PluginSortMode mode)
 
 void PluginsApi::free(ID pluginId, ID channelId)
 {
-	utils::container::removeIf(m_model.get().tracks.getChannel(channelId).plugins, [pluginId](const m::Plugin* p)
+	utils::container::removeIf(m_model_DEPR_.get().tracks.getChannel(channelId).plugins, [pluginId](const m::Plugin* p)
 	{
 		return p->id == pluginId;
 	});
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 	m_pluginHost.freePlugin(pluginId);
 }
 

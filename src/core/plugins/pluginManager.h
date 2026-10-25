@@ -41,7 +41,7 @@ namespace giada::m::model_DEPR_
 {
 class Model;
 class Sequencer;
-} // namespace giada::m::model
+} // namespace giada::m::model_DEPR_
 
 namespace giada::m
 {
@@ -78,8 +78,8 @@ public:
 	bool saveList(const std::string& path) const;
 	bool loadList(const std::string& path);
 
-	std::unique_ptr<Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, const model_DEPR_::Sequencer&, ID id = {});
-	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const model_DEPR_::Sequencer&);
+	std::shared_ptr<Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, ID id = {});
+	std::shared_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize);
 
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& juceId, int sampleRate, int bufferSize);
 
