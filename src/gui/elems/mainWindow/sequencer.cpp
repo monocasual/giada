@@ -45,9 +45,9 @@ geSequencer::geSequencer()
 
 /* -------------------------------------------------------------------------- */
 
-void geSequencer::refresh()
+void geSequencer::refresh(const c::main::Sequencer& sequencer)
 {
-	m_data = c::main::getSequencer();
+	m_data.emplace(sequencer);
 	redraw();
 }
 
@@ -61,7 +61,10 @@ void geSequencer::draw()
 	/* Cleanup */
 	drawRectf(m_background, FL_BACKGROUND_COLOR);
 
-	if (m_data.isFreeModeInputRec)
+	if (!m_data)
+		return;
+
+	if (m_data->isFreeModeInputRec)
 		drawRecBars();
 
 	drawBody();
@@ -82,21 +85,21 @@ void geSequencer::drawBody() const
 
 	/* Beat lines. */
 
-	for (int i = 1; i <= m_data.timeSignature.beats; i++)
+	for (int i = 1; i <= m_data->timeSignature.beats; i++)
 		drawLine(line.withShiftedX(m_cell.w * i), G_COLOR_GREY_4);
 
 	/* Bar lines. */
 
-	const int delta = m_data.timeSignature.beats / m_data.timeSignature.bars;
-	for (int i = 1; i < m_data.timeSignature.bars; i++)
+	const int delta = m_data->timeSignature.beats / m_data->timeSignature.bars;
+	for (int i = 1; i < m_data->timeSignature.bars; i++)
 		drawLine(line.withShiftedX(m_cell.w * i * delta), G_COLOR_LIGHT_1);
 
-	for (int i = 0; i < m_data.timeSignature.beats; i++)
+	for (int i = 0; i < m_data->timeSignature.beats; i++)
 		drawBeatNumber(i, G_COLOR_GREY_4);
 
 	/* Unused grey area. */
 
-	drawRectf(body.withTrimmedLeft(m_data.timeSignature.beats * m_cell.w), G_COLOR_GREY_4);
+	drawRectf(body.withTrimmedLeft(m_data->timeSignature.beats * m_cell.w), G_COLOR_GREY_4);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -105,7 +108,7 @@ void geSequencer::drawRecBars() const
 {
 	namespace math = mcl::utils::math;
 
-	int length = math::map(m_data.recPosition, m_data.recMaxLength, w());
+	int length = math::map(m_data->getRecPosition(), m_data->recMaxLength, w());
 
 	drawRectf(geompp::Rect(x(), y(), length, h()), G_COLOR_LIGHT_1);
 }
@@ -121,7 +124,7 @@ void geSequencer::drawBeatNumber(int beat, Fl_Color color) const
 
 void geSequencer::drawCursor(int beat) const
 {
-	if (m_data.shouldBlink) // Don't paint if is blinking
+	if (m_data->shouldBlink()) // Don't paint if is blinking
 		return;
 	// TODO withW(...): FLTK glitch?
 	drawRectf(m_cell.withShiftedX(beat * m_cell.w).reduced(CURSOR_PAD).withW(m_cell.w - CURSOR_PAD - 2), G_COLOR_LIGHT_1);
@@ -132,12 +135,12 @@ void geSequencer::drawCursor(int beat) const
 
 void geSequencer::drawCursor() const
 {
-	if (m_data.isFreeModeInputRec)
+	if (m_data->isFreeModeInputRec)
 	{
-		for (int i = 0; i < m_data.timeSignature.beats; i++)
+		for (int i = 0; i < m_data->timeSignature.beats; i++)
 			drawCursor(i);
 	}
 	else
-		drawCursor(m_data.currentBeat);
+		drawCursor(m_data->getCurrentBeat());
 }
 } // namespace giada::v

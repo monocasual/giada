@@ -32,6 +32,7 @@
 #include "src/deps/geompp/src/rect.hpp"
 #include "src/glue/main.h"
 #include "src/gui/elems/basics/box.h"
+#include <optional>
 
 namespace giada::v
 {
@@ -42,7 +43,7 @@ public:
 
 	void draw() override;
 
-	void refresh();
+	void refresh(const c::main::Sequencer&);
 
 private:
 	static constexpr int REC_BARS_H = 3;
@@ -54,7 +55,7 @@ private:
 	void drawRecBars() const;
 	void drawBeatNumber(int beat, Fl_Color) const;
 
-	c::main::Sequencer m_data;
+	std::optional<c::main::Sequencer> m_data;
 
 	geompp::Rect<int> m_background;
 	geompp::Rect<int> m_cell;
