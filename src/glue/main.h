@@ -29,6 +29,7 @@
 
 #include "src/core/model/mixer.h"
 #include "src/core/model/modelView.h"
+#include "src/core/model/parameters.h"
 #include "src/core/model/sequencer.h"
 #include "src/core/types.h"
 #include "src/glue/channel.h"
@@ -87,14 +88,25 @@ private:
 	const m::model::Mixer::Parameters& m_params;
 };
 
-struct Sequencer
+class Sequencer
 {
+public:
+	Sequencer(const m::model::ModelView&);
+
 	bool          isFreeModeInputRec;
-	bool          shouldBlink;
 	TimeSignature timeSignature;
-	int           currentBeat;
-	Frame         recPosition;
 	Frame         recMaxLength;
+
+	/* Values that change while the Document stays the same: they are read live
+	from the model's Parameters. */
+
+	bool  shouldBlink() const;
+	int   getCurrentBeat() const;
+	Frame getRecPosition() const;
+
+private:
+	bool                       m_isWaiting;
+	const m::model::Parameters& m_params;
 };
 
 class Transport
@@ -137,13 +149,13 @@ public:
 	Timer                       timer;
 	IO                          io;
 	Transport                   transport;
+	Sequencer                   sequencer;
 };
 
 /* get*
 Returns viewModel objects filled with data. */
 
 Main      getMain(const m::model::ModelView&);
-Sequencer getSequencer();
 Scenes    getScenes();
 
 void setTimeSignature(TimeSignature);

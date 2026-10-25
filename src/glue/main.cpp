@@ -118,8 +118,32 @@ Main::Main(const m::model::ModelView& view)
 , timer(view)
 , io(view)
 , transport(view)
+, sequencer(view)
 {
 }
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Sequencer::Sequencer(const m::model::ModelView& view)
+: isFreeModeInputRec(view.getDocument().mixer.isRecordingInput && view.getDocument().mixer.inputRecMode == InputRecMode::FREE)
+, timeSignature(view.getDocument().sequencer.getTimeSignature())
+, recMaxLength(view.getAssets().mixerRendering != nullptr ? view.getAssets().mixerRendering->getRecBuffer().countFrames() : 0)
+, m_isWaiting(view.getDocument().sequencer.status == SeqStatus::WAITING)
+, m_params(view.getParameters())
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Sequencer::shouldBlink() const
+{
+	return g_ui->shouldBlink() && (m_isWaiting || isFreeModeInputRec);
+}
+
+int   Sequencer::getCurrentBeat() const { return m_params.sequencer.getCurrentBeat(); }
+Frame Sequencer::getRecPosition() const { return m_params.mixer.getInputTracker(); }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -169,24 +193,6 @@ bool Transport::canEnableRecOnSignal() const
 Main getMain(const m::model::ModelView& view)
 {
 	return Main(view);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Sequencer getSequencer()
-{
-	Sequencer out;
-
-	const m::Mixer::RecordInfo recInfo = g_engine->getMainApi().getRecordInfo();
-
-	out.isFreeModeInputRec = g_engine->getMainApi().isRecordingInput() && g_engine->getMainApi().getInputRecMode() == InputRecMode::FREE;
-	out.shouldBlink        = g_ui->shouldBlink() && (g_engine->getMainApi().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
-	out.timeSignature      = g_engine->getMainApi().getTimeSignature();
-	out.currentBeat        = g_engine->getMainApi().getCurrentBeat();
-	out.recPosition        = recInfo.position;
-	out.recMaxLength       = recInfo.maxLength;
-
-	return out;
 }
 
 /* -------------------------------------------------------------------------- */
