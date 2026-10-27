@@ -195,7 +195,7 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
+std::unique_ptr<Wave> createFromWave_DEPR_(const Wave& src, int a, int b)
 {
 	a = a == -1 ? 0 : a;
 	b = b == -1 ? src.getBuffer().countFrames() : b;
@@ -204,6 +204,24 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	const int frames   = b - a;
 
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
+	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
+	wave->getBuffer().setAll(src.getBuffer(), frames, 0, 0);
+	wave->setLogical(true);
+
+	u::log::print("[waveFactory::createFromWave] new Wave created, {} frames\n", frames);
+
+	return wave;
+}
+
+std::shared_ptr<model::Wave> createFromWave(const model::Wave& src, int a, int b)
+{
+	a = a == -1 ? 0 : a;
+	b = b == -1 ? src.getBuffer().countFrames() : b;
+
+	const int channels = src.getBuffer().countChannels();
+	const int frames   = b - a;
+
+	std::shared_ptr<model::Wave> wave = std::make_shared<model::Wave>(waveId_.generate());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
 	wave->getBuffer().setAll(src.getBuffer(), frames, 0, 0);
 	wave->setLogical(true);
