@@ -550,21 +550,24 @@ void ChannelManager::resetRange(ID channelId, Scene scene)
 
 void ChannelManager::toggleArm(ID channelId)
 {
-	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
-	ch.armed    = !ch.armed;
-
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId](model::Document& doc)
+	{
+		model::Channel& ch = doc.tracks.getChannel(channelId);
+		ch.armed           = !ch.armed;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setOverdubProtection(ID channelId, bool value)
 {
-	Channel& ch                         = m_model_DEPR_.get().tracks.getChannel(channelId);
-	ch.sampleChannel->overdubProtection = value;
-	if (value == true && ch.armed)
-		ch.armed = false;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, value](model::Document& doc)
+	{
+		model::Channel& ch                  = doc.tracks.getChannel(channelId);
+		ch.sampleChannel->overdubProtection = value;
+		if (value == true && ch.armed)
+			ch.armed = false;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -591,11 +594,13 @@ void ChannelManager::setHeight(ID channelId, int height)
 
 void ChannelManager::setSendToMaster(ID channelId, bool value)
 {
-	/* Can't toggle 'send to master' flag if there are no extra outputs. */
-	assert(m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs.size() > 0);
+	m_model.writeDocument(model::SwapType::NONE, [channelId, value](model::Document& doc)
+	{
+		/* Can't toggle 'send to master' flag if there are no extra outputs. */
+		assert(doc.tracks.getChannel(channelId).extraOutputs.size() > 0);
 
-	m_model_DEPR_.get().tracks.getChannel(channelId).sendToMaster = value;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
+		doc.tracks.getChannel(channelId).sendToMaster = value;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -605,44 +610,50 @@ void ChannelManager::addExtraOutput(ID channelId, int offset)
 	/* 'offset' can be only multiple of 2, that is stereo pair. */
 	assert(offset >= 0 && offset % 2 == 0);
 
-	m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs.push_back(offset);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [channelId, offset](model::Document& doc)
+	{
+		doc.tracks.getChannel(channelId).extraOutputs.push_back(offset);
+	});
 }
 
 void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 {
-	utils::container::removeAt(m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs, i);
-	if (m_model_DEPR_.get().tracks.getChannel(channelId).extraOutputs.size() == 0)
-		m_model_DEPR_.get().tracks.getChannel(channelId).sendToMaster = true;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [channelId, i](model::Document& doc)
+	{
+		model::Channel& ch = doc.tracks.getChannel(channelId);
+		utils::container::removeAt(ch.extraOutputs, i);
+		if (ch.extraOutputs.empty())
+			ch.sendToMaster = true;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::loadWaveInPreviewChannel(ID channelId, Scene scene)
 {
-	Channel&       previewCh = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
-	const Channel& sourceCh  = m_model_DEPR_.get().tracks.getChannel(channelId);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, scene](model::Document& doc)
+	{
+		model::Channel&       previewCh = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+		const model::Channel& sourceCh  = doc.tracks.getChannel(channelId);
 
-	assert(previewCh.sampleChannel);
-	assert(sourceCh.sampleChannel);
+		assert(previewCh.sampleChannel);
+		assert(sourceCh.sampleChannel);
 
-	previewCh.loadSample(sourceCh.sampleChannel->getSample(scene), Scene{0});
-	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
-	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(scene), Scene{0});
-	previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(scene), Scene{0});
-
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+		previewCh.loadSample(sourceCh.sampleChannel->getSample(scene), Scene{0});
+		previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
+		previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(scene), Scene{0});
+		previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(scene), Scene{0});
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::freeWaveInPreviewChannel()
 {
-	Channel& previewCh = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
-
-	previewCh.loadSample({}, Scene{0});
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [](model::Document& doc)
+	{
+		doc.tracks.getChannel(PREVIEW_CHANNEL_ID).loadSample({}, Scene{0});
+	});
 }
 
 /* -------------------------------------------------------------------------- */
