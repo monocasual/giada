@@ -42,12 +42,13 @@ class gePluginElement;
 class gdPluginList : public gdWindow
 {
 public:
-	gdPluginList(ID channelId, geompp::Rect<int> bounds);
+	gdPluginList(const c::plugin::Plugins&, geompp::Rect<int> bounds);
 	~gdPluginList();
 
-	void rebuild() override;
+	void rebuild() override; // TODO - remove
 	void rebuild(const c::plugin::Plugins&);
 
+	ID                     getChannelId() const;
 	const gePluginElement& getNextElement(const gePluginElement& curr) const;
 	const gePluginElement& getPrevElement(const gePluginElement& curr) const;
 
@@ -55,7 +56,7 @@ private:
 	geTextButton*   addPlugin;
 	geLiquidScroll* list;
 
-	ID                 m_channelId;
+	ID m_channelId;
 };
 } // namespace giada::v
 
