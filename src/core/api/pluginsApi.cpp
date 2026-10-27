@@ -90,13 +90,15 @@ void PluginsApi::add(const std::string& juceId, ID channelId)
 
 void PluginsApi::swap(ID pluginId1, ID pluginId2, ID channelId)
 {
-	auto&             plugins = m_model_DEPR_.get().tracks.getChannel(channelId).plugins;
-	const std::size_t index1  = utils::container::indexOfIf(plugins, [pluginId1](const Plugin* p)
-	 { return p->id == pluginId1; });
-	const std::size_t index2  = utils::container::indexOfIf(plugins, [pluginId2](const Plugin* p)
-	 { return p->id == pluginId2; });
-	std::swap(plugins.at(index1), plugins.at(index2));
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [pluginId1, pluginId2, channelId](model::Document& doc)
+	{
+		auto&             plugins = doc.tracks.getChannel(channelId).plugins;
+		const std::size_t index1  = utils::container::indexOfIf(plugins, [pluginId1](ID id)
+		 { return id == pluginId1; });
+		const std::size_t index2  = utils::container::indexOfIf(plugins, [pluginId2](ID id)
+		 { return id == pluginId2; });
+		std::swap(plugins.at(index1), plugins.at(index2));
+	});
 }
 
 /* -------------------------------------------------------------------------- */
