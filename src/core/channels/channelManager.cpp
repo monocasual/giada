@@ -242,34 +242,37 @@ void ChannelManager::loadSampleChannel(ID channelId, std::shared_ptr<model::Wave
 
 void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int bufferSize, const std::vector<Plugin*>& plugins)
 {
-	const Channel&             oldChannel     = m_model_DEPR_.get().tracks.getChannel(channelId);
-	const std::size_t          trackIndex     = m_model_DEPR_.get().tracks.getByChannel(channelId).getIndex();
-	const Resampler::Quality   rsmpQuality    = m_model_DEPR_.get().kernelAudio.rsmpQuality;
-	channelFactory::Data_DEPR_ newChannelData = channelFactory::create(oldChannel, sampleRate, bufferSize, rsmpQuality);
-
-	setupChannelCallbacks(newChannelData.channel, *newChannelData.shared);
-
-	/* Clone Wave first, if any. */
-
-	if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave(scene))
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [channelId, scene, sampleRate, bufferSize](model::Document& doc, model::Assets& assets)
 	{
-		const Sample& sample   = oldChannel.sampleChannel->getSample(scene);
-		const Wave&   oldWave  = *sample.wave;
-		const Frame   oldShift = sample.shift;
-		const auto    oldRange = sample.range;
-		Wave&         wave     = m_model_DEPR_.addWave(waveFactory::createFromWave(oldWave));
+		const model::Channel&    oldChannel     = doc.tracks.getChannel(channelId);
+		const std::size_t        trackIndex     = doc.tracks.getByChannel(channelId).getIndex();
+		const Resampler::Quality rsmpQuality    = doc.kernelAudio.rsmpQuality;
+		channelFactory::Data     newChannelData = channelFactory::create(oldChannel, sampleRate, bufferSize, rsmpQuality);
+		const ID                 newChannelId   = newChannelData.channel.id;
 
-		// TODO - new model
-		newChannelData.channel.loadSample({nullptr, wave.id, oldRange, oldShift}, scene);
-	}
+		// TODO channel callbacks
 
-	newChannelData.channel.plugins = plugins;
+		/* Clone Wave first, if any. */
 
-	/* Then push the new channel in the channels vector. */
+		if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave(scene))
+		{
+			const Sample& sample    = oldChannel.sampleChannel->getSample(scene);
+			const ID      oldWaveId = sample.waveId;
+			const Frame   oldShift  = sample.shift;
+			const auto    oldRange  = sample.range;
+			auto          oldWave   = assets.waves.get(oldWaveId);
+			auto          newWave   = waveFactory::createFromWave(*oldWave);
+			assets.waves.set(newWave->id, newWave);
+			newChannelData.channel.loadSample({nullptr, newWave->id, oldRange, oldShift}, scene);
+		}
 
-	m_model_DEPR_.get().tracks.get(trackIndex).addChannel(std::move(newChannelData.channel));
-	m_model_DEPR_.addChannelShared(std::move(newChannelData.shared));
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+		// TODO plug-ins
+
+		doc.tracks.addChannel(std::move(newChannelData.channel), trackIndex);
+		assets.channelsParameters.set(newChannelId, newChannelData.parameters);
+		assets.channelsRendering.set(newChannelId, newChannelData.rendering);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -806,7 +809,7 @@ void ChannelManager::copyChannelToScene(Channel& ch, Scene srcScene, Scene dstSc
 	of Wave and set it to the new scene. */
 
 	Sample sample = ch.sampleChannel->getSample(srcScene);
-	Wave&  wave   = m_model_DEPR_.addWave(waveFactory::createFromWave(*sample.wave));
+	Wave&  wave   = m_model_DEPR_.addWave(waveFactory::createFromWave_DEPR_(*sample.wave));
 
 	sample.wave = &wave;
 	ch.loadSample(sample, dstScene);

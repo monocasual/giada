@@ -118,7 +118,7 @@ void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::copy(ID channelId, Frame a, Frame b)
 {
-	m_waveBuffer = waveFactory::createFromWave(getWave(channelId), a, b);
+	m_waveBuffer = waveFactory::createFromWave_DEPR_(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -224,7 +224,7 @@ ID SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 {
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	Wave&     wave       = m_model.addWave(waveFactory::createFromWave(getWave(channelId), a, b));
+	Wave&     wave       = m_model.addWave(waveFactory::createFromWave_DEPR_(getWave(channelId), a, b));
 
 	const ID newChannelId = m_channelManager.addChannel(ChannelType::SAMPLE, 0, sampleRate, bufferSize); // TODO trackIndex
 	m_channelManager.loadSampleChannel(newChannelId, wave, m_sequencer.getCurrentScene());

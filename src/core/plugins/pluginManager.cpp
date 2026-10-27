@@ -25,9 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/pluginManager.h"
+#include "src/core/model/plugin.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/patch.h"
-#include "src/core/model/plugin.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/deps/mcl-utils/src/fs.hpp"

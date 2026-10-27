@@ -170,11 +170,12 @@ void ChannelsApi::clone(ID channelId)
 	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3
 	internal workings. */
 
-	const Channel&             ch            = m_channelManager.getChannel(channelId);
+	// TODO plug-ins
+	// const Channel&             ch            = m_channelManager.getChannel(channelId);
 	const Scene                scene         = m_sequencer.getCurrentScene();
 	const int                  bufferSize    = m_kernelAudio.getBufferSize();
 	const int                  sampleRate    = m_kernelAudio.getSampleRate();
-	const std::vector<Plugin*> plugins       = m_pluginManager.clonePlugins(ch.plugins, sampleRate, bufferSize, m_model);
+	const std::vector<Plugin*> plugins       = {}; // m_pluginManager.clonePlugins(ch.plugins, sampleRate, bufferSize, m_model);
 	const ID                   nextChannelId = channelFactory::getNextId();
 
 	m_channelManager.cloneChannel(channelId, scene, sampleRate, bufferSize, plugins);

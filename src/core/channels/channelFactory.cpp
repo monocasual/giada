@@ -122,7 +122,7 @@ Data create(ID channelId, ChannelType type, int sampleRate, int bufferSize,
 
 /* -------------------------------------------------------------------------- */
 
-Data_DEPR_ create(const Channel& o, int sampleRate, int bufferSize, Resampler::Quality quality)
+Data_DEPR_ create_DEPR_(const Channel& o, int sampleRate, int bufferSize, Resampler::Quality quality)
 {
 	std::unique_ptr<ChannelShared> shared = makeShared_DEPR_(o.type, o.id, sampleRate, bufferSize, quality);
 	Channel                        ch     = Channel(o);
@@ -131,6 +131,16 @@ Data_DEPR_ create(const Channel& o, int sampleRate, int bufferSize, Resampler::Q
 	ch.shared = shared.get();
 
 	return {ch, std::move(shared)};
+}
+
+Data create(const model::Channel& o, int sampleRate, int bufferSize, Resampler::Quality quality)
+{
+	auto [parameters, rendering] = makeShared_(o.type, sampleRate, bufferSize, quality);
+	model::Channel ch            = model::Channel(o);
+
+	ch.id = channelId_.generate();
+
+	return {ch, parameters, rendering};
 }
 
 /* -------------------------------------------------------------------------- */
