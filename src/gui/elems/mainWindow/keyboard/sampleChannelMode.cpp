@@ -46,7 +46,7 @@ geSampleChannelMode::geSampleChannelMode(int x, int y, int w, int h, const c::ch
 		openMenu();
 	};
 
-	// refresh(m_channel.sample->mode);
+	refresh(m_channel.sampleChannel->mode);
 }
 
 /* -------------------------------------------------------------------------- */
