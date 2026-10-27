@@ -28,7 +28,6 @@
 #define GE_PLUGIN_ELEMENT_H
 
 #include "src/glue/plugin.h"
-
 #include "src/gui/elems/basics/flex.h"
 
 namespace giada::v
@@ -56,7 +55,7 @@ private:
 	void shiftUp();
 	void shiftDown();
 
-	const c::plugin::Plugin& m_plugin;
+	c::plugin::Plugin m_plugin;
 };
 } // namespace giada::v
 
