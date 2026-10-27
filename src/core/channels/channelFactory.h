@@ -55,18 +55,18 @@ struct Data
 };
 
 /* getNextId
-    Returns the next channel ID that will be assigned to a new channel. */
+Returns the next channel ID that will be assigned to a new channel. */
 
 ID getNextId();
 
 /* reset
-    Resets internal ID generator. */
+Resets internal ID generator. */
 
 void reset();
 
 /* create (1)
-    Creates a new channel. If channelId == 0 generates a new ID, reuse the one
-    passed in otherwise. */
+Creates a new channel. If channelId == 0 generates a new ID, reuse the one
+passed in otherwise. */
 
 Data_DEPR_ create_DEPR_(ID channelId, ChannelType type, int sampleRate,
     int bufferSize, Resampler::Quality, bool overdubProtection);
@@ -74,9 +74,10 @@ Data       create(ID channelId, ChannelType type, int sampleRate,
           int bufferSize, Resampler::Quality, bool overdubProtection);
 
 /* create (2)
-    Creates a new channel given an existing one (i.e. clone). */
+Creates a new channel given an existing one (i.e. clone). */
 
-Data_DEPR_ create(const Channel& ch, int sampleRate, int bufferSize, Resampler::Quality);
+Data_DEPR_ create_DEPR_(const Channel& ch, int sampleRate, int bufferSize, Resampler::Quality);
+Data       create(const model::Channel& ch, int sampleRate, int bufferSize, Resampler::Quality);
 
 /* (de)deserializeChannel
 Creates a new channel given the patch raw data and vice versa. */

@@ -72,7 +72,8 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
     Creates a new Wave from an existing one. If specified, copying the data in
     range a - b. Range is [0, sr.buffer.countFrames()] otherwise. */
 
-std::unique_ptr<Wave> createFromWave(const Wave& src, int a = -1, int b = -1);
+std::unique_ptr<Wave>        createFromWave_DEPR_(const Wave& src, int a = -1, int b = -1);
+std::shared_ptr<model::Wave> createFromWave(const model::Wave& src, int a = -1, int b = -1);
 
 /* (de)serializeWave
     Creates a new Wave given the patch raw data and vice versa. */
