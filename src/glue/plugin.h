@@ -113,7 +113,7 @@ public:
 	std::vector<Plugin> plugins;
 };
 
-Plugins getPlugins(const m::model::ModelView&, ID channelId);
+Plugins getPlugins(ID channelId);
 
 std::vector<PluginInfo> getPluginsInfo();
 
