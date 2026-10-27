@@ -110,12 +110,14 @@ void PluginsApi::sort(PluginSortMode mode)
 
 void PluginsApi::free(ID pluginId, ID channelId)
 {
-	utils::container::removeIf(m_model_DEPR_.get().tracks.getChannel(channelId).plugins, [pluginId](const m::Plugin* p)
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [pluginId, channelId](model::Document& doc, model::Assets& assets)
 	{
-		return p->id == pluginId;
+		utils::container::removeIf(doc.tracks.getChannel(channelId).plugins, [pluginId](ID id)
+		{ return id == pluginId; });
+
+		assets.plugins.remove(pluginId);
 	});
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
-	m_pluginHost.freePlugin(pluginId);
 }
 
 /* -------------------------------------------------------------------------- */
