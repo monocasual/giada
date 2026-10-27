@@ -188,9 +188,9 @@ bool Transport::canEnableRecOnSignal() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Main getMain(const m::model::ModelView& view)
+Main getMain()
 {
-	return Main(view);
+	return Main(g_engine->getModelView());
 }
 
 /* -------------------------------------------------------------------------- */

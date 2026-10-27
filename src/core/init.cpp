@@ -120,7 +120,7 @@ void startup()
 
 		if (documentSwapType == model::SwapType::HARD || assetsSwapType == model::SwapType::HARD)
 		{
-			g_ui->rebuildMainWindow(c::main::getMain(g_engine->getModelView()));
+			g_ui->rebuildMainWindow();
 		}
 		else if (documentSwapType == model::SwapType::SOFT || assetsSwapType == model::SwapType::SOFT)
 			g_ui->update();

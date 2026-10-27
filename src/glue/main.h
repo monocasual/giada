@@ -144,7 +144,7 @@ public:
 /* get*
 Returns viewModel objects filled with data. */
 
-Main getMain(const m::model::ModelView&);
+Main getMain();
 
 void setTimeSignature(TimeSignature);
 void quantize(int val);
