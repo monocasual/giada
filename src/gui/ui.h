@@ -88,7 +88,7 @@ public:
 	Rebuilds the UI from scratch. Used when the model has changed. */
 
 	void rebuild();
-	void rebuildMainWindow(const c::main::Main&);
+	void rebuildMainWindow();
 
 	/* update
 	Updates part of the UI. Used when a model property has been modified, e.g.
