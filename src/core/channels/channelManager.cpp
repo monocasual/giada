@@ -72,32 +72,6 @@ Channel& ChannelManager::getChannel(ID channelId)
 
 void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 {
-	/* DEPR */
-	{
-		/* Create internal track with internal channels (Master In/Out, Preview). */
-
-		const bool               overdubProtection = false;
-		const Resampler::Quality rsmpQuality       = m_model_DEPR_.get().kernelAudio.rsmpQuality;
-
-		channelFactory::Data_DEPR_ masterOutData = channelFactory::create_DEPR_(
-		    MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
-		channelFactory::Data_DEPR_ masterInData = channelFactory::create_DEPR_(
-		    MASTER_IN_CHANNEL_ID, ChannelType::MASTER, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
-		channelFactory::Data_DEPR_ previewData = channelFactory::create_DEPR_(
-		    PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, sampleRate, framesInBuffer, rsmpQuality, overdubProtection);
-
-		m_model_DEPR_.get().tracks = {};
-
-		model_DEPR_::Track& track = m_model_DEPR_.get().tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
-		track.addChannel(std::move(masterInData.channel));
-		track.addChannel(std::move(previewData.channel));
-
-		m_model_DEPR_.addChannelShared(std::move(masterOutData.shared));
-		m_model_DEPR_.addChannelShared(std::move(masterInData.shared));
-		m_model_DEPR_.addChannelShared(std::move(previewData.shared));
-	}
-	/* DEPR */
-
 	const bool               overdubProtection = false;
 	const Resampler::Quality rsmpQuality       = m_model.getCurrentDocument()->kernelAudio.rsmpQuality;
 
