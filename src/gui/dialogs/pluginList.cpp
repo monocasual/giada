@@ -37,9 +37,9 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
+gdPluginList::gdPluginList(const c::plugin::Plugins& plugins, geompp::Rect<int> bounds)
 : gdWindow(u::gui::getCenterWinBounds(bounds), "", WID_FX_LIST)
-, m_channelId(channelId)
+, m_channelId(plugins.channelId)
 {
 	end();
 
@@ -51,7 +51,7 @@ gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
 	resizable(list);
 
 	set_non_modal();
-	rebuild();
+	rebuild(plugins);
 	show();
 }
 
@@ -92,6 +92,10 @@ void gdPluginList::rebuild(const c::plugin::Plugins& plugins)
 
 	list->addWidget(addPlugin);
 }
+
+/* -------------------------------------------------------------------------- */
+
+ID gdPluginList::getChannelId() const { return m_channelId; }
 
 /* -------------------------------------------------------------------------- */
 

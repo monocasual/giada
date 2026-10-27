@@ -25,7 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/ui.h"
+#include "src/glue/plugin.h"
 #include "src/gui/const.h"
+#include "src/gui/dialogs/pluginList.h"
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/keyboard/track.h"
@@ -207,7 +209,6 @@ void Ui::refresh()
 
 void Ui::rebuild()
 {
-	rebuildSubWindow(WID_FX_LIST);
 	rebuildSubWindow(WID_SAMPLE_EDITOR);
 	rebuildSubWindow(WID_ACTION_EDITOR);
 	rebuildSubWindow(WID_CHANNEL_ROUTING);
@@ -218,6 +219,15 @@ void Ui::rebuild()
 void Ui::rebuildMainWindow()
 {
 	mainWindow->rebuild(c::main::getMain());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::rebuildPluginListWindow()
+{
+	auto* w = static_cast<gdPluginList*>(getSubwindow(WID_FX_LIST));
+	if (w != nullptr)
+		w->rebuild(c::plugin::getPlugins(w->getChannelId()));
 }
 
 /* -------------------------------------------------------------------------- */

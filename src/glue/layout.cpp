@@ -34,6 +34,7 @@
 #include "src/glue/config.h"
 #include "src/glue/io.h"
 #include "src/glue/main.h"
+#include "src/glue/plugin.h"
 #include "src/glue/storage.h"
 #include "src/gui/dialogs/about.h"
 #include "src/gui/dialogs/actionEditor/midiActionEditor.h"
@@ -218,21 +219,21 @@ void openBrowserForPlugins(v::gdWindow& parent)
 
 void openChannelPluginListWindow(ID channelId)
 {
-	g_ui->openSubWindow(new v::gdPluginList(channelId, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(c::plugin::getPlugins(channelId), g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterInPluginListWindow()
 {
-	g_ui->openSubWindow(new v::gdPluginList(MASTER_IN_CHANNEL_ID, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(c::plugin::getPlugins(MASTER_IN_CHANNEL_ID), g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterOutPluginListWindow()
 {
-	g_ui->openSubWindow(new v::gdPluginList(MASTER_OUT_CHANNEL_ID, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(c::plugin::getPlugins(MASTER_OUT_CHANNEL_ID), g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */

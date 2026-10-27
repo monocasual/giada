@@ -121,6 +121,7 @@ void startup()
 		if (documentSwapType == model::SwapType::HARD || assetsSwapType == model::SwapType::HARD)
 		{
 			g_ui->rebuildMainWindow();
+			g_ui->rebuildPluginListWindow();
 		}
 		else if (documentSwapType == model::SwapType::SOFT || assetsSwapType == model::SwapType::SOFT)
 			g_ui->update();
