@@ -207,7 +207,6 @@ void Ui::refresh()
 
 void Ui::rebuild()
 {
-	mainWindow->rebuild();
 	rebuildSubWindow(WID_FX_LIST);
 	rebuildSubWindow(WID_SAMPLE_EDITOR);
 	rebuildSubWindow(WID_ACTION_EDITOR);
@@ -216,9 +215,9 @@ void Ui::rebuild()
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::rebuildMainWindow(const c::main::Main& main)
+void Ui::rebuildMainWindow()
 {
-	mainWindow->rebuild(main);
+	mainWindow->rebuild(c::main::getMain());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -299,9 +298,9 @@ void Ui::stopJuceDispatchLoop()
 
 void Ui::rebuildStaticWidgets()
 {
-	//mainWindow->mainInput->rebuild();
-	//mainWindow->mainOutput->rebuild();
-	//mainWindow->mainTimer->rebuild();
+	// mainWindow->mainInput->rebuild();
+	// mainWindow->mainOutput->rebuild();
+	// mainWindow->mainTimer->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
