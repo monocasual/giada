@@ -26,6 +26,7 @@
 
 #include "src/glue/actionEditor.h"
 #include "src/core/engine.h"
+#include "src/core/model/modelView.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/sequencer.h"
 #include "src/glue/channel.h"
@@ -36,7 +37,7 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::actionEditor
 {
-SampleData::SampleData(const m::SampleChannel& s)
+SampleData::SampleData(const m::model::SampleChannel& s)
 : channelMode(s.mode)
 , isLoopMode(s.isAnyLoopMode())
 {
@@ -44,18 +45,20 @@ SampleData::SampleData(const m::SampleChannel& s)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, Scene scene)
-: channelId(c.id)
-, scene(scene)
-, channelName(c.getName(scene))
-, ticksInSeq(g_engine->getMainApi().getTicksInSeq())
-, ticksInBeat(g_engine->getMainApi().getTicksInBeat())
-, ticksInBar(g_engine->getMainApi().getTicksInBar())
-, ticksInLoop(g_engine->getMainApi().getTicksInLoop())
-, actions(g_engine->getActionEditorApi().getActionsOnChannel(c.id))
+Data::Data(const m::model::ModelView& view, ID channelId)
+: channelId(channelId)
+, scene(view.getParameters().sequencer.getCurrentScene())
+, channelName(view.getDocument().tracks.getChannel(channelId).getName(scene))
+, ticksInSeq(view.getDocument().sequencer.getTicksInSeq())
+, ticksInBeat(view.getDocument().sequencer.getTicksInBeat())
+, ticksInBar(view.getDocument().sequencer.getTicksInBar())
+, ticksInLoop(view.getDocument().sequencer.getTicksInLoop())
+, actions(view.getDocument().actions.getActionsOnChannel(channelId, scene))
+, m_view(view)
 {
-	if (c.type == ChannelType::SAMPLE)
-		sample = std::make_optional<SampleData>(c.sampleChannel.value());
+	const m::model::Channel& ch = view.getDocument().tracks.getChannel(channelId);
+	if (ch.type == ChannelType::SAMPLE)
+		sample = std::make_optional<SampleData>(ch.sampleChannel.value());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,7 +81,7 @@ bool Data::isChannelPlaying() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getChannelsApi().get(channelId), g_engine->getMainApi().getCurrentScene());
+	return Data(g_engine->getModelView(), channelId);
 }
 
 /* -------------------------------------------------------------------------- */

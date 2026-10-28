@@ -84,17 +84,15 @@ float geVelocityEditor::yToValue(Pixel px) const
 
 /* -------------------------------------------------------------------------- */
 
-void geVelocityEditor::rebuild(c::actionEditor::Data& d)
+void geVelocityEditor::rebuild(const c::actionEditor::Data& data)
 {
-	m_data = &d;
-
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
 
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action* action : m_data->actions)
+	for (const m::Action* action : data.actions)
 	{
 		if (action->event.getStatus() != m::MidiEvent::CHANNEL_NOTE_ON)
 			continue;
