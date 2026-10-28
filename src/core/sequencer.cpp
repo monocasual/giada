@@ -130,28 +130,24 @@ Sequencer::Sequencer(model::Model& m, model_DEPR_::Model& m_DEPR_, MidiSynchroni
 }
 /* -------------------------------------------------------------------------- */
 
-bool          Sequencer::canQuantize() const { return m_model_DEPR_.get().sequencer.canQuantize(); }
-bool          Sequencer::isRunning() const { return m_model_DEPR_.get().sequencer.isRunning(); }
-bool          Sequencer::isActive() const { return m_model_DEPR_.get().sequencer.isActive(); }
-bool          Sequencer::isOnBar() const { return m_model_DEPR_.get().sequencer.a_isOnBar(m_currentSampleRate); }
-bool          Sequencer::isOnBeat() const { return m_model_DEPR_.get().sequencer.a_isOnBeat(m_currentSampleRate); }
-bool          Sequencer::isOnFirstBeat() const { return m_model_DEPR_.get().sequencer.a_isOnFirstBeat(); }
-float         Sequencer::getBpm() const { return m_model_DEPR_.get().sequencer.getBpm(); }
-TimeSignature Sequencer::getTimeSignature() const { return m_model_DEPR_.get().sequencer.getTimeSignature(); }
-int           Sequencer::getCurrentBeat() const { return m_model_DEPR_.get().sequencer.a_getCurrentBeat(); }
-Frame         Sequencer::getCurrentFrame() const { return m_model_DEPR_.get().sequencer.a_getCurrentFrame(); }
-Frame         Sequencer::getFramesInBar() const { return u::time::tickToFrame(m_model_DEPR_.get().sequencer.getTicksInBar(), m_currentSampleRate, getBpm()); }
-Frame         Sequencer::getFramesInBeat() const { return u::time::tickToFrame(m_model_DEPR_.get().sequencer.getTicksInBeat(), m_currentSampleRate, getBpm()); }
-Frame         Sequencer::getFramesInLoop() const { return u::time::tickToFrame(m_model_DEPR_.get().sequencer.getTicksInLoop(), m_currentSampleRate, getBpm()); }
-Frame         Sequencer::getFramesInSeq() const { return u::time::tickToFrame(m_model_DEPR_.get().sequencer.getTicksInSeq(), m_currentSampleRate, getBpm()); }
-Tick          Sequencer::getTicksInBar() const { return m_model_DEPR_.get().sequencer.getTicksInBar(); }
-Tick          Sequencer::getTicksInBeat() const { return m_model_DEPR_.get().sequencer.getTicksInBeat(); }
-Tick          Sequencer::getTicksInLoop() const { return m_model_DEPR_.get().sequencer.getTicksInLoop(); }
-Tick          Sequencer::getTicksInSeq() const { return m_model_DEPR_.get().sequencer.getTicksInSeq(); }
-int           Sequencer::getQuantizerValue() const { return m_model_DEPR_.get().sequencer.quantize; }
+bool          Sequencer::canQuantize() const { return m_model.getCurrentDocument()->sequencer.canQuantize(); }
+bool          Sequencer::isRunning() const { return m_model.getCurrentDocument()->sequencer.isRunning(); }
+float         Sequencer::getBpm() const { return m_model.getCurrentDocument()->sequencer.getBpm(); }
+TimeSignature Sequencer::getTimeSignature() const { return m_model.getCurrentDocument()->sequencer.getTimeSignature(); }
+int           Sequencer::getCurrentBeat() const { return m_model.getParameters().sequencer.getCurrentBeat(); }
+Frame         Sequencer::getCurrentFrame() const { return m_model.getParameters().sequencer.getCurrentFrame(); }
+Frame         Sequencer::getFramesInBar() const { return u::time::tickToFrame(m_model.getCurrentDocument()->sequencer.getTicksInBar(), m_currentSampleRate, getBpm()); }
+Frame         Sequencer::getFramesInBeat() const { return u::time::tickToFrame(m_model.getCurrentDocument()->sequencer.getTicksInBeat(), m_currentSampleRate, getBpm()); }
+Frame         Sequencer::getFramesInLoop() const { return u::time::tickToFrame(m_model.getCurrentDocument()->sequencer.getTicksInLoop(), m_currentSampleRate, getBpm()); }
+Frame         Sequencer::getFramesInSeq() const { return u::time::tickToFrame(m_model.getCurrentDocument()->sequencer.getTicksInSeq(), m_currentSampleRate, getBpm()); }
+Tick          Sequencer::getTicksInBar() const { return m_model.getCurrentDocument()->sequencer.getTicksInBar(); }
+Tick          Sequencer::getTicksInBeat() const { return m_model.getCurrentDocument()->sequencer.getTicksInBeat(); }
+Tick          Sequencer::getTicksInLoop() const { return m_model.getCurrentDocument()->sequencer.getTicksInLoop(); }
+Tick          Sequencer::getTicksInSeq() const { return m_model.getCurrentDocument()->sequencer.getTicksInSeq(); }
+int           Sequencer::getQuantizerValue() const { return m_model.getCurrentDocument()->sequencer.quantize; }
 int           Sequencer::getQuantizerStep() const { return m_quantizerStep; }
-SeqStatus     Sequencer::getStatus() const { return m_model_DEPR_.get().sequencer.status; }
-int           Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model_DEPR_.get().sequencer.getMaxFramesInLoop(sampleRate); }
+SeqStatus     Sequencer::getStatus() const { return m_model.getCurrentDocument()->sequencer.status; }
+int           Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.getCurrentDocument()->sequencer.getMaxFramesInLoop(sampleRate); }
 Scene         Sequencer::getCurrentScene() const { return m_model.getParameters().sequencer.getCurrentScene(); }
 Scene         Sequencer::getNextScene() const { return m_model.getParameters().sequencer.getNextScene(); }
 SceneStatus   Sequencer::getSceneStatus() const { return m_model.getParameters().sequencer.getSceneStatus(); }
@@ -335,7 +331,8 @@ void Sequencer::rawRewind(Frame delta)
 
 void Sequencer::rewindForced()
 {
-	m_model_DEPR_.get().sequencer.a_setCurrentFrame(0, /*sampleRate=*/0); // No need for sampleRate, it's just 0
+	// No need for sampleRate and bpm values, everything it's just 0
+	m_model.getParameters().sequencer.setCurrentFrame(0, /*sampleRate=*/0, /*bpm=*/0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -363,11 +360,12 @@ void Sequencer::stop()
 	if (!m_jackTransport.stop())
 		rawStop();
 
-	const auto& sequencer = m_model_DEPR_.get().sequencer;
-	if (sequencer.a_getSceneStatus() == SceneStatus::CHANGING)
+	const auto& params = m_model.getParameters().sequencer;
+
+	if (params.getSceneStatus() == SceneStatus::CHANGING)
 	{
-		sequencer.a_setSceneStatus(SceneStatus::IDLE);
-		sequencer.a_setNextScene(sequencer.a_getCurrentScene());
+		params.setSceneStatus(SceneStatus::IDLE);
+		params.setNextScene(params.getCurrentScene());
 	}
 }
 
@@ -432,8 +430,10 @@ void Sequencer::setQuantize(int q)
 
 void Sequencer::setStatus(SeqStatus s)
 {
-	m_model_DEPR_.get().sequencer.status = s;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [s](model::Document& doc)
+	{
+		doc.sequencer.status = s;
+	});
 
 	/* Additional things to do when the status changes. */
 
