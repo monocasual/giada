@@ -131,6 +131,6 @@ void geVelocityEditor::onRefreshAction()
 {
 	c::actionEditor::updateVelocity(m_action->a1->id, yToValue(m_action->y() - y()));
 
-	m_base->rebuild(); // Rebuild pianoRoll as well
+	//TODO - m_base->rebuild(); // Rebuild pianoRoll as well
 }
 } // namespace giada::v

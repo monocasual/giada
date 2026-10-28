@@ -39,7 +39,7 @@ class gdSampleActionEditor : public gdBaseActionEditor
 public:
 	gdSampleActionEditor(const c::actionEditor::Data&, const Model&);
 
-	void rebuild(const c::actionEditor::Data&);
+	void rebuild(const c::actionEditor::Data&) override;
 
 	int getActionType() const;
 

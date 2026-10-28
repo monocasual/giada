@@ -122,6 +122,7 @@ void startup()
 		{
 			g_ui->rebuildMainWindow();
 			g_ui->rebuildPluginListWindow();
+			g_ui->rebuildActionEditorWindow();
 		}
 		else if (documentSwapType == model::SwapType::SOFT || assetsSwapType == model::SwapType::SOFT)
 			g_ui->update();

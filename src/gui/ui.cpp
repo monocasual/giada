@@ -25,6 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/ui.h"
+
+#include "dialogs/actionEditor/baseActionEditor.h"
 #include "src/glue/plugin.h"
 #include "src/gui/const.h"
 #include "src/gui/dialogs/pluginList.h"
@@ -234,9 +236,9 @@ void Ui::rebuildPluginListWindow()
 
 void Ui::rebuildActionEditorWindow()
 {
-	auto* w = static_cast<gdPluginList*>(getSubwindow(WID_ACTION_EDITOR));
-	// if (w != nullptr)
-	//	w->rebuild();
+	auto* w = static_cast<gdBaseActionEditor*>(getSubwindow(WID_ACTION_EDITOR));
+	if (w != nullptr)
+		w->rebuild(c::actionEditor::getData(w->getChannelId()));
 }
 
 /* -------------------------------------------------------------------------- */

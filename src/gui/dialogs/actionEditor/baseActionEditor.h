@@ -53,6 +53,8 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
+	virtual void rebuild(const c::actionEditor::Data&) = 0;
+
 	Tick pixelToTick(int) const;
 	Tick pixelToTickSnapped(int) const;
 	int  tickToPixel(Tick) const;
