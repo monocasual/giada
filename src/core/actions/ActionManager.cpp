@@ -28,8 +28,6 @@
 #include "src/core/actions/action.h"
 #include "src/core/actions/actionFactory.h"
 #include "src/core/const.h"
-#include "src/core/model_DEPR_/actions.h"
-#include "src/core/model_DEPR_/model.h"
 #include "src/core/patch.h"
 #include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
@@ -74,7 +72,7 @@ Tick sanitizeTick_(Tick t, Tick ticksInLoop)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ActionManager::ActionManager(model_DEPR_::Model& m)
+ActionManager::ActionManager(model::Model& m)
 : m_model(m)
 {
 	m_liveActions.reserve(MAX_LIVE_RECS_CHUNK);
@@ -86,8 +84,11 @@ void ActionManager::reset()
 {
 	m_liveActions.clear();
 	actionFactory::reset();
-	m_model.get().actions.clearAll();
-	m_model.swap(model_DEPR_::SwapType::NONE);
+
+	m_model.writeDocument(model::SwapType::HARD, [](model::Document& doc)
+	{
+		doc.actions.clearAll();
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -202,7 +203,7 @@ void ActionManager::updateSampleAction(ID channelId, Scene scene, ID actionId,
 
 void ActionManager::updateVelocity(ID actionId, float value)
 {
-	const Action* action = m_model.get().actions.findAction(actionId);
+	const Action* action = findAction(actionId);
 	assert(action != nullptr);
 
 	MidiEvent event(action->event);
@@ -217,8 +218,12 @@ std::unordered_set<ID> ActionManager::consolidate(Scene scene)
 	for (auto it = m_liveActions.begin(); it != m_liveActions.end(); ++it)
 		consolidate(*it, it - m_liveActions.begin()); // Pass current index
 
-	m_model.get().actions.rec(m_liveActions, scene);
-	m_model.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [this, scene](model::Document& doc)
+	{
+		doc.actions.rec(m_liveActions, scene);
+	});
+
+	m_model.flush();
 
 	std::unordered_set<ID> out;
 	for (const Action& action : m_liveActions)
@@ -232,11 +237,13 @@ std::unordered_set<ID> ActionManager::consolidate(Scene scene)
 
 void ActionManager::clearAllActions(Scene scene)
 {
-	if (scene.isValid())
-		m_model.get().actions.clearActions(scene);
-	else
-		m_model.get().actions.clearAll();
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [scene](model::Document& doc)
+	{
+		if (scene.isValid())
+			doc.actions.clearActions(scene);
+		else
+			doc.actions.clearAll();
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -279,108 +286,122 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 	// Both channel IDs must have the same validity state
 	assert(channelId.isValid() == newChannelId.isValid());
 
-	const Scene                scene = src == dst ? src : dst;
-	std::vector<Action>        actions;
-	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
-
-	for (const Action& a : m_model.get().actions.getAll())
+	m_model.writeDocument(model::SwapType::HARD, [channelId, src, dst, newChannelId](model::Document& doc)
 	{
-		if (channelId.isValid() && (a.channelId != channelId || a.scene != src))
-			return;
+		const Scene                scene = src == dst ? src : dst;
+		std::vector<Action>        actions;
+		std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
-		ID newActionId = actionFactory::getNewActionId();
+		for (const Action& a : doc.actions.getAll())
+		{
+			if (channelId.isValid() && (a.channelId != channelId || a.scene != src))
+				return;
 
-		map.insert({a.id, newActionId});
+			ID newActionId = actionFactory::getNewActionId();
 
-		Action clone(a);
-		clone.id        = newActionId;
-		clone.channelId = newChannelId.isValid() ? newChannelId : clone.channelId;
-		clone.scene     = scene;
+			map.insert({a.id, newActionId});
 
-		actions.push_back(clone);
-	};
+			Action clone(a);
+			clone.id        = newActionId;
+			clone.channelId = newChannelId.isValid() ? newChannelId : clone.channelId;
+			clone.scene     = scene;
 
-	/* Update nextId and prevId relationships given the new action ID. */
+			actions.push_back(clone);
+		};
 
-	for (Action& a : actions)
-	{
-		if (a.prevId.isValid())
-			a.prevId = map.at(a.prevId);
-		if (a.nextId.isValid())
-			a.nextId = map.at(a.nextId);
-	}
+		/* Update nextId and prevId relationships given the new action ID. */
 
-	m_model.get().actions.rec(actions, scene);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+		for (Action& a : actions)
+		{
+			if (a.prevId.isValid())
+				a.prevId = map.at(a.prevId);
+			if (a.nextId.isValid())
+				a.nextId = map.at(a.nextId);
+		}
+
+		doc.actions.rec(actions, scene);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 const Action* ActionManager::findAction(ID id) const
 {
-	return m_model.get().actions.findAction(id);
+	return m_model.getCurrentDocument()->actions.findAction(id);
 }
 
 bool ActionManager::hasActions(ID channelId, int type) const
 {
-	return m_model.get().actions.hasActions(channelId, type);
+	return m_model.getCurrentDocument()->actions.hasActions(channelId, type);
 }
 
 bool ActionManager::hasActions(Scene scene) const
 {
-	return m_model.get().actions.hasActions(scene);
+	return m_model.getCurrentDocument()->actions.hasActions(scene);
 }
 
 std::vector<const Action*> ActionManager::getActionsOnChannel(ID channelId, Scene scene) const
 {
-	return m_model.get().actions.getActionsOnChannel(channelId, scene);
+	return m_model.getCurrentDocument()->actions.getActionsOnChannel(channelId, scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionManager::clearChannel(ID channelId, Scene sceneToClear)
 {
-	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
-		if (!sceneToClear.isValid() || (sceneToClear.isValid() && sceneToClear.getIndex() == sceneIndex))
-			m_model.get().actions.clearChannel(channelId, Scene{sceneIndex});
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [channelId, sceneToClear](model::Document& doc)
+	{
+		for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
+			if (!sceneToClear.isValid() || (sceneToClear.isValid() && sceneToClear.getIndex() == sceneIndex))
+				doc.actions.clearChannel(channelId, Scene{sceneIndex});
+	});
 }
 
 void ActionManager::clearActions(ID channelId, int type)
 {
-	m_model.get().actions.clearActions(channelId, type);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [channelId, type](model::Document& doc)
+	{
+		doc.actions.clearActions(channelId, type);
+	});
 }
 
-Action ActionManager::rec(ID channelId, Scene scene, Tick tick, MidiEvent e)
+void ActionManager::rec(ID channelId, Scene scene, Tick tick, MidiEvent e)
 {
-	Action action = m_model.get().actions.rec(channelId, scene, tick, e);
-
-	m_model.swap(model_DEPR_::SwapType::HARD);
-	return action;
+	m_model.writeDocument(model::SwapType::HARD, [channelId, scene, tick, e](model::Document& doc)
+	{
+		doc.actions.rec(channelId, scene, tick, e);
+	});
 }
 
 void ActionManager::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
 {
-	m_model.get().actions.rec(channelId, scene, range, e1, e2);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [channelId, scene, range, e1, e2](model::Document& doc)
+	{
+		doc.actions.rec(channelId, scene, range, e1, e2);
+	});
 }
 
 void ActionManager::deleteAction(ID id)
 {
-	m_model.get().actions.deleteAction(id);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [id](model::Document& doc)
+	{
+		doc.actions.deleteAction(id);
+	});
 }
 
 void ActionManager::deleteAction(ID currId, ID nextId)
 {
-	m_model.get().actions.deleteAction(currId, nextId);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [currId, nextId](model::Document& doc)
+	{
+		doc.actions.deleteAction(currId, nextId);
+	});
 }
 
 void ActionManager::updateEvent(ID id, MidiEvent e)
 {
-	m_model.get().actions.updateEvent(id, e);
-	m_model.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [id, e](model::Document& doc)
+	{
+		doc.actions.updateEvent(id, e);
+	});
 }
 } // namespace giada::m
