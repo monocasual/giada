@@ -94,15 +94,6 @@ public:
 
 	bool isRunning() const;
 
-	/* isActive
-	Sequencer is enabled, but might be in wait mode, i.e. SeqStatus == RUNNING or
-	SeqStatus == WAITING. */
-
-	bool isActive() const;
-
-	bool isOnBeat() const;
-	bool isOnBar() const;
-	bool isOnFirstBeat() const;
 	bool isMetronomeOn() const;
 
 	float         getBpm() const;
