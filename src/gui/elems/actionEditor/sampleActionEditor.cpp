@@ -54,7 +54,7 @@ void geSampleActionEditor::rebuild(const c::actionEditor::Data& data)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action* a1 : data.actions)
+	for (const m::model::Action* a1 : data.actions)
 	{
 		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_CC)
 			continue;

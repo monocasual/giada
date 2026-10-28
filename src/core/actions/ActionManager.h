@@ -101,10 +101,10 @@ public:
 
 	/* Pass-thru functions. See Actions.h */
 
-	const Action*              findAction(ID) const;
-	bool                       hasActions(ID channelId, int type = 0) const;
-	bool                       hasActions(Scene) const;
-	std::vector<const Action*> getActionsOnChannel(ID channelId, Scene) const;
+	const model::Action*              findAction(ID) const;
+	bool                              hasActions(ID channelId, int type = 0) const;
+	bool                              hasActions(Scene) const;
+	std::vector<const model::Action*> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* clearChannel
 	Removes all actions from channel 'channelId' from a given scene. Pass an invalid Scene
@@ -123,13 +123,13 @@ private:
 	/* areComposite
 	Composite: NOTE_ON + NOTE_OFF on the same note. */
 
-	bool areComposite(const Action& a1, const Action& a2) const;
+	bool areComposite(const model::Action& a1, const model::Action& a2) const;
 
 	/* consolidate
 	Given an action 'a1' tries to find the matching NOTE_OFF and updates the
 	action accordingly. */
 
-	void consolidate(Action& a1, std::size_t i);
+	void consolidate(model::Action& a1, std::size_t i);
 
 	/* cloneActions
 	Internal generic method for copying actions between channels and/or scenes.
@@ -137,8 +137,8 @@ private:
 
 	void copyActions(ID channelId, Scene src, Scene dst, ID newChannelId);
 
-	model::Model&       m_model;
-	std::vector<Action> m_liveActions;
+	model::Model&              m_model;
+	std::vector<model::Action> m_liveActions;
 };
 } // namespace giada::m
 

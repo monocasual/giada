@@ -87,7 +87,7 @@ private:
 	Pixel snapToY(Pixel p) const;
 	int   yToNote(Pixel y) const;
 	Pixel noteToY(int n) const;
-	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
+	Pixel getPianoItemW(Pixel x, const m::model::Action& a1, const m::model::Action& a2) const;
 
 	Fl_Offscreen m_offscreenGrid; // lines, x-repeat
 };

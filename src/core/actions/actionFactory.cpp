@@ -46,17 +46,17 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-Action makeAction(ID id, ID channelId, Scene scene, Tick tick, MidiEvent e)
+model::Action makeAction(ID id, ID channelId, Scene scene, Tick tick, MidiEvent e)
 {
-	Action out{actionId_.generate(id), channelId, scene, tick, e, {}, -1};
+	model::Action out{actionId_.generate(id), channelId, scene, tick, e, {}, -1};
 	actionId_.set(id);
 	return out;
 }
 
-Action makeAction(const Patch::Action& a)
+model::Action makeAction(const Patch::Action& a)
 {
 	actionId_.set(a.id);
-	return Action{a.id, a.channelId, Scene{a.scene}, a.tick,
+	return model::Action{a.id, a.channelId, Scene{a.scene}, a.tick,
 	    MidiEvent::makeFromRaw(a.event, /*numBytes=*/3), {}, -1, a.prevId, a.nextId};
 }
 
@@ -69,9 +69,9 @@ ID getNewActionId()
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Action> deserializeActions(const std::vector<Patch::Action>& pactions)
+std::vector<model::Action> deserializeActions(const std::vector<Patch::Action>& pactions)
 {
-	std::vector<Action> out;
+	std::vector<model::Action> out;
 	for (const Patch::Action& paction : pactions)
 		out.push_back(makeAction(paction));
 	return out;
@@ -79,10 +79,10 @@ std::vector<Action> deserializeActions(const std::vector<Patch::Action>& paction
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Patch::Action> serializeActions(const std::vector<Action>& actions)
+std::vector<Patch::Action> serializeActions(const std::vector<model::Action>& actions)
 {
 	std::vector<Patch::Action> out;
-	for (const Action& a : actions)
+	for (const model::Action& a : actions)
 		out.push_back({
 		    a.id,
 		    a.channelId,

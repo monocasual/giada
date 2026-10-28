@@ -54,7 +54,6 @@ Data::Data(const m::model::ModelView& view, ID channelId)
 , ticksInBar(view.getDocument().sequencer.getTicksInBar())
 , ticksInLoop(view.getDocument().sequencer.getTicksInLoop())
 , actions(view.getDocument().actions.getActionsOnChannel(channelId, scene))
-, m_view(view)
 {
 	const m::model::Channel& ch = view.getDocument().tracks.getChannel(channelId);
 	if (ch.type == ChannelType::SAMPLE)
@@ -86,7 +85,7 @@ Data getData(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-const m::Action* findAction(ID id)
+const m::model::Action* findAction(ID id)
 {
 	return g_engine->getActionEditorApi().findAction(id);
 }

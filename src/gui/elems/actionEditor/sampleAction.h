@@ -35,7 +35,7 @@ namespace giada::v
 class geSampleAction : public geBaseAction
 {
 public:
-	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const m::Action& a1);
+	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const m::model::Action&);
 
 	void draw() override;
 };

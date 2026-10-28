@@ -25,13 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/actionEditor/baseAction.h"
+#include "src/core/model/action.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
 namespace giada::v
 {
 geBaseAction::geBaseAction(Pixel X, Pixel Y, Pixel W, Pixel H, bool resizable,
-    const m::Action& a1, const m::Action* a2)
+    const m::model::Action& a1, const m::model::Action* a2)
 : geBox(X, Y, W, H)
 , onRightEdge(false)
 , onLeftEdge(false)

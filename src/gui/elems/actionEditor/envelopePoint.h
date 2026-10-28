@@ -27,7 +27,7 @@
 #ifndef GE_ENVELOPE_POINT_H
 #define GE_ENVELOPE_POINT_H
 
-#include "src/core/actions/action.h"
+#include "src/core/model/action.h"
 #include "src/gui/elems/actionEditor/baseAction.h"
 
 namespace giada::v
@@ -37,7 +37,7 @@ class geEnvelopePoint : public geBaseAction
 public:
 	static const Pixel SIDE = 12;
 
-	geEnvelopePoint(Pixel x, Pixel y, const m::Action&);
+	geEnvelopePoint(Pixel x, Pixel y, const m::model::Action&);
 
 	void draw() override;
 };

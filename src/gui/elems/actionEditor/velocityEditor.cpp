@@ -92,7 +92,7 @@ void geVelocityEditor::rebuild(const c::actionEditor::Data& data)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action* action : data.actions)
+	for (const m::model::Action* action : data.actions)
 	{
 		if (action->event.getStatus() != m::MidiEvent::CHANNEL_NOTE_ON)
 			continue;

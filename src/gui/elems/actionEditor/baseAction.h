@@ -27,7 +27,7 @@
 #ifndef GE_BASE_ACTION_H
 #define GE_BASE_ACTION_H
 
-#include "src/core/actions/action.h"
+#include "src/core/model/action.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/types.h"
 
@@ -44,7 +44,7 @@ public:
 	static const Pixel HANDLE_WIDTH = 6;
 
 	geBaseAction(Pixel x, Pixel y, Pixel w, Pixel h, bool resizable,
-	    const m::Action& a1, const m::Action* a2);
+	    const m::model::Action& a1, const m::model::Action* a2);
 
 	int handle(int e) override;
 
@@ -65,8 +65,8 @@ public:
 	bool  altered;
 	Pixel pick;
 
-	const m::Action* a1;
-	const m::Action* a2;
+	const m::model::Action* a1;
+	const m::model::Action* a2;
 
 protected:
 	bool m_resizable;
