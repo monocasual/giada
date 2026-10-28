@@ -143,7 +143,7 @@ RenderInfo parseAction_(
     const model::ChannelView& channelView,
     ID                        channelId,
     Scene                     scene,
-    const Action&             a,
+    const model::Action&      a,
     Frame                     localFrame,
     SamplePlayerMode          mode)
 {

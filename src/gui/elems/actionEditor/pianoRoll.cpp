@@ -205,7 +205,7 @@ Pixel gePianoRoll::snapToY(Pixel p) const
 	return math::quantize(p, CELL_H);
 }
 
-Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action& a2) const
+Pixel gePianoRoll::getPianoItemW(Pixel px, const m::model::Action& a1, const m::model::Action& a2) const
 {
 	if (a2.isValid())
 	{                          // Regular
@@ -226,14 +226,14 @@ void gePianoRoll::rebuild(const c::actionEditor::Data& data)
 	clear();
 	size(m_base->fullWidth, (MAX_KEYS + 1) * CELL_H);
 
-	for (const m::Action* a1 : data.actions)
+	for (const m::model::Action* a1 : data.actions)
 	{
 		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 			continue;
 
 		assert(a1->isValid()); // a2 might be null if orphaned
 
-		const m::Action* a2 = a1->nextId.isValid() ? c::actionEditor::findAction(a1->nextId) : nullptr;
+		const m::model::Action* a2 = a1->nextId.isValid() ? c::actionEditor::findAction(a1->nextId) : nullptr;
 
 		Pixel px = x() + m_base->tickToPixel(a1->tick);
 		Pixel py = y() + noteToY(a1->event.getNote());

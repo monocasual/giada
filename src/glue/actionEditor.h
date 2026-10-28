@@ -27,7 +27,7 @@
 #ifndef G_GLUE_ACTION_EDITOR_H
 #define G_GLUE_ACTION_EDITOR_H
 
-#include "src/core/actions/action.h"
+#include "src/core/model/action.h"
 #include "src/core/types.h"
 #include <optional>
 #include <string>
@@ -37,7 +37,7 @@ namespace giada::m::model
 {
 class ModelView;
 class SampleChannel;
-}
+} // namespace giada::m::model
 
 namespace giada::m
 {
@@ -67,24 +67,21 @@ public:
 	Tick getCurrentTick() const;
 	bool isChannelPlaying() const;
 
-	ID                            channelId;
-	Scene                         scene;
-	std::string                   channelName;
-	Tick                          ticksInSeq;
-	Tick                          ticksInBeat;
-	Tick                          ticksInBar;
-	Tick                          ticksInLoop;
-	std::vector<const m::Action*> actions;
+	ID                                   channelId;
+	Scene                                scene;
+	std::string                          channelName;
+	Tick                                 ticksInSeq;
+	Tick                                 ticksInBeat;
+	Tick                                 ticksInBar;
+	Tick                                 ticksInLoop;
+	std::vector<const m::model::Action*> actions;
 
 	std::optional<SampleData> sample;
-
-private:
-	const m::model::ModelView& m_view;
 };
 
 Data getData(ID channelId);
 
-const m::Action* findAction(ID);
+const m::model::Action* findAction(ID);
 
 /* MIDI actions.  */
 

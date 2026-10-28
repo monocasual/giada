@@ -27,8 +27,8 @@
 #ifndef G_ACTION_FACTORY_H
 #define G_ACTION_FACTORY_H
 
-#include "src/core/actions/action.h"
 #include "src/core/idManager.h"
+#include "src/core/model/action.h"
 #include "src/core/model_DEPR_/actions.h"
 #include "src/core/patch.h"
 
@@ -42,8 +42,8 @@ void reset();
 /* makeAction
 Makes a new action given some data. */
 
-Action makeAction(ID id, ID channelId, Scene, Tick, MidiEvent e);
-Action makeAction(const Patch::Action&);
+model::Action makeAction(ID id, ID channelId, Scene, Tick, MidiEvent e);
+model::Action makeAction(const Patch::Action&);
 
 /* getNewActionId
 Returns a new action ID, internally generated. */
@@ -53,8 +53,8 @@ ID getNewActionId();
 /* (de)serializeActions
 Creates new Actions given the patch raw data and vice versa. */
 
-std::vector<Action>        deserializeActions(const std::vector<Patch::Action>&);
-std::vector<Patch::Action> serializeActions(const std::vector<Action>&);
+std::vector<model::Action> deserializeActions(const std::vector<Patch::Action>&);
+std::vector<Patch::Action> serializeActions(const std::vector<model::Action>&);
 } // namespace giada::m::actionFactory
 
 #endif

@@ -73,11 +73,11 @@ public:
 
 	struct Event
 	{
-		EventType     type   = EventType::NONE;
-		Frame         global = 0; // Where the event occurs in the whole sequencer [0, framesInLoop)
-		Frame         delta  = 0; // Where the event occurs in the current block [0, blockSize)
-		const Action* action = nullptr;
-		Scene         scene  = {};
+		EventType            type   = EventType::NONE;
+		Frame                global = 0; // Where the event occurs in the whole sequencer [0, framesInLoop)
+		Frame                delta  = 0; // Where the event occurs in the current block [0, blockSize)
+		const model::Action* action = nullptr;
+		Scene                scene  = {};
 	};
 
 	using EventBuffer = std::vector<Event>;

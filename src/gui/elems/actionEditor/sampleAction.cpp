@@ -31,7 +31,7 @@
 
 namespace giada::v
 {
-geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, const m::Action& a1)
+geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, const m::model::Action& a1)
 : geBaseAction(X, Y, W, H, /*resizable=*/false, a1, nullptr)
 {
 }
