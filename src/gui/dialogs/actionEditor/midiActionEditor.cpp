@@ -44,8 +44,8 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
-: gdBaseActionEditor(channelId, model)
+gdMidiActionEditor::gdMidiActionEditor(const c::actionEditor::Data& data, const Model& model)
+: gdBaseActionEditor(data, model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -125,6 +125,7 @@ gdMidiActionEditor::~gdMidiActionEditor()
 
 void gdMidiActionEditor::rebuild()
 {
+#if 0
 	m_data = c::actionEditor::getData(channelId);
 
 	computeWidth(m_data.ticksInSeq, m_data.ticksInLoop);
@@ -133,5 +134,6 @@ void gdMidiActionEditor::rebuild()
 	m_pianoRoll->rebuild(m_data);
 	m_velocityEditor->rebuild(m_data);
 	m_splitScroll->initScrollbar();
+#endif
 }
 } // namespace giada::v

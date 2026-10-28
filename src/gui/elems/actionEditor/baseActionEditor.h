@@ -28,13 +28,14 @@
 #ifndef GE_BASE_ACTION_EDITOR_H
 #define GE_BASE_ACTION_EDITOR_H
 
+#include "src/glue/actionEditor.h"
 #include "src/gui/types.h"
 #include "src/types.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::c::actionEditor
 {
-struct Data;
+class Data;
 }
 
 namespace giada::v
@@ -47,7 +48,7 @@ public:
 	/* updateActions
 	Rebuild the actions widgets from scratch. */
 
-	virtual void rebuild(c::actionEditor::Data& d) = 0;
+	virtual void rebuild(const c::actionEditor::Data&) = 0;
 
 	/* handle
 	Override base FL_Group events. */
@@ -73,8 +74,6 @@ protected:
 	Draws basic things like borders and grids. Optional background clear. */
 
 	void baseDraw(bool clear = true) const;
-
-	c::actionEditor::Data* m_data;
 
 	/* m_base
 	Pointer to parent class. */

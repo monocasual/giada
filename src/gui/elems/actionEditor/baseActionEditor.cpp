@@ -36,7 +36,6 @@ namespace giada::v
 geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h,
     gdBaseActionEditor* base)
 : Fl_Group(x, y, w, h)
-, m_data(nullptr)
 , m_base(base)
 , m_action(nullptr)
 {
@@ -79,10 +78,10 @@ void geBaseActionEditor::baseDraw(bool clear) const
 	}
 
 	fl_color(G_COLOR_GREY_4);
-	drawVerticals(m_data->ticksInBeat);
+	drawVerticals(m_base->getData().ticksInBeat);
 
 	fl_color(G_COLOR_GREY_5);
-	drawVerticals(m_data->ticksInBar);
+	drawVerticals(m_base->getData().ticksInBar);
 
 	/* Cover unused area. Avoid drawing cover if width == 0 (i.e. beats are 32). */
 
@@ -97,7 +96,7 @@ void geBaseActionEditor::drawVerticals(Tick steps) const
 {
 	/* Start drawing from steps, not from 0. The zero-th element is always
 	graphically useless. */
-	for (Tick i = Tick{steps}; i < m_data->ticksInLoop; i += steps)
+	for (Tick i = Tick{steps}; i < m_base->getData().ticksInLoop; i += steps)
 	{
 		Pixel p = m_base->tickToPixel(i) + x();
 		fl_line(p, y() + 1, p, y() + h() - 2);

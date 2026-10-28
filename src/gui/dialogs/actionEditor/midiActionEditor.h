@@ -36,7 +36,7 @@ class geVelocityEditor;
 class gdMidiActionEditor : public gdBaseActionEditor
 {
 public:
-	gdMidiActionEditor(ID channelId, const Model&);
+	gdMidiActionEditor(const c::actionEditor::Data&, const Model&);
 	~gdMidiActionEditor();
 
 	void rebuild() override;

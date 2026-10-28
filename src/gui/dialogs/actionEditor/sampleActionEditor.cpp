@@ -45,8 +45,8 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
-: gdBaseActionEditor(channelId, model)
+gdSampleActionEditor::gdSampleActionEditor(const c::actionEditor::Data& data, const Model& model)
+: gdBaseActionEditor(data, model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -109,28 +109,28 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 	};
 
 	prepareWindow();
-	rebuild();
+	rebuild(data);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool gdSampleActionEditor::canChangeActionType()
 {
-	return m_data.sample->isLoopMode == false;
+	return m_data->sample->isLoopMode == false;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gdSampleActionEditor::rebuild()
+void gdSampleActionEditor::rebuild(const c::actionEditor::Data& data)
 {
-	m_data = c::actionEditor::getData(channelId);
+	m_data.emplace(data);
 
 	canChangeActionType() ? m_actionType->activate() : m_actionType->deactivate();
-	computeWidth(m_data.ticksInSeq, m_data.ticksInLoop);
-	updateTitleWithScene(m_data.scene);
+	computeWidth(data.ticksInSeq, data.ticksInLoop);
+	updateTitleWithScene(data.scene);
 
-	m_sampleActionEditor->rebuild(m_data);
-	m_velocityEditor->rebuild(m_data);
+	m_sampleActionEditor->rebuild(data);
+	m_velocityEditor->rebuild(data);
 	m_splitScroll->initScrollbar();
 }
 

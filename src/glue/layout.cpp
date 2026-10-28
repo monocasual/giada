@@ -170,14 +170,14 @@ void openMidiChannelMidiOutputWindow(ID channelId)
 
 void openSampleActionEditor(ID channelId)
 {
-	g_ui->openSubWindow(new v::gdSampleActionEditor(channelId, g_ui->model));
+	g_ui->openSubWindow(new v::gdSampleActionEditor(c::actionEditor::getData(channelId), g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMidiActionEditor(ID channelId)
 {
-	g_ui->openSubWindow(new v::gdMidiActionEditor(channelId, g_ui->model));
+	g_ui->openSubWindow(new v::gdMidiActionEditor(c::actionEditor::getData(channelId), g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
