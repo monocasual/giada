@@ -94,15 +94,15 @@ entire block, contiguously. */
 
 struct ActionsBlock
 {
-	std::span<const Action> head;
-	std::span<const Action> tail;
+	std::span<const model::Action> head;
+	std::span<const model::Action> tail;
 
 	template <typename F>
 	void onEachAction(F&& fn) const
 	{
-		for (const Action& a : head)
+		for (const model::Action& a : head)
 			fn(a);
-		for (const Action& a : tail)
+		for (const model::Action& a : tail)
 			fn(a);
 	}
 };
@@ -250,7 +250,7 @@ const Sequencer::EventBuffer& Sequencer::advance(
 	needed if the scene has changed in this block: we need to process actions
 	that belong to the next scene, not the current one (which is the old one). */
 
-	actionsBlock.onEachAction([&](const Action& action)
+	actionsBlock.onEachAction([&](const model::Action& action)
 	{
 		/* An action may fall just outside the current block because the frame-to-tick
 		conversion above (AudioBlock -> ActionsBlock) is conservative. Double-check

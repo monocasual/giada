@@ -152,14 +152,14 @@ void ActionManager::recordSampleAction(ID channelId, Scene scene, int type,
 
 void ActionManager::deleteMidiAction(ID actionId)
 {
-	const Action* curr = findAction(actionId);
+	const model::Action* curr = findAction(actionId);
 
 	assert(curr->isValid());
 	assert(curr->event.getStatus() == MidiEvent::CHANNEL_NOTE_ON);
 
 	/* Check if 'next' exist first: could be orphaned. */
 
-	const Action* next = findAction(curr->nextId);
+	const model::Action* next = findAction(curr->nextId);
 
 	if (next != nullptr)
 		deleteAction(curr->id, next->id);
@@ -171,7 +171,7 @@ void ActionManager::deleteMidiAction(ID actionId)
 
 void ActionManager::deleteSampleAction(ID actionId)
 {
-	const Action* action = findAction(actionId);
+	const model::Action* action = findAction(actionId);
 	deleteAction(action->id);
 }
 
@@ -180,7 +180,7 @@ void ActionManager::deleteSampleAction(ID actionId)
 void ActionManager::updateMidiAction(ID channelId, Scene scene, ID actionId, int note,
     float velocity, TickRange range, Tick ticksInLoop)
 {
-	const Action* action = findAction(actionId);
+	const model::Action* action = findAction(actionId);
 	assert(action != nullptr);
 
 	deleteAction(action->id, action->nextId);
@@ -192,7 +192,7 @@ void ActionManager::updateMidiAction(ID channelId, Scene scene, ID actionId, int
 void ActionManager::updateSampleAction(ID channelId, Scene scene, ID actionId,
     int type, Tick tick, Tick ticksInLoop)
 {
-	const Action* action = findAction(actionId);
+	const model::Action* action = findAction(actionId);
 	assert(action != nullptr);
 
 	deleteAction(action->id);
@@ -203,7 +203,7 @@ void ActionManager::updateSampleAction(ID channelId, Scene scene, ID actionId,
 
 void ActionManager::updateVelocity(ID actionId, float value)
 {
-	const Action* action = findAction(actionId);
+	const model::Action* action = findAction(actionId);
 	assert(action != nullptr);
 
 	MidiEvent event(action->event);
@@ -226,7 +226,7 @@ std::unordered_set<ID> ActionManager::consolidate(Scene scene)
 	m_model.flush();
 
 	std::unordered_set<ID> out;
-	for (const Action& action : m_liveActions)
+	for (const model::Action& action : m_liveActions)
 		out.insert(action.channelId);
 
 	m_liveActions.clear();
@@ -248,7 +248,7 @@ void ActionManager::clearAllActions(Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-bool ActionManager::areComposite(const Action& a1, const Action& a2) const
+bool ActionManager::areComposite(const model::Action& a1, const model::Action& a2) const
 {
 	return a1.event.getStatus() == MidiEvent::CHANNEL_NOTE_ON &&
 	       a2.event.getStatus() == MidiEvent::CHANNEL_NOTE_OFF &&
@@ -258,7 +258,7 @@ bool ActionManager::areComposite(const Action& a1, const Action& a2) const
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::consolidate(Action& a1, std::size_t i)
+void ActionManager::consolidate(model::Action& a1, std::size_t i)
 {
 	/* This algorithm must start searching from the element next to 'a1': since
 	live actions are recorded in linear sequence, the potential partner of 'a1'
@@ -267,7 +267,7 @@ void ActionManager::consolidate(Action& a1, std::size_t i)
 
 	for (auto it = m_liveActions.begin() + i; it != m_liveActions.end(); ++it)
 	{
-		Action& a2 = *it;
+		model::Action& a2 = *it;
 
 		if (!areComposite(a1, a2))
 			continue;
@@ -289,10 +289,10 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 	m_model.writeDocument(model::SwapType::HARD, [channelId, src, dst, newChannelId](model::Document& doc)
 	{
 		const Scene                scene = src == dst ? src : dst;
-		std::vector<Action>        actions;
+		std::vector<model::Action> actions;
 		std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
-		for (const Action& a : doc.actions.getAll())
+		for (const model::Action& a : doc.actions.getAll())
 		{
 			if (channelId.isValid() && (a.channelId != channelId || a.scene != src))
 				return;
@@ -301,7 +301,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 
 			map.insert({a.id, newActionId});
 
-			Action clone(a);
+			model::Action clone(a);
 			clone.id        = newActionId;
 			clone.channelId = newChannelId.isValid() ? newChannelId : clone.channelId;
 			clone.scene     = scene;
@@ -311,7 +311,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 
 		/* Update nextId and prevId relationships given the new action ID. */
 
-		for (Action& a : actions)
+		for (model::Action& a : actions)
 		{
 			if (a.prevId.isValid())
 				a.prevId = map.at(a.prevId);
@@ -325,7 +325,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 
 /* -------------------------------------------------------------------------- */
 
-const Action* ActionManager::findAction(ID id) const
+const model::Action* ActionManager::findAction(ID id) const
 {
 	return m_model.getCurrentDocument()->actions.findAction(id);
 }
@@ -340,7 +340,7 @@ bool ActionManager::hasActions(Scene scene) const
 	return m_model.getCurrentDocument()->actions.hasActions(scene);
 }
 
-std::vector<const Action*> ActionManager::getActionsOnChannel(ID channelId, Scene scene) const
+std::vector<const model::Action*> ActionManager::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	return m_model.getCurrentDocument()->actions.getActionsOnChannel(channelId, scene);
 }

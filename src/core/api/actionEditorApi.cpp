@@ -40,14 +40,14 @@ ActionEditorApi::ActionEditorApi(Engine& e, Sequencer& s, ActionManager& ar)
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<const Action*> ActionEditorApi::getActionsOnChannel(ID channelId) const
+std::vector<const model::Action*> ActionEditorApi::getActionsOnChannel(ID channelId) const
 {
 	return m_actionManager.getActionsOnChannel(channelId, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
 
-const Action* ActionEditorApi::findAction(ID id) const
+const model::Action* ActionEditorApi::findAction(ID id) const
 {
 	return m_actionManager.findAction(id);
 }
@@ -67,8 +67,8 @@ void ActionEditorApi::deleteMidiAction(ID channelId, ID actionId)
 	/* Send a note-off first in case we are deleting it in a middle of a
 	key_on/key_off sequence. Only if it exists (i.e. it's not orphaned). */
 
-	const Action* noteOn  = m_actionManager.findAction(actionId);
-	const Action* noteOff = m_actionManager.findAction(noteOn->nextId);
+	const model::Action* noteOn  = m_actionManager.findAction(actionId);
+	const model::Action* noteOff = m_actionManager.findAction(noteOn->nextId);
 	if (noteOff != nullptr)
 		m_engine.getChannelsApi().sendMidi(channelId, noteOff->event);
 
