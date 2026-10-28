@@ -232,6 +232,15 @@ void Ui::rebuildPluginListWindow()
 
 /* -------------------------------------------------------------------------- */
 
+void Ui::rebuildActionEditorWindow()
+{
+	auto* w = static_cast<gdPluginList*>(getSubwindow(WID_ACTION_EDITOR));
+	// if (w != nullptr)
+	//	w->rebuild();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Ui::update()
 {
 	// TODO

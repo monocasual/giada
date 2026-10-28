@@ -33,6 +33,12 @@
 #include <string>
 #include <vector>
 
+namespace giada::m::model
+{
+class ModelView;
+class SampleChannel;
+}
+
 namespace giada::m
 {
 class SampleChannel;
@@ -44,18 +50,19 @@ Functions to interact with the Action Editor. Only the main thread can use these
 
 namespace giada::c::actionEditor
 {
-struct SampleData
+class SampleData
 {
-	SampleData(const m::SampleChannel&);
+public:
+	SampleData(const m::model::SampleChannel&);
 
 	SamplePlayerMode channelMode;
 	bool             isLoopMode;
 };
 
-struct Data
+class Data
 {
-	Data() = default;
-	Data(const m::Channel&, Scene);
+public:
+	Data(const m::model::ModelView&, ID channelId);
 
 	Tick getCurrentTick() const;
 	bool isChannelPlaying() const;
@@ -70,6 +77,9 @@ struct Data
 	std::vector<const m::Action*> actions;
 
 	std::optional<SampleData> sample;
+
+private:
+	const m::model::ModelView& m_view;
 };
 
 Data getData(ID channelId);

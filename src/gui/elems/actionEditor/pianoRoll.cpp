@@ -101,14 +101,14 @@ void gePianoRoll::onAddAction()
 	const Tick tickOn  = m_base->pixelToTickSnapped(Fl::event_x() - x());
 	const Tick tickOff = tickOn + G_DEFAULT_ACTION_SIZE;
 	int        note    = yToNote(Fl::event_y() - y());
-	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT, {tickOn, tickOff});
+	c::actionEditor::recordMidiAction(m_base->getData().channelId, note, G_MAX_VELOCITY_FLOAT, {tickOn, tickOff});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gePianoRoll::onDeleteAction()
 {
-	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1->id);
+	c::actionEditor::deleteMidiAction(m_base->getData().channelId, m_action->a1->id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -183,7 +183,7 @@ void gePianoRoll::onRefreshAction()
 		t2 = t1 + m_action->getTickRange().getLength();
 	}
 
-	c::actionEditor::updateMidiAction(m_data->channelId, m_action->a1->id, note, velocity, {t1, t2});
+	c::actionEditor::updateMidiAction(m_base->getData().channelId, m_action->a1->id, note, velocity, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -218,17 +218,15 @@ Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action&
 
 /* -------------------------------------------------------------------------- */
 
-void gePianoRoll::rebuild(c::actionEditor::Data& d)
+void gePianoRoll::rebuild(const c::actionEditor::Data& data)
 {
-	m_data = &d;
-
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
 
 	clear();
 	size(m_base->fullWidth, (MAX_KEYS + 1) * CELL_H);
 
-	for (const m::Action* a1 : m_data->actions)
+	for (const m::Action* a1 : data.actions)
 	{
 		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 			continue;

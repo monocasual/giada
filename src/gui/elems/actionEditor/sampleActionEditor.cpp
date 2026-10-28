@@ -44,11 +44,9 @@ geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor*
 
 /* -------------------------------------------------------------------------- */
 
-void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
+void geSampleActionEditor::rebuild(const c::actionEditor::Data& data)
 {
-	m_data = &d;
-
-	bool isAnyLoopMode = m_data->sample->isLoopMode;
+	bool isAnyLoopMode = data.sample->isLoopMode;
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -56,7 +54,7 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action* a1 : m_data->actions)
+	for (const m::Action* a1 : data.actions)
 	{
 		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_CC)
 			continue;
@@ -101,7 +99,7 @@ void geSampleActionEditor::draw()
 void geSampleActionEditor::onAddAction()
 {
 	Tick t = m_base->pixelToTickSnapped(Fl::event_x() - x());
-	c::actionEditor::recordSampleAction(m_data->channelId,
+	c::actionEditor::recordSampleAction(m_base->getData().channelId,
 	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), t);
 }
 
@@ -151,6 +149,6 @@ void geSampleActionEditor::onRefreshAction()
 	const Tick  t    = m_base->pixelToTickSnapped(p);
 	const int   type = m_action->a1->event.getStatus();
 
-	c::actionEditor::updateSampleAction(m_data->channelId, m_action->a1->id, type, t);
+	c::actionEditor::updateSampleAction(m_base->getData().channelId, m_action->a1->id, type, t);
 }
 } // namespace giada::v

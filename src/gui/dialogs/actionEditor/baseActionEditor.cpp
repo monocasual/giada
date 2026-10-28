@@ -51,14 +51,14 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdBaseActionEditor::gdBaseActionEditor(ID channelId, const Model& model)
+gdBaseActionEditor::gdBaseActionEditor(const c::actionEditor::Data& data, const Model& model)
 : gdWindow(u::gui::getCenterWinBounds(model.actionEditorBounds), g_ui->getI18Text(LangMap::ACTIONEDITOR_TITLE), WID_ACTION_EDITOR)
-, channelId(channelId)
 , gridTool(new geGridTool(0, 0, model))
 , m_zoomInBtn(new geImageButton(graphics::plusOff, graphics::plusOn))
 , m_zoomOutBtn(new geImageButton(graphics::minusOff, graphics::minusOn))
 , m_splitScroll(new geSplitScroll(0, 0, 0, 0))
 , m_legends(new geFlexResizable(Direction::VERTICAL, geResizerBar::Mode::RESIZE))
+, m_data(data)
 , m_ratio(model.actionEditorZoom)
 {
 	m_zoomInBtn->onClick = [this]()
@@ -78,6 +78,10 @@ gdBaseActionEditor::~gdBaseActionEditor()
 	g_ui->model.actionEditorSplitH = m_splitScroll->getTopContentH();
 	g_ui->model.actionEditorZoom   = m_ratio;
 }
+
+/* -------------------------------------------------------------------------- */
+
+const c::actionEditor::Data& gdBaseActionEditor::getData() const { return m_data.value(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -110,6 +114,11 @@ int gdBaseActionEditor::tickToPixel(Tick t) const
 {
 	return u::time::tickToPixel(t, m_ratio);
 }
+
+/* -------------------------------------------------------------------------- */
+
+ID    gdBaseActionEditor::getChannelId() const { return m_data->channelId; };
+Scene gdBaseActionEditor::getScene() const { return m_data->scene; };
 
 /* -------------------------------------------------------------------------- */
 
@@ -189,9 +198,9 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 	/* Make sure the new content width doesn't underflow the window space (i.e.
 	the minimum width allowed). */
 
-	if (tickToPixel(m_data.ticksInSeq) < minWidth)
+	if (tickToPixel(m_data->ticksInSeq) < minWidth)
 	{
-		m_ratio = m_data.ticksInSeq.value() / static_cast<float>(minWidth);
+		m_ratio = m_data->ticksInSeq.value() / static_cast<float>(minWidth);
 		m_splitScroll->setScrollX(0);
 	}
 
@@ -220,6 +229,6 @@ void gdBaseActionEditor::refresh()
 
 Pixel gdBaseActionEditor::currentTickToPixel() const
 {
-	return (tickToPixel(m_data.getCurrentTick()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
+	return (tickToPixel(m_data->getCurrentTick()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
 }
 } // namespace giada::v

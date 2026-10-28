@@ -57,7 +57,10 @@ public:
 	Tick pixelToTickSnapped(int) const;
 	int  tickToPixel(Tick) const;
 
-	ID channelId;
+	ID    getChannelId() const;
+	Scene getScene() const;
+
+	const c::actionEditor::Data& getData() const;
 
 	geGridTool* gridTool;
 
@@ -70,7 +73,7 @@ protected:
 	static constexpr float RATIO_STEP   = 1.5f;
 	static constexpr int   LEGEND_WIDTH = 35;
 
-	gdBaseActionEditor(ID channelId, const Model&);
+	gdBaseActionEditor(const c::actionEditor::Data&, const Model&);
 
 	/* getMouseOverContent
 	Returns mouse x-position relative to the viewport content. */
@@ -100,7 +103,7 @@ protected:
 	geSplitScroll*   m_splitScroll;
 	geFlexResizable* m_legends;
 
-	c::actionEditor::Data m_data;
+	std::optional<c::actionEditor::Data> m_data;
 
 private:
 	void refresh() override;
