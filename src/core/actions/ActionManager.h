@@ -28,8 +28,7 @@
 #define G_ACTION_MANAGER_H
 
 #include "src/core/midiEvent.h"
-#include "src/core/model_DEPR_/model.h"
-#include "src/core/types.h"
+#include "src/core/model/types.h"
 #include <cstddef>
 #include <unordered_set>
 
@@ -44,7 +43,7 @@ struct Action;
 class ActionManager
 {
 public:
-	ActionManager(model_DEPR_::Model&);
+	ActionManager(model::Model&);
 
 	/* reset
 	Brings everything back to the initial state. */
@@ -113,12 +112,12 @@ public:
 
 	void clearChannel(ID channelId, Scene);
 
-	void   clearActions(ID channelId, int type);
-	Action rec(ID channelId, Scene, Tick, MidiEvent e);
-	void   rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
-	void   deleteAction(ID id);
-	void   deleteAction(ID currId, ID nextId);
-	void   updateEvent(ID id, MidiEvent e);
+	void clearActions(ID channelId, int type);
+	void rec(ID channelId, Scene, Tick, MidiEvent e);
+	void rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
+	void deleteAction(ID id);
+	void deleteAction(ID currId, ID nextId);
+	void updateEvent(ID id, MidiEvent e);
 
 private:
 	/* areComposite
@@ -138,7 +137,7 @@ private:
 
 	void copyActions(ID channelId, Scene src, Scene dst, ID newChannelId);
 
-	model_DEPR_::Model&       m_model;
+	model::Model&       m_model;
 	std::vector<Action> m_liveActions;
 };
 } // namespace giada::m

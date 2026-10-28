@@ -26,6 +26,7 @@
 
 #include "src/core/rendering/sampleReactions.h"
 #include "src/core/actions/ActionManager.h"
+#include "src/core/channels/channelShared.h"
 #include "src/core/model/channel.h"
 
 namespace giada::m::rendering

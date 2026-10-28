@@ -213,7 +213,7 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 	/* 2. Rebuild everything and adjust scrolling given the change occurred in
 	the x-position. This effectively centers the view on the mouse cursor. */
 
-	rebuild();
+	rebuild(m_data.value());
 	m_splitScroll->setScrollX(m_splitScroll->getScrollX() + (mnow - mpre));
 	redraw();
 }
