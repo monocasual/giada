@@ -32,6 +32,7 @@
 #include "src/core/midiSynchronizer.h"
 #include "src/core/model/actions.h"
 #include "src/core/model/sequencer.h"
+#include "src/core/model/types.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/quantizer.h"
 #include "src/deps/mcl-utils/src/math.hpp"
@@ -111,11 +112,12 @@ struct ActionsBlock
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Sequencer::Sequencer(model_DEPR_::Model& m, MidiSynchronizer& s, JackTransport& j)
+Sequencer::Sequencer(model::Model& m, model_DEPR_::Model& m_DEPR_, MidiSynchronizer& s, JackTransport& j)
 : onAboutStart(nullptr)
 , onAboutStop(nullptr)
 , onSceneChanged(nullptr)
-, m_model_DEPR_(m)
+, m_model(m)
+, m_model_DEPR_(m_DEPR_)
 , m_midiSynchronizer(s)
 , m_jackTransport(j)
 , m_quantizerStep(1)
@@ -150,9 +152,9 @@ int           Sequencer::getQuantizerValue() const { return m_model_DEPR_.get().
 int           Sequencer::getQuantizerStep() const { return m_quantizerStep; }
 SeqStatus     Sequencer::getStatus() const { return m_model_DEPR_.get().sequencer.status; }
 int           Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model_DEPR_.get().sequencer.getMaxFramesInLoop(sampleRate); }
-Scene         Sequencer::getCurrentScene() const { return m_model_DEPR_.get().sequencer.a_getCurrentScene(); }
-Scene         Sequencer::getNextScene() const { return m_model_DEPR_.get().sequencer.a_getNextScene(); }
-SceneStatus   Sequencer::getSceneStatus() const { return m_model_DEPR_.get().sequencer.a_getSceneStatus(); }
+Scene         Sequencer::getCurrentScene() const { return m_model.getParameters().sequencer.getCurrentScene(); }
+Scene         Sequencer::getNextScene() const { return m_model.getParameters().sequencer.getNextScene(); }
+SceneStatus   Sequencer::getSceneStatus() const { return m_model.getParameters().sequencer.getSceneStatus(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -468,27 +470,33 @@ void Sequencer::setScene(Scene scene, bool forced)
 {
 	assert(scene.isValid());
 
-	const auto& sequencer    = m_model_DEPR_.get().sequencer;
-	const Scene currentScene = sequencer.a_getCurrentScene();
-	const bool  sameScene    = scene == currentScene;
+	const auto& params = m_model.getParameters().sequencer;
 
-	if (sameScene)
+	// TODO - we HARD swap only to refresh the whole UI on scene change. Maybe
+	// there is a better way.
+
+	m_model.writeDocument(model::SwapType::HARD, [&params, scene, forced](model::Document& doc)
 	{
-		if (!isRunning())
+		const Scene currentScene = params.getCurrentScene();
+		const bool  sameScene    = scene == currentScene;
+
+		if (sameScene)
+		{
+			if (!doc.sequencer.isRunning())
+				return;
+			params.setNextScene(scene);
+			params.setSceneStatus(SceneStatus::IDLE);
 			return;
-		sequencer.a_setNextScene(scene);
-		sequencer.a_setSceneStatus(SceneStatus::IDLE);
-		return;
-	}
-	if (!isRunning() || forced)
-	{
-		sequencer.a_setCurrentScene(scene);
-		sequencer.a_setSceneStatus(SceneStatus::IDLE);
-	}
-	else
-		sequencer.a_setSceneStatus(SceneStatus::CHANGING);
-	sequencer.a_setNextScene(scene);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+		}
+		if (!doc.sequencer.isRunning() || forced)
+		{
+			params.setCurrentScene(scene);
+			params.setSceneStatus(SceneStatus::IDLE);
+		}
+		else
+			params.setSceneStatus(SceneStatus::CHANGING);
+		params.setNextScene(scene);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
