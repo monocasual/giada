@@ -50,8 +50,8 @@ public:
 	gdSampleEditor(ID channelId, const Model&);
 	~gdSampleEditor();
 
-	void rebuild() override;
-	void refresh() override;
+	void rebuild();
+	void refresh();
 
 	void refreshPitch();
 

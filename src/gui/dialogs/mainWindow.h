@@ -51,8 +51,8 @@ class gdMainWindow : public gdWindow
 public:
 	gdMainWindow(geompp::Rect<int>, const char* title);
 
-	void refresh() override;
-	void rebuild() override;
+	void refresh();
+	void rebuild();
 
 	void rebuild(const c::main::Main&);
 

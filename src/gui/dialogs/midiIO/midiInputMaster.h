@@ -51,7 +51,7 @@ class gdMidiInputMaster : public gdMidiInputBase
 public:
 	gdMidiInputMaster(const Model&);
 
-	void rebuild() override;
+	void rebuild();
 
 private:
 	geMasterLearnerPack* m_learners;

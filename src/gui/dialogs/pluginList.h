@@ -45,7 +45,6 @@ public:
 	gdPluginList(const c::plugin::Plugins&, geompp::Rect<int> bounds);
 	~gdPluginList();
 
-	void rebuild() override; // TODO - remove
 	void rebuild(const c::plugin::Plugins&);
 
 	ID                     getChannelId() const;
