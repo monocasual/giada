@@ -129,8 +129,8 @@ void gdSampleActionEditor::rebuild(const c::actionEditor::Data& data)
 	computeWidth(data.ticksInSeq, data.ticksInLoop);
 	updateTitleWithScene(data.scene);
 
-	m_sampleActionEditor->rebuild(data);
-	m_velocityEditor->rebuild(data);
+	m_sampleActionEditor->rebuild(m_data.value());
+	m_velocityEditor->rebuild(m_data.value());
 	m_splitScroll->initScrollbar();
 }
 
