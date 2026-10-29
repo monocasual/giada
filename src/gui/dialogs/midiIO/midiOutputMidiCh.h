@@ -39,7 +39,7 @@ class gdMidiOutputMidiCh : public gdMidiOutputBase
 public:
 	gdMidiOutputMidiCh(ID channelId);
 
-	void rebuild() override;
+	void rebuild();
 
 private:
 	geCheck*  m_enableOut;

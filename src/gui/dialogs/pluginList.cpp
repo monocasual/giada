@@ -64,8 +64,6 @@ gdPluginList::~gdPluginList()
 
 /* -------------------------------------------------------------------------- */
 
-void gdPluginList::rebuild() {}
-
 void gdPluginList::rebuild(const c::plugin::Plugins& plugins)
 {
 	if (plugins.channelId == MASTER_OUT_CHANNEL_ID)

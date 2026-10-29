@@ -45,7 +45,7 @@ public:
 	gdChannelRouting(ID channelId, const Model&);
 	~gdChannelRouting();
 
-	void rebuild() override;
+	void rebuild();
 
 private:
 	ID                      m_channelId;
