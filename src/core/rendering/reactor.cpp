@@ -286,28 +286,25 @@ void Reactor::stopAll()
 {
 	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [](model::Document& doc, model::Assets& assets)
 	{
-		for (const model::Track& track : doc.tracks.getAll())
+		doc.tracks.forEachChannel([&doc, &assets](model::Channel& ch)
 		{
-			for (const model::Channel& ch : track.getChannels().getAll())
+			const model::ChannelView channelView = model::makeChannelView(ch, assets);
+
+			if (ch.type == ChannelType::MIDI)
 			{
-				const model::ChannelView channelView = model::makeChannelView(ch, assets);
-
-				if (ch.type == ChannelType::MIDI)
+				if (channelView.getParameters().isPlaying())
 				{
-					if (!channelView.getParameters().isPlaying())
-						continue;
-
-					// TODO
 					// stopMidiChannel(ch.shared->playStatus);
 					// sendMidiAllNotesOff(ch, m_kernelMidi);
 				}
-				else if (ch.type == ChannelType::SAMPLE)
-				{
-					stopSampleChannelBySeq(channelView,
-					    doc.behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
-				}
 			}
-		}
+			else if (ch.type == ChannelType::SAMPLE)
+			{
+				stopSampleChannelBySeq(channelView,
+				    doc.behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+			}
+			return true;
+		});
 	});
 }
 
