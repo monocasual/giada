@@ -25,20 +25,19 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/actionEditor/pianoItem.h"
-#include "src/core/actions/action.h"
 #include "src/core/const.h"
-#include "src/core/midiEvent.h"
 #include "src/deps/mcl-utils/src/math.hpp"
+#include "src/glue/actionEditor.h"
 #include "src/gui/const.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v
 {
-gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, const m::model::Action& a1,
-    const m::model::Action& a2)
+gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, const c::actionEditor::Action& a1,
+    const c::actionEditor::Action& a2)
 : geBaseAction(X, Y, W, H, /*resizable=*/true, a1, &a2)
-, m_ringLoop(a2.isValid() && a1.tick > a2.tick)
-, m_orphaned(!a2.isValid())
+, m_ringLoop(a2.isValid && a1.tick > a2.tick)
+, m_orphaned(!a2.isValid)
 {
 	m_resizable = isResizable();
 }
@@ -87,6 +86,6 @@ Pixel gePianoItem::calcVelocityH() const
 {
 	namespace math = mcl::utils::math;
 
-	return math::map(a1->event.getVelocityFloat(), G_MAX_VELOCITY_FLOAT, h() - 3);
+	return math::map(a1.event.getVelocityFloat(), G_MAX_VELOCITY_FLOAT, h() - 3);
 }
 } // namespace giada::v

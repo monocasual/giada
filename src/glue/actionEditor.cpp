@@ -37,6 +37,21 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::actionEditor
 {
+Action::Action(const m::model::Action& a)
+: id(a.id)
+, tick(a.tick)
+, event(a.event)
+, prevId(a.prevId)
+, nextId(a.nextId)
+, isValid(a.isValid())
+, isVolumeEnvelope(a.isVolumeEnvelope())
+{
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 SampleData::SampleData(const m::model::SampleChannel& s)
 : channelMode(s.mode)
 , isLoopMode(s.isAnyLoopMode())
@@ -53,11 +68,13 @@ Data::Data(const m::model::ModelView& view, ID channelId)
 , ticksInBeat(view.getDocument().sequencer.getTicksInBeat())
 , ticksInBar(view.getDocument().sequencer.getTicksInBar())
 , ticksInLoop(view.getDocument().sequencer.getTicksInLoop())
-, actions(view.getDocument().actions.getActionsOnChannel(channelId, scene))
 {
 	const m::model::Channel& ch = view.getDocument().tracks.getChannel(channelId);
 	if (ch.type == ChannelType::SAMPLE)
 		sample = std::make_optional<SampleData>(ch.sampleChannel.value());
+
+	for (const m::model::Action* action : view.getDocument().actions.getActionsOnChannel(channelId, scene))
+		actions.push_back(Action(*action));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -85,9 +102,12 @@ Data getData(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-const m::model::Action* findAction(ID id)
+std::optional<Action> findAction(ID id)
 {
-	return g_engine->getActionEditorApi().findAction(id);
+	const m::model::Action* a = g_engine->getActionEditorApi().findAction(id);
+	if (a != nullptr)
+		return *a;
+	return {};
 }
 
 /* -------------------------------------------------------------------------- */

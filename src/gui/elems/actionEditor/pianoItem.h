@@ -29,9 +29,9 @@
 
 #include "src/gui/elems/actionEditor/baseAction.h"
 
-namespace giada::m
+namespace giada::c::actionEditor
 {
-struct Action;
+class Action;
 }
 
 namespace giada::v
@@ -39,7 +39,8 @@ namespace giada::v
 class gePianoItem : public geBaseAction
 {
 public:
-	gePianoItem(int x, int y, int w, int h, const m::model::Action& a1, const m::model::Action& a2);
+	gePianoItem(int x, int y, int w, int h, const c::actionEditor::Action& a1,
+	    const c::actionEditor::Action& a2);
 
 	void draw() override;
 

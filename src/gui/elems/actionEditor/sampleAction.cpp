@@ -25,13 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/actionEditor/sampleAction.h"
-#include "src/core/actions/action.h"
+#include "src/glue/actionEditor.h"
 #include "src/gui/const.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v
 {
-geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, const m::model::Action& a1)
+geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, const c::actionEditor::Action& a1)
 : geBaseAction(X, Y, W, H, /*resizable=*/false, a1, nullptr)
 {
 }
@@ -42,16 +42,16 @@ void geSampleAction::draw()
 {
 	const Fl_Color color = hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1;
 
-	if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_KILL)
+	if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_KILL)
 	{
 		fl_rect(x(), y(), MIN_WIDTH, h(), color);
 		return;
 	}
 
 	fl_rectf(x(), y(), MIN_WIDTH, h(), color);
-	if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_ON)
+	if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_ON)
 		fl_rectf(x() + 3, y() + h() - 11, w() - 6, 8, G_COLOR_GREY_4);
-	else if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
+	else if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 		fl_rectf(x() + 3, y() + 3, w() - 6, 8, G_COLOR_GREY_4);
 }
 } // namespace giada::v
