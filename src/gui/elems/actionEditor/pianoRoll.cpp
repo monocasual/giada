@@ -108,7 +108,7 @@ void gePianoRoll::onAddAction()
 
 void gePianoRoll::onDeleteAction()
 {
-	c::actionEditor::deleteMidiAction(m_base->getData().channelId, m_action->a1->id);
+	c::actionEditor::deleteMidiAction(m_base->getData().channelId, m_action->a1.id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -162,7 +162,7 @@ void gePianoRoll::onRefreshAction()
 	const Pixel p1       = m_action->x() - x();
 	const Pixel p2       = m_action->x() + m_action->w() - x();
 	const int   note     = yToNote(m_action->y() - y());
-	const float velocity = m_action->a1->event.getVelocityFloat();
+	const float velocity = m_action->a1.event.getVelocityFloat();
 
 	Tick t1;
 	Tick t2;
@@ -183,7 +183,7 @@ void gePianoRoll::onRefreshAction()
 		t2 = t1 + m_action->getTickRange().getLength();
 	}
 
-	c::actionEditor::updateMidiAction(m_base->getData().channelId, m_action->a1->id, note, velocity, {t1, t2});
+	c::actionEditor::updateMidiAction(m_base->getData().channelId, m_action->a1.id, note, velocity, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -205,9 +205,9 @@ Pixel gePianoRoll::snapToY(Pixel p) const
 	return math::quantize(p, CELL_H);
 }
 
-Pixel gePianoRoll::getPianoItemW(Pixel px, const m::model::Action& a1, const m::model::Action& a2) const
+Pixel gePianoRoll::getPianoItemW(Pixel px, const c::actionEditor::Action& a1, const c::actionEditor::Action& a2) const
 {
-	if (a2.isValid())
+	if (a2.isValid)
 	{                          // Regular
 		if (a1.tick > a2.tick) // Ring-loop
 			return m_base->loopWidth - (px - x());
@@ -226,21 +226,23 @@ void gePianoRoll::rebuild(const c::actionEditor::Data& data)
 	clear();
 	size(m_base->fullWidth, (MAX_KEYS + 1) * CELL_H);
 
-	for (const m::model::Action* a1 : data.actions)
+	for (const c::actionEditor::Action& a1 : data.actions)
 	{
-		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
+		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 			continue;
 
-		assert(a1->isValid()); // a2 might be null if orphaned
+		assert(a1.isValid); // a2 might be null if orphaned
 
-		const m::model::Action* a2 = a1->nextId.isValid() ? c::actionEditor::findAction(a1->nextId) : nullptr;
+		const std::optional<c::actionEditor::Action> a2 = c::actionEditor::findAction(a1.nextId);
 
-		Pixel px = x() + m_base->tickToPixel(a1->tick);
-		Pixel py = y() + noteToY(a1->event.getNote());
+		assert(a2.has_value());
+
+		Pixel px = x() + m_base->tickToPixel(a1.tick);
+		Pixel py = y() + noteToY(a1.event.getNote());
 		Pixel ph = CELL_H;
-		Pixel pw = getPianoItemW(px, *a1, *a2);
+		Pixel pw = getPianoItemW(px, a1, a2.value());
 
-		add(new gePianoItem(px, py, pw, ph, *a1, *a2));
+		add(new gePianoItem(px, py, pw, ph, a1, a2.value()));
 	}
 
 	redraw();

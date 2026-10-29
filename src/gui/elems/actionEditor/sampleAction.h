@@ -27,15 +27,19 @@
 #ifndef GE_SAMPLE_ACTION_H
 #define GE_SAMPLE_ACTION_H
 
-#include "src/core/actions/action.h"
 #include "src/gui/elems/actionEditor/baseAction.h"
+
+namespace giada::c::actionEditor
+{
+class Action;
+}
 
 namespace giada::v
 {
 class geSampleAction : public geBaseAction
 {
 public:
-	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const m::model::Action&);
+	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const c::actionEditor::Action&);
 
 	void draw() override;
 };

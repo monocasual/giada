@@ -25,12 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/actionEditor/envelopePoint.h"
+#include "src/glue/actionEditor.h"
 #include "src/gui/const.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v
 {
-geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, const m::model::Action& a)
+geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, const c::actionEditor::Action& a)
 : geBaseAction(X, Y, SIDE, SIDE, /*resizable=*/false, a, {})
 {
 }
