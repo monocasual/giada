@@ -44,7 +44,11 @@ void recordSampleKeyPress(ID channelId, Scene, ChannelShared&, Tick currentTickQ
 void recordSampleKeyRelease(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
 void recordSampleKeyKill(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
 void killSampleReadActions(ChannelShared&);
-void toggleSampleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning);
+
+void toggleSampleReadActions(
+    const model::Channel::Parameters&,
+    bool treatRecsAsLoops,
+    bool seqIsRunning);
 
 /* [...]SampleChannel
 Actions manually performed on a Sample channel. */
