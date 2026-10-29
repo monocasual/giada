@@ -39,7 +39,7 @@ public:
 	gdMidiActionEditor(const c::actionEditor::Data&, const Model&);
 	~gdMidiActionEditor();
 
-	void rebuild(const c::actionEditor::Data&) override {}; // TODO
+	void rebuild(const c::actionEditor::Data&) override;
 
 private:
 	gePianoRoll*      m_pianoRoll;
