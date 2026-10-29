@@ -45,11 +45,22 @@ class SampleChannel;
 class Channel;
 } // namespace giada::m
 
-/* giada::c::actionEditor
-Functions to interact with the Action Editor. Only the main thread can use these! */
-
 namespace giada::c::actionEditor
 {
+class Action
+{
+public:
+	Action(const m::model::Action&);
+
+	ID           id;
+	Tick         tick;
+	m::MidiEvent event;
+	ID           prevId;
+	ID           nextId;
+	bool         isValid;
+	bool         isVolumeEnvelope;
+};
+
 class SampleData
 {
 public:
@@ -67,21 +78,21 @@ public:
 	Tick getCurrentTick() const;
 	bool isChannelPlaying() const;
 
-	ID                                   channelId;
-	Scene                                scene;
-	std::string                          channelName;
-	Tick                                 ticksInSeq;
-	Tick                                 ticksInBeat;
-	Tick                                 ticksInBar;
-	Tick                                 ticksInLoop;
-	std::vector<const m::model::Action*> actions;
+	ID                  channelId;
+	Scene               scene;
+	std::string         channelName;
+	Tick                ticksInSeq;
+	Tick                ticksInBeat;
+	Tick                ticksInBar;
+	Tick                ticksInLoop;
+	std::vector<Action> actions;
 
 	std::optional<SampleData> sample;
 };
 
 Data getData(ID channelId);
 
-const m::model::Action* findAction(ID);
+std::optional<Action> findAction(ID);
 
 /* MIDI actions.  */
 

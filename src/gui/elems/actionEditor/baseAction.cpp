@@ -25,21 +25,21 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/actionEditor/baseAction.h"
-#include "src/core/model/action.h"
+#include "src/glue/actionEditor.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
 namespace giada::v
 {
 geBaseAction::geBaseAction(Pixel X, Pixel Y, Pixel W, Pixel H, bool resizable,
-    const m::model::Action& a1, const m::model::Action* a2)
+    const c::actionEditor::Action& a1, const c::actionEditor::Action* a2)
 : geBox(X, Y, W, H)
 , onRightEdge(false)
 , onLeftEdge(false)
 , hovered(false)
 , altered(false)
 , pick(0)
-, a1(&a1)
+, a1(a1)
 , a2(a2)
 , m_resizable(resizable)
 {
@@ -131,6 +131,6 @@ TickRange geBaseAction::getTickRange() const
 {
 	if (a2 == nullptr)
 		return {};
-	return {a1->tick, a2->tick};
+	return {a1.tick, a2->tick};
 }
 } // namespace giada::v

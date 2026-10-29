@@ -29,11 +29,6 @@
 
 #include "src/gui/elems/actionEditor/baseActionEditor.h"
 
-namespace giada::m
-{
-struct Action;
-}
-
 namespace giada::v
 {
 class geSampleAction;
