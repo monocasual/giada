@@ -45,20 +45,20 @@ void record_(ID channelId, Scene scene, int note, Tick currentTickQuantized, Act
 
 /* -------------------------------------------------------------------------- */
 
-void startReadActions_(ChannelShared& shared, bool treatRecsAsLoops)
+void startReadActions_(const model::Channel::Parameters& params, bool treatRecsAsLoops)
 {
 	if (treatRecsAsLoops)
-		shared.recStatus.store(ChannelStatus::WAIT);
+		params.setRecStatus(ChannelStatus::WAIT);
 	else
 	{
-		shared.recStatus.store(ChannelStatus::PLAY);
-		shared.readActions.store(true);
+		params.setRecStatus(ChannelStatus::PLAY);
+		params.setReadActions(true);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
+void stopReadActions_(const model::Channel::Parameters& params, ChannelStatus curRecStatus,
     bool treatRecsAsLoops, bool seqIsRunning)
 {
 	/* First of all, if the sequencer is not running or treatRecsAsLoops is off,
@@ -67,15 +67,15 @@ void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
 
 	if (!seqIsRunning || !treatRecsAsLoops)
 	{
-		shared.recStatus.store(ChannelStatus::OFF);
-		shared.readActions.store(false);
+		params.setRecStatus(ChannelStatus::OFF);
+		params.setReadActions(false);
 	}
 	else if (curRecStatus == ChannelStatus::WAIT)
-		shared.recStatus.store(ChannelStatus::OFF);
+		params.setRecStatus(ChannelStatus::OFF);
 	else if (curRecStatus == ChannelStatus::ENDING)
-		shared.recStatus.store(ChannelStatus::PLAY);
+		params.setRecStatus(ChannelStatus::PLAY);
 	else
-		shared.recStatus.store(ChannelStatus::ENDING);
+		params.setRecStatus(ChannelStatus::ENDING);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -173,7 +173,7 @@ void killSampleReadActions(ChannelShared& shared)
 
 /* -------------------------------------------------------------------------- */
 
-void toggleSampleReadActions(ChannelShared& shared, bool treatRecsAsLoops, bool seqIsRunning)
+void toggleSampleReadActions(const model::Channel::Parameters& params, bool treatRecsAsLoops, bool seqIsRunning)
 {
 	/* When you start reading actions while conf::treatRecsAsLoops is true, the
 	value ch.shared->readActions actually is not set to true immediately, because
@@ -183,13 +183,13 @@ void toggleSampleReadActions(ChannelShared& shared, bool treatRecsAsLoops, bool 
 	handle the case of when you press 'R', the channel goes into REC_WAITING and
 	then you press 'R' again to undo the status. */
 
-	const bool          readActions = shared.readActions.load();
-	const ChannelStatus recStatus   = shared.recStatus.load();
+	const bool          readActions = params.getReadActions();
+	const ChannelStatus recStatus   = params.getRecStatus();
 
 	if (readActions || (!readActions && recStatus == ChannelStatus::WAIT))
-		stopReadActions_(shared, recStatus, treatRecsAsLoops, seqIsRunning);
+		stopReadActions_(params, recStatus, treatRecsAsLoops, seqIsRunning);
 	else
-		startReadActions_(shared, treatRecsAsLoops);
+		startReadActions_(params, treatRecsAsLoops);
 }
 
 /* -------------------------------------------------------------------------- */

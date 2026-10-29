@@ -192,8 +192,10 @@ void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
 
 void Reactor::toggleReadActions(ID channelId, bool seqIsRunning)
 {
-	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
-	toggleSampleReadActions(*ch.shared, m_model_DEPR_.get().behaviors.treatRecsAsLoops, seqIsRunning);
+	const auto& params           = m_model.getCurrentAssets()->channelsParameters.get(channelId);
+	const bool  treatRecsAsLoops = m_model.getCurrentDocument()->behaviors.treatRecsAsLoops;
+
+	toggleSampleReadActions(*params, treatRecsAsLoops, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
