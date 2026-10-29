@@ -55,6 +55,8 @@ void Document::store(Conf& conf) const
 #if G_DEBUG_MODE
 void Document::debug() const
 {
+	actions.debug();
+	tracks.debug();
 }
 #endif
 } // namespace giada::m::model

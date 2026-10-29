@@ -382,7 +382,7 @@ void Engine::resume()
 #if G_DEBUG_MODE
 void Engine::debug()
 {
-	m_model_DEPR_.debug();
+	m_model.getCurrentDocument()->debug();
 }
 #endif
 
