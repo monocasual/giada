@@ -111,7 +111,7 @@ gdMidiActionEditor::gdMidiActionEditor(const c::actionEditor::Data& data, const 
 	}
 
 	prepareWindow();
-	rebuild();
+	//rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,9 +123,9 @@ gdMidiActionEditor::~gdMidiActionEditor()
 
 /* -------------------------------------------------------------------------- */
 
+#if 0
 void gdMidiActionEditor::rebuild()
 {
-#if 0
 	m_data = c::actionEditor::getData(channelId);
 
 	computeWidth(m_data.ticksInSeq, m_data.ticksInLoop);
@@ -134,6 +134,6 @@ void gdMidiActionEditor::rebuild()
 	m_pianoRoll->rebuild(m_data);
 	m_velocityEditor->rebuild(m_data);
 	m_splitScroll->initScrollbar();
-#endif
 }
+#endif
 } // namespace giada::v

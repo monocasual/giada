@@ -46,7 +46,8 @@ public:
 	gdKeyGrabber(int key);
 
 	int  handle(int e) override;
-	void rebuild() override;
+
+	void rebuild();
 
 	/* onSetKey
 	Callback fired when this widget has grabbed an event. Returns a boolean value

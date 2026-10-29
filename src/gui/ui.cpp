@@ -203,17 +203,17 @@ void Ui::refresh()
 
 	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
 
-	refreshSubWindow(WID_SAMPLE_EDITOR);
-	refreshSubWindow(WID_ACTION_EDITOR);
+	//refreshSubWindow(WID_SAMPLE_EDITOR);
+	//refreshSubWindow(WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::rebuild()
 {
-	rebuildSubWindow(WID_SAMPLE_EDITOR);
-	rebuildSubWindow(WID_ACTION_EDITOR);
-	rebuildSubWindow(WID_CHANNEL_ROUTING);
+	//rebuildSubWindow(WID_SAMPLE_EDITOR);
+	//rebuildSubWindow(WID_ACTION_EDITOR);
+	//rebuildSubWindow(WID_CHANNEL_ROUTING);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -252,18 +252,18 @@ void Ui::update()
 
 void Ui::rebuildSubWindow(ID wid)
 {
-	v::gdWindow* w = getSubwindow(wid);
-	if (w != nullptr) // If its open
-		w->rebuild();
+	//v::gdWindow* w = getSubwindow(wid);
+	//if (w != nullptr) // If its open
+	//	w->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::refreshSubWindow(ID wid)
 {
-	v::gdWindow* w = getSubwindow(wid);
-	if (w != nullptr) // If its open
-		w->refresh();
+	//v::gdWindow* w = getSubwindow(wid);
+	//if (w != nullptr) // If its open
+	//	w->refresh();
 }
 
 /* -------------------------------------------------------------------------- */

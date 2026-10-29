@@ -108,7 +108,7 @@ protected:
 	std::optional<c::actionEditor::Data> m_data;
 
 private:
-	void refresh() override;
+	void refresh();
 
 	/* zoomAbout
 	Zooms and centers the viewport around the mouse cursor. Wants a function to

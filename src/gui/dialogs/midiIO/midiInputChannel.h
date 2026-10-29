@@ -63,7 +63,7 @@ class gdMidiInputChannel : public gdMidiInputBase
 public:
 	gdMidiInputChannel(ID channelId, const Model&);
 
-	void rebuild() override;
+	void rebuild();
 
 private:
 	ID m_channelId;
