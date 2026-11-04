@@ -51,7 +51,7 @@ IdManager waveId_;
 
 std::string makeWavePath_(const std::string& base, const m::Wave& w, int k)
 {
-	return utils::fs::join(base, fmt::format("{}-{}{}", w.getBasename(/*ext=*/false), k, w.getExtension()));
+	return utils::fs::join(base, fmt::format("{}-{}.wav", w.getBasename(/*ext=*/false), k));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -73,13 +73,13 @@ bool isWavePathUnique_(const m::Wave& skip, const std::string& path,
 std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
     const std::vector<std::unique_ptr<Wave>>& waves)
 {
-	std::string path = utils::fs::join(base, w.getBasename(/*ext=*/true));
+	std::string path = utils::fs::join(base, w.getBasename(/*ext=*/false) + ".wav");
 	if (isWavePathUnique_(w, path, waves))
 		return path;
 
 	// TODO - just use a timestamp. e.g. makeWavePath_(..., ..., getTimeStamp())
 	int k = 0;
-	path  = makeWavePath_(base, w, k);
+	path  = makeWavePath_(base, w, k++);
 	while (!isWavePathUnique_(w, path, waves))
 		path = makeWavePath_(base, w, k++);
 
