@@ -74,7 +74,11 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 	Patch patch;
 	uiModel.store(patch);
-	m_model.store(patch, projectPath);
+	if (!m_model.store(patch, projectPath))
+	{
+		u::log::print("[StorageApi::storeProject] Unable to save project audio!\n");
+		return false;
+	}
 
 	/* Store current sample rate in Patch. Needed for adjusting sample range points
 	in case project sample rate != current sample rate when loading a project. */

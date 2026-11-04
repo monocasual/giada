@@ -58,9 +58,9 @@ public:
 	LoadState load(const Patch&, PluginManager&, const Sequencer&, int sampleRate, int bufferSize, Resampler::Quality);
 
 	/* store
-	Stores shared data into a Patch object. */
+	Stores shared data into a Patch object. Returns false if an audio asset cannot be saved. */
 
-	void store(Patch&, const std::string& projectPath);
+	bool store(Patch&, const std::string& projectPath);
 
 #if G_DEBUG_MODE
 	void

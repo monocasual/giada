@@ -95,9 +95,9 @@ public:
 	void store(Conf&) const;
 
 	/* store
-	Stores data into a Patch object. */
+	Stores data into a Patch object. Returns false if an audio asset cannot be saved. */
 
-	void store(Patch&, const std::string& projectPath);
+	bool store(Patch&, const std::string& projectPath);
 
 	bool registerThread(Thread, bool realtime) const;
 

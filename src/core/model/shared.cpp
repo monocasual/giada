@@ -137,21 +137,30 @@ LoadState Shared::load(const Patch& patch, PluginManager& pluginManager, const S
 
 /* -------------------------------------------------------------------------- */
 
-void Shared::store(Patch& patch, const std::string& projectPath)
+bool Shared::store(Patch& patch, const std::string& projectPath)
 {
 	for (const auto& p : getAllPlugins())
 		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
 
+	std::vector<std::pair<Wave*, std::string>> originalPaths;
 	for (auto& w : getAllWaves())
 	{
 		/* Update all existing file paths in Waves, so that they point to the
 		project folder they belong to. */
 
-		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, getAllWaves()));
-		waveFactory::save(*w, w->getPath()); // TODO - error checking
-
-		patch.waves.push_back(waveFactory::serializeWave(*w));
+		originalPaths.emplace_back(w.get(), w->getPath());
+		const std::string path = waveFactory::makeUniqueWavePath(projectPath, *w, getAllWaves());
+		if (waveFactory::save(*w, path) != G_RES_OK)
+		{
+			for (const auto& [wave, originalPath] : originalPaths)
+				wave->setPath(originalPath);
+			return false;
+		}
+		w->setPath(path);
 	}
+	for (const auto& w : getAllWaves())
+		patch.waves.push_back(waveFactory::serializeWave(*w));
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
