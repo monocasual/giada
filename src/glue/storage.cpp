@@ -51,9 +51,11 @@
 #include "src/gui/elems/mainWindow/keyboard/track.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
+#include "src/utils/fs.h"
 #include "src/utils/log.h"
 #include "src/utils/string.h"
 #include <cassert>
+#include <filesystem>
 
 extern giada::m::Engine* g_engine;
 extern giada::v::Ui*     g_ui;
@@ -99,8 +101,11 @@ bool validateFileName_(const std::string& name)
 void loadProject(void* data)
 {
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
+	loadProjectPath(browser->getSelectedItem());
+}
 
-	const std::string projectPath = browser->getSelectedItem();
+void loadProjectPath(const std::string& projectPath)
+{
 
 	/* Close all plug-ins sub-windows first, in case there are VST editors visible.
 	VST editors must be closed before deleting their plug-in processors. */
@@ -139,32 +144,59 @@ void loadProject(void* data)
 void saveProject(void* data)
 {
 	v::gdBrowserSave* browser = static_cast<v::gdBrowserSave*>(data);
+	if (saveProjectPath(browser->getCurrentPath(), browser->getName()))
+		browser->do_callback();
+}
 
-	const std::string projectName = utils::fs::stripExt(browser->getName());
-	const std::string projectPath = utils::fs::join(browser->getCurrentPath(), projectName + G_PROJECT_EXT);
+bool saveProjectPath(const std::string& directory, const std::string& name)
+{
+	// Validate before joining so a typed path cannot escape the chosen folder.
+	std::string projectName = u::fs::isProject(directory)
+	    ? utils::fs::stripExt(utils::fs::basename(directory)) : name;
+	if (utils::fs::getExt(projectName) == G_PROJECT_EXT)
+		projectName = utils::fs::stripExt(projectName);
 
 	if (!validateFileName_(projectName))
-		return;
+		return false;
+	const std::string projectPath = u::fs::getProjectSavePath(directory, projectName);
 
-	if (utils::fs::dirExists(projectPath) &&
+	std::error_code pathError;
+	const bool exists = std::filesystem::exists(projectPath, pathError);
+	if (pathError)
+	{
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
+		return false;
+	}
+	if (exists &&
 	    !v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
 	        g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
-		return;
+		return false;
 
 	auto uiProgress     = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
 	auto engineProgress = [&uiProgress](float v)
 	{ uiProgress.setProgress(v); };
 
+	const std::string previousName = g_ui->model.projectName;
 	g_ui->model.projectName = projectName;
 
-	if (g_engine->getStorageApi().storeProject(projectPath, g_ui->model, engineProgress))
+	bool saved = false;
+	try
+	{
+		saved = g_engine->getStorageApi().storeProject(projectPath, g_ui->model, engineProgress);
+	}
+	catch (const std::filesystem::filesystem_error& error)
+	{
+		u::log::print("[saveProjectPath] {}\n", error.what());
+	}
+	if (saved)
 	{
 		g_ui->mainWindow->setProjectTitle(projectName);
 		g_ui->model.patchPath = utils::fs::getUpDir(projectPath);
-		browser->do_callback();
+		return true;
 	}
-	else
-		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
+	g_ui->model.projectName = previousName;
+	v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
+	return false;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -173,14 +205,18 @@ void loadSample(void* data)
 {
 	v::gdBrowserLoad* browser  = static_cast<v::gdBrowserLoad*>(data);
 	std::string       fullPath = browser->getSelectedItem();
+	loadSamplePath(browser->getChannelId(), fullPath);
+	if (!fullPath.empty())
+		browser->do_callback();
+}
 
+void loadSamplePath(ID channelId, const std::string& fullPath)
+{
 	if (fullPath.empty())
 		return;
 
 	g_ui->model.samplePath = utils::fs::dirname(fullPath);
 
-	c::channel::loadChannel(browser->getChannelId(), fullPath);
-
-	browser->do_callback();
+	c::channel::loadChannel(channelId, fullPath);
 }
 } // namespace giada::c::storage

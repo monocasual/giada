@@ -213,6 +213,7 @@ PluginData getPluginData()
 MiscData getMiscData()
 {
 	MiscData miscData;
+	miscData.useNativeSampleDialogs = g_ui->model.useNativeSampleDialogs;
 	miscData.logMode      = g_ui->model.logMode;
 	miscData.showTooltips = g_ui->model.showTooltips;
 	miscData.langMaps     = g_ui->getLangMapFilesFound();
@@ -319,6 +320,7 @@ void save(const PluginData& data)
 
 void save(const MiscData& data)
 {
+	g_ui->model.useNativeSampleDialogs = data.useNativeSampleDialogs;
 	g_ui->model.logMode      = data.logMode;
 	g_ui->model.showTooltips = data.showTooltips;
 	g_ui->model.langMap      = data.langMap;

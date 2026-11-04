@@ -30,11 +30,25 @@
 #include "src/const.h"
 #include "src/deps/mcl-utils/src/string.hpp"
 #include "src/utils/log.h"
+#include <filesystem>
 
 namespace utils = mcl::utils;
 
 namespace giada::u::fs
 {
+std::string getProjectSavePath(const std::string& directory, const std::string& name)
+{
+	namespace fs = std::filesystem;
+	const fs::path folder(directory);
+	// Selecting an existing project saves that bundle, rather than nesting it.
+	if (folder.extension() == G_PROJECT_EXT)
+		return folder.string();
+	fs::path projectName(name);
+	if (projectName.extension() != G_PROJECT_EXT)
+		projectName += G_PROJECT_EXT;
+	return (folder / projectName).string();
+}
+
 bool isProject(const std::string& s)
 {
 	/** TODO - checks too weak. */

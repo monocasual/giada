@@ -81,6 +81,7 @@ protected:
 	geFileBrowser* browser;
 	geTextButton*  ok;
 	geTextButton*  cancel;
+	geTextButton*  preview;
 	geFlex*        pathArea;
 	geInput*       where;
 	geInput*       name;

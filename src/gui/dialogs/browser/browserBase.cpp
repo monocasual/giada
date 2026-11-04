@@ -25,6 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/browser/browserBase.h"
+#include "src/gui/dialogs/warnings.h"
+#include <juce_core/juce_core.h>
 #include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/box.h"
@@ -78,6 +80,9 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 		{
 			ok     = new geTextButton("");
 			cancel = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
+			preview = new geTextButton(g_ui->getI18Text(LangMap::BROWSER_PLAYPREVIEW));
+			footer->addWidget(preview, 110);
+			preview->hide();
 			footer->addWidget(new geBox());
 			footer->addWidget(cancel, 80);
 			footer->addWidget(ok, 80);
@@ -96,9 +101,26 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	hiddenFiles->callback(cb_toggleHiddenFiles, (void*)this);
 
-	where->setReadonly(true);
-	where->setCursorColor(G_COLOR_BLACK);
+	where->setReadonly(false);
+	where->setCursorColor(G_COLOR_LIGHT_2);
+	where->setWhen(FL_WHEN_ENTER_KEY_ALWAYS);
 	where->setValue(path.c_str());
+	where->onChange = [this](const std::string& value)
+	{
+		const auto requested = juce::String::fromUTF8(value.c_str()).trim().unquoted();
+		if (!requested.isEmpty())
+		{
+			const auto current = juce::String::fromUTF8(browser->getCurrentDir().c_str());
+			const auto base = current.isEmpty() ? juce::File::getCurrentWorkingDirectory() : juce::File(current);
+			const auto directory = base.getChildFile(requested);
+			if (directory.isDirectory())
+			{
+				browser->loadDir(directory.getFullPathName().toStdString());
+				return;
+			}
+		}
+		gdAlert(g_ui->getI18Text(LangMap::BROWSER_FOLDERNOTFOUND));
+	};
 
 	updir->onClick = [this]()
 	{
@@ -154,7 +176,8 @@ void gdBrowserBase::hidePathName()
 
 std::string gdBrowserBase::getCurrentPath() const
 {
-	return where->getValue();
+	// Pending address edits are not a destination until Enter validates them.
+	return browser->getCurrentDir();
 }
 
 ID gdBrowserBase::getChannelId() const

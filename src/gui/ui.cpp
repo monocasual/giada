@@ -194,10 +194,11 @@ void Ui::refresh()
 
 	m_blinker = (m_blinker + 1) % BLINK_RATE;
 
-	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
+	/* Refresh editor playheads and the browser's preview playback control. */
 
 	refreshSubWindow(WID_SAMPLE_EDITOR);
 	refreshSubWindow(WID_ACTION_EDITOR);
+	refreshSubWindow(WID_FILE_BROWSER);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -67,6 +67,18 @@ jobs:
       - name: Run tests
         run: ./build/Debug/giada.exe --run-tests
 
+      - name: Run native Windows dialog tests
+        shell: pwsh
+        run: ./scripts/test-windows-gui.ps1 -Executable ./build/Debug/giada.exe
+
+      - name: Upload Windows GUI test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-gui-test-results
+          path: build/gui-test-results/
+          if-no-files-found: ignore
+
   # macOS ----------------------------------------------------------------------
   macos:
     name: macOS
