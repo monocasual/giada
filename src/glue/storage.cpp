@@ -99,8 +99,11 @@ bool validateFileName_(const std::string& name)
 void loadProject(void* data)
 {
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
+	loadProjectPath(browser->getSelectedItem());
+}
 
-	const std::string projectPath = browser->getSelectedItem();
+void loadProjectPath(const std::string& projectPath)
+{
 
 	/* Close all plug-ins sub-windows first, in case there are VST editors visible.
 	VST editors must be closed before deleting their plug-in processors. */

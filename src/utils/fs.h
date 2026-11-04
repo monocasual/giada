@@ -34,6 +34,8 @@
 namespace giada::u::fs
 {
 bool        isProject(const std::string& s);
+// Resolve a project bundle or its contained patch file to the bundle directory.
+std::string getProjectOpenPath(const std::string& argument);
 std::string getConfigDirPath();
 std::string getMidiMapsPath();
 std::string getLangMapsPath();
