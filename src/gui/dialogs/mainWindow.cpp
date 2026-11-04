@@ -79,6 +79,9 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	Fl::visible_focus(0);
 
 	Fl::background(25, 25, 25); // TODO use G_COLOR_GREY_1
+	// Built-in menus, including Cut/Copy/Paste in text inputs, use FLTK's
+	// global foreground rather than the input widget's text color.
+	Fl::foreground(200, 200, 200); // Match G_COLOR_LIGHT_2 on the dark palette.
 
 	Fl::set_boxtype(G_CUSTOM_BORDER_BOX, g_customBorderBox, 1, 1, 2, 2);
 	Fl::set_boxtype(G_CUSTOM_UP_BOX, g_customUpBox, 1, 1, 2, 2);
