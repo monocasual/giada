@@ -40,6 +40,9 @@
 #include "tests/ActionManager.cpp"
 #include "tests/channelFactory.cpp"
 #include "tests/midiEvent.cpp"
+#ifdef _WIN32
+#include "tests/midiEditor.cpp"
+#endif
 #include "tests/midiLightning.cpp"
 #include "tests/patch.cpp"
 #include "tests/sampleRendering.cpp"
