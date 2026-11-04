@@ -206,7 +206,7 @@ Engine::Engine()
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames)
 	{
-		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), "TAKE");
+		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), "TAKE.wav");
 	};
 
 	m_sequencer.onAboutStart = [this](SeqStatus status)
