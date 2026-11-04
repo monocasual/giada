@@ -46,6 +46,7 @@
 #include "tests/version.cpp"
 #include "tests/wave.cpp"
 #include "tests/waveFactory.cpp"
+#include "tests/projectWavNames.cpp"
 #include "tests/waveFx.cpp"
 #include "tests/waveReading.cpp"
 #include <catch2/catch_session.hpp>
