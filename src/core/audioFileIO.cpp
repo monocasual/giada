@@ -30,6 +30,7 @@
 #include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/utils/log.h"
 #include <sndfile.h>
+#include <juce_core/juce_core.h>
 
 namespace utils = mcl::utils;
 
@@ -175,14 +176,25 @@ std::expected<mcl::AudioBuffer, int> read(const std::string& path)
 
 /* -------------------------------------------------------------------------- */
 
-int write(const std::string& path, const mcl::AudioBuffer& buffer, int sampleRate)
+namespace
 {
+// Per-call operations allow tests to exercise real short writes and close errors
+// without changing global I/O state or filling a disk.
+int write_(const std::string& path, const mcl::AudioBuffer& buffer, int sampleRate,
+    sf_count_t (*writeFrames)(SNDFILE*, const float*, sf_count_t) = sf_writef_float,
+    int (*closeFile)(SNDFILE*) = sf_close)
+{
+	const juce::File target = juce::File::getCurrentWorkingDirectory().getChildFile(juce::String::fromUTF8(path.c_str()));
+	if (path.empty() || target.isDirectory())
+		return G_RES_ERR_IO;
+	// Keep an existing asset intact if opening, writing or finalizing fails.
+	juce::TemporaryFile temporary(target);
 	SF_INFO info{};
 	info.samplerate = sampleRate;
 	info.channels   = buffer.countChannels();
 	info.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
 
-	SndFileHandle_ file(sf_open(path.c_str(), SFM_WRITE, &info));
+	SndFileHandle_ file(sf_open(temporary.getFile().getFullPathName().toRawUTF8(), SFM_WRITE, &info));
 	if (!file)
 	{
 		u::log::print("[audioFileIO::write] Unable to open '{}' for writing\n", path);
@@ -190,11 +202,27 @@ int write(const std::string& path, const mcl::AudioBuffer& buffer, int sampleRat
 	}
 
 	std::vector<float> interleaved   = interleave_(buffer);
-	sf_count_t         framesWritten = sf_writef_float(file.get(), interleaved.data(), buffer.countFrames());
+	sf_count_t         framesWritten = writeFrames(file.get(), interleaved.data(), buffer.countFrames());
+	const int closeResult = closeFile(file.release());
 
-	if (framesWritten != buffer.countFrames())
-		u::log::print("[audioFileIO::write] Warning: incomplete write!\n");
+	if (framesWritten != buffer.countFrames() || closeResult != 0)
+	{
+		u::log::print("[audioFileIO::write] Unable to complete audio write: '{}'\n", path);
+		return G_RES_ERR_IO;
+	}
+	if (!temporary.overwriteTargetFileWithTemporary())
+		return G_RES_ERR_IO;
 
 	return G_RES_OK;
 }
+} // namespace
+
+int write(const std::string& path, const mcl::AudioBuffer& buffer, int sampleRate)
+{
+	return write_(path, buffer, sampleRate);
+}
 } // namespace giada::m::audioFileIO
+
+#ifdef WITH_TESTS
+#include "tests/audioFileIO.cpp"
+#endif
