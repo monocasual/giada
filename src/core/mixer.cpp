@@ -277,7 +277,7 @@ int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Fr
 		return 0;
 	}
 
-	const int   framesToCopy = -1; // copy everything
+	const int   framesToCopy = inBuf.countFrames();
 	const Frame srcOffset    = 0;
 	const Frame destOffset   = inputTracker % maxFrames; // loop over at maxFrames
 
