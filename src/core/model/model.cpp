@@ -116,7 +116,7 @@ void Model::store(Conf& conf) const
 
 /* -------------------------------------------------------------------------- */
 
-void Model::store(Patch& patch, const std::string& projectPath)
+bool Model::store(Patch& patch, const std::string& projectPath)
 {
 	get().store(patch);
 
@@ -125,7 +125,7 @@ void Model::store(Patch& patch, const std::string& projectPath)
 	is the Wave's new file path, something that the real-time thread doesn't
 	care about. */
 
-	m_shared.store(patch, projectPath);
+	return m_shared.store(patch, projectPath);
 }
 
 /* -------------------------------------------------------------------------- */
