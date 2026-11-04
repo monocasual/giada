@@ -30,11 +30,24 @@
 #include "src/const.h"
 #include "src/deps/mcl-utils/src/string.hpp"
 #include "src/utils/log.h"
+#include <juce_core/juce_core.h>
 
 namespace utils = mcl::utils;
 
 namespace giada::u::fs
 {
+std::string getProjectOpenPath(const std::string& argument)
+{
+	if (argument.empty())
+		return {};
+	const juce::File file = juce::File::getCurrentWorkingDirectory().getChildFile(juce::String::fromUTF8(argument.c_str()));
+	if (file.hasFileExtension(".gptc"))
+		return file.getParentDirectory().getFullPathName().toStdString();
+	if (file.hasFileExtension(".gprj"))
+		return file.getFullPathName().toStdString();
+	return {};
+}
+
 bool isProject(const std::string& s)
 {
 	/** TODO - checks too weak. */

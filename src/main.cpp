@@ -26,6 +26,15 @@
 
 #include "src/core/engine.h"
 #include "src/gui/ui.h"
+#include "src/glue/storage.h"
+#include "src/utils/fs.h"
+#if G_OS_WINDOWS
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#include <shellapi.h>
+#endif
 
 giada::m::Engine* g_engine = nullptr;
 giada::v::Ui*     g_ui     = nullptr;
@@ -44,6 +53,22 @@ int main(int argc, char** argv)
 	g_ui     = uiPtr.get();
 
 	m::init::startup();
+	if (argc > 1)
+	{
+		std::string argument = argv[1];
+#if G_OS_WINDOWS
+		// Explorer supplies Unicode filenames; the narrow CRT argv can lose them.
+		int count = 0;
+		if (auto** args = CommandLineToArgvW(GetCommandLineW(), &count))
+		{
+			if (count > 1)
+				argument = juce::String(args[1]).toStdString();
+			LocalFree(args);
+		}
+#endif
+		if (const std::string project = u::fs::getProjectOpenPath(argument); !project.empty())
+			c::storage::loadProjectPath(project);
+	}
 	m::init::run();
 
 	return 0;
