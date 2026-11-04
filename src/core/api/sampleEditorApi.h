@@ -49,6 +49,7 @@ public:
 	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&, rendering::Reactor&, Sequencer&);
 
 	void          loadPreviewChannel(ID sourceChannelId);
+	int           playPreviewFile(const std::string& path);
 	void          freePreviewChannel();
 	void          setPreviewTracker(Frame);
 	void          setPreviewLoop(bool);
@@ -84,6 +85,8 @@ private:
 	A Wave used during cut/copy/paste operations. */
 
 	std::unique_ptr<m::Wave> m_waveBuffer;
+	// Browser previews are transient and must never enter the project's wave list.
+	std::unique_ptr<m::Wave> m_browserPreviewWave;
 };
 } // namespace giada::m
 

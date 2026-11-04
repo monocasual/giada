@@ -49,6 +49,7 @@ private:
 	geChoice*     m_tooltips;
 	geStringMenu* m_langMap;
 	geChoice*     m_uiScaling;
+	geChoice*     m_fileBrowser;
 };
 } // namespace giada::v
 

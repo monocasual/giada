@@ -34,6 +34,7 @@ void Model::store(m::Conf& conf) const
 {
 	conf.logMode      = logMode;
 	conf.showTooltips = showTooltips;
+	conf.useNativeSampleDialogs = useNativeSampleDialogs;
 	conf.langMap      = langMap;
 	conf.pluginPath   = pluginPath;
 	conf.patchPath    = patchPath;
@@ -89,6 +90,7 @@ void Model::load(const m::Conf& conf)
 {
 	logMode          = conf.logMode;
 	showTooltips     = conf.showTooltips;
+	useNativeSampleDialogs = conf.useNativeSampleDialogs;
 	langMap          = conf.langMap;
 	pluginPath       = conf.pluginPath;
 	patchPath        = conf.patchPath;

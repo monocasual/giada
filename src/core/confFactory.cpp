@@ -143,6 +143,7 @@ Conf parse_(std::ifstream& ifs)
 	conf.valid                      = true;
 	conf.logMode                    = j.value(CONF_KEY_LOG_MODE, conf.logMode);
 	conf.showTooltips               = j.value(CONF_KEY_SHOW_TOOLTIPS, conf.showTooltips);
+	conf.useNativeSampleDialogs     = j.value("use_native_sample_dialogs", conf.useNativeSampleDialogs);
 	conf.langMap                    = j.value(CONF_KEY_LANGMAP, conf.langMap);
 	conf.soundSystem                = j.value(CONF_KEY_SOUND_SYSTEM, conf.soundSystem);
 	conf.soundDeviceOut             = j.value(CONF_KEY_SOUND_DEVICE_OUT, conf.soundDeviceOut);
@@ -309,6 +310,7 @@ bool serialize(const Conf& conf)
 	j[CONF_KEY_INPUT_MONITOR_DEFAULT_ON]      = conf.inputMonitorDefaultOn;
 	j[CONF_KEY_OVERDUB_PROTECTION_DEFAULT_ON] = conf.overdubProtectionDefaultOn;
 	j[CONF_KEY_PLUGINS_PATH]                  = conf.pluginPath;
+	j["use_native_sample_dialogs"]             = conf.useNativeSampleDialogs;
 	j[CONF_KEY_PATCHES_PATH]                  = conf.patchPath;
 	j[CONF_KEY_SAMPLES_PATH]                  = conf.samplePath;
 	j[CONF_KEY_MAIN_WINDOW_X]                 = conf.mainWindowBounds.x;

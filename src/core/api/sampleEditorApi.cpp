@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/api/sampleEditorApi.h"
+#include "src/core/rendering/sampleReactions.h"
 #include "src/core/channels/channelManager.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/mixer.h"
@@ -49,6 +50,8 @@ SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager
 
 void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 {
+	if (m_browserPreviewWave)
+		freePreviewChannel();
 	m_channelManager.loadWaveInPreviewChannel(sourceChannelId, m_sequencer.getCurrentScene());
 	m_model.get().mixer.renderPreview = true;
 	m_model.swap(model::SwapType::NONE);
@@ -61,6 +64,25 @@ void SampleEditorApi::freePreviewChannel()
 	m_channelManager.freeWaveInPreviewChannel();
 	m_model.get().mixer.renderPreview = false;
 	m_model.swap(model::SwapType::NONE);
+	m_browserPreviewWave.reset();
+}
+
+int SampleEditorApi::playPreviewFile(const std::string& path)
+{
+	freePreviewChannel();
+	auto result = waveFactory::createFromFile(path, {}, m_kernelAudio.getSampleRate(),
+	    m_model.get().kernelAudio.rsmpQuality);
+	if (result.status != G_RES_OK)
+		return result.status;
+	m_browserPreviewWave = std::move(result.wave);
+	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	preview.loadSample({m_browserPreviewWave.get(), {}}, Scene{0});
+	preview.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC;
+	preview.volume = 0.5f;
+	m_model.get().mixer.renderPreview = true;
+	m_model.swap(model::SwapType::NONE);
+	rendering::playSampleChannel(*m_channelManager.getChannel(PREVIEW_CHANNEL_ID).shared, 0);
+	return G_RES_OK;
 }
 
 /* -------------------------------------------------------------------------- */

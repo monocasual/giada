@@ -35,7 +35,15 @@ class gdBrowserLoad : public gdBrowserBase
 {
 public:
 	gdBrowserLoad(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, ID channelId, const Model&);
+	    std::function<void(void*)> cb, ID channelId, const Model&, bool audioPreview = false);
+	~gdBrowserLoad();
+	void refresh() override;
+
+private:
+	void stopPreview();
+	void updatePreviewButton();
+	bool m_audioPreview = false;
+	bool m_previewLoaded = false;
 };
 } // namespace giada::v
 

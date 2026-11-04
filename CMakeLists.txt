@@ -272,6 +272,8 @@ list(APPEND SOURCES
 	src/gui/dialogs/browser/browserLoad.h
 	src/gui/dialogs/browser/browserSave.cpp
 	src/gui/dialogs/browser/browserSave.h
+	src/gui/dialogs/browser/nativeProjectDialog.cpp
+	src/gui/dialogs/browser/nativeProjectDialog.h
 	src/gui/dialogs/midiIO/midiOutputBase.cpp
 	src/gui/dialogs/midiIO/midiOutputBase.h
 	src/gui/dialogs/midiIO/midiOutputSampleCh.cpp

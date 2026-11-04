@@ -52,17 +52,27 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 		m_langMap   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MISC_LANGUAGE),
 		      g_ui->getI18Text(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
 		m_uiScaling = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MISC_UISCALING), LABEL_WIDTH);
+		m_fileBrowser = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MISC_FILEBROWSER), LABEL_WIDTH);
 
 		body->addWidget(m_debugMsg, G_GUI_UNIT);
 		body->addWidget(m_tooltips, G_GUI_UNIT);
 		body->addWidget(m_langMap, G_GUI_UNIT);
 		body->addWidget(m_uiScaling, G_GUI_UNIT);
+		body->addWidget(m_fileBrowser, G_GUI_UNIT);
 		body->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_RESTARTGIADA)));
 		body->end();
 	}
 
 	add(body);
 	resizable(body);
+	m_fileBrowser->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_FILEBROWSER_GIADA), 0);
+	m_fileBrowser->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_FILEBROWSER_SYSTEM), 1);
+	m_fileBrowser->showItem(m_data.useNativeSampleDialogs ? 1 : 0);
+	m_fileBrowser->onChange = [this](int id)
+	{
+		m_data.useNativeSampleDialogs = id == 1;
+		c::config::save(m_data);
+	};
 
 	m_debugMsg->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES_DISABLED));
 	m_debugMsg->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES_TOSTDOUT));

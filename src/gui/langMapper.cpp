@@ -246,6 +246,18 @@ LangMap::LangMap()
 	m_data[ACTIONEDITOR_LABEL_ACTIONTYPE] = "Action type to add";
 
 	m_data[BROWSER_SHOWHIDDENFILES] = "Show hidden files";
+	m_data[BROWSER_PROJECTNAME] = "Project name";
+	m_data[BROWSER_FOLDERNOTFOUND] = "This folder is not available. Check the path and try again.";
+	m_data[BROWSER_PLAYPREVIEW] = "Play preview";
+	m_data[BROWSER_STOPPREVIEW] = "Stop preview";
+	m_data[BROWSER_PREVIEWERROR] = "Could not preview this audio file.";
+	m_data[CONFIG_MISC_FILEBROWSER] = "Sample browser";
+	m_data[CONFIG_MISC_FILEBROWSER_GIADA] = "Giada browser (experimental)";
+	m_data[CONFIG_MISC_FILEBROWSER_SYSTEM] = "OS native";
+	m_data[BROWSER_SAVEIN] = "Save in";
+	m_data[BROWSER_PROJECTFOLDER] = "Project folder";
+	m_data[BROWSER_SYSTEMDIALOGERROR] = "Unable to open the system file dialog.";
+	m_data[BROWSER_SELECTPROJECT] = "Select a Giada project folder (.gprj).";
 	m_data[BROWSER_OPENPROJECT]     = "Open project";
 	m_data[BROWSER_SAVEPROJECT]     = "Save project";
 	m_data[BROWSER_OPENSAMPLE]      = "Open sample";
