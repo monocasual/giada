@@ -33,7 +33,9 @@
 #include "src/core/rendering/pluginRendering.h"
 #include "src/core/rendering/sampleAdvance.h"
 #include "src/core/rendering/sampleRendering.h"
+#include "src/utils/time.h"
 #include <chrono>
+#include <cmath>
 #ifdef WITH_AUDIO_JACK
 #include "src/core/jackSynchronizer.h"
 #include "src/core/jackTransport.h"
@@ -67,6 +69,31 @@ RenderInfo findRenderInfo_(const RenderCommands& commands, ID channelId)
 		if (id == channelId)
 			return info;
 	return {RenderInfo::Mode::NONE};
+}
+
+/* -------------------------------------------------------------------------- */
+
+juce::AudioPlayHead::PositionInfo makePluginPositionInfo_(
+    const model::Sequencer& sequencer,
+    Frame                   blockStart,
+    int                     sampleRate,
+    bool                    isPlaying)
+{
+	const TimeSignature signature   = sequencer.getTimeSignature();
+	const double        bpm         = sequencer.getBpm();
+	const double        ppqPosition = u::time::frameToQuarterNotes(blockStart, sampleRate, bpm);
+	const int           beatsPerBar = signature.beats / signature.bars;
+
+	juce::AudioPlayHead::PositionInfo position;
+	position.setTimeInSamples(blockStart);
+	position.setTimeInSeconds(static_cast<double>(blockStart) / sampleRate);
+	position.setBpm(bpm);
+	position.setPpqPosition(ppqPosition);
+	position.setPpqPositionOfLastBarStart(std::floor(ppqPosition / beatsPerBar) * beatsPerBar);
+	position.setTimeSignature(juce::AudioPlayHead::TimeSignature{beatsPerBar, 4});
+	position.setIsPlaying(isPlaying);
+
+	return position;
 }
 } // namespace
 
@@ -118,18 +145,22 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 		return;
 
 	const int bufferSize = out.countFrames();
+	const int sampleRate = doc.kernelAudio.samplerate;
 
 #ifdef WITH_AUDIO_JACK
 	if (kernelAudio.api == RtAudio::Api::UNIX_JACK)
 		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
+	const Frame currentFrame   = params.sequencer.getCurrentFrame();
+	const auto  pluginPosition = makePluginPositionInfo_(doc.sequencer, currentFrame,
+	     sampleRate, doc.sequencer.isRunning());
+
 	/* If the sequencer is running, advance it first (i.e. parse it for events).
 	Also advance channels (i.e. let them react to sequencer events). */
 
 	if (doc.sequencer.isRunning())
 	{
-		const Frame      currentFrame  = params.sequencer.getCurrentFrame();
 		const int        quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const FrameRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
@@ -144,7 +175,6 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int                sampleRate     = doc.kernelAudio.samplerate;
 	const int                maxFramesToRec = doc.mixer.inputRecMode == InputRecMode::FREE ? doc.sequencer.getMaxFramesInLoop(sampleRate) : doc.sequencer.getFramesInLoop(sampleRate);
 	const Scene              scene          = params.sequencer.getCurrentScene();
 	const bool               hasSolos       = doc.mixer.hasSolos;
@@ -163,10 +193,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	// Render tracks
 
-	renderTracks(doc.tracks, assets, masterOutView, out, assets.mixerRendering->getInBuffer(),
+	renderTracks(doc.tracks, assets, pluginPosition, masterOutView, out, assets.mixerRendering->getInBuffer(),
 	    scene, hasSolos, doc.sequencer.isRunning());
 
-	renderMasterOut(masterOutView, assets, out, doc.kernelAudio.deviceOut.channelsStart);
+	renderMasterOut(masterOutView, assets, pluginPosition, out, doc.kernelAudio.deviceOut.channelsStart);
 
 	// TODO
 	// if (mixer.renderPreview)
@@ -237,14 +267,15 @@ RenderInfo Renderer::advanceChannel(const model::ChannelView& channelView,
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderTracks(
-    const model::Tracks&      tracks,
-    const model::Assets&      assets,
-    const model::ChannelView& masterOut,
-    mcl::AudioBuffer&         hardwareOut,
-    const mcl::AudioBuffer&   in,
-    Scene                     scene,
-    bool                      hasSolos,
-    bool                      seqIsRunning) const
+    const model::Tracks&                     tracks,
+    const model::Assets&                     assets,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    const model::ChannelView&                masterOut,
+    mcl::AudioBuffer&                        hardwareOut,
+    const mcl::AudioBuffer&                  in,
+    Scene                                    scene,
+    bool                                     hasSolos,
+    bool                                     seqIsRunning) const
 {
 	const model::Channel::Rendering& masterOutRendering = masterOut.getRendering();
 
@@ -270,12 +301,12 @@ void Renderer::renderTracks(
 			{
 				const model::SampleChannelView sampleView = model::makeSampleChannelView(channelView, assets, scene);
 				renderNormalChannel(sampleView, renderInfo, in, seqIsRunning);
-				renderAudioPlugins(channelView, assets, m_pluginHost);
+				renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
 			}
 			else if (c.type == ChannelType::MIDI)
 			{
 				channelView.getRendering().clearAudioBuffer(0);
-				renderMidiChannel(channelView, assets);
+				renderMidiChannel(channelView, assets, pluginPosition);
 			}
 			else
 				channelView.getRendering().clearAudioBuffer(0);
@@ -288,7 +319,7 @@ void Renderer::renderTracks(
 				mergeChannel(channelView, hardwareOut, offset);
 		}
 
-		renderAudioPlugins(groupView, assets, m_pluginHost);
+		renderAudioPlugins(groupView, assets, pluginPosition, m_pluginHost);
 
 		if (!group.isAudible(hasSolos))
 			continue;
@@ -317,12 +348,13 @@ void Renderer::renderNormalChannel(
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderMasterOut(
-    const model::ChannelView& channelView,
-    const model::Assets&      assets,
-    mcl::AudioBuffer&         out,
-    int                       channelOffset) const
+    const model::ChannelView&                channelView,
+    const model::Assets&                     assets,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    mcl::AudioBuffer&                        out,
+    int                                      channelOffset) const
 {
-	renderAudioPlugins(channelView, assets, m_pluginHost);
+	renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
 	mergeChannel(channelView, out, channelOffset);
 }
 
@@ -360,11 +392,12 @@ void Renderer::renderSampleChannel(
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderMidiChannel(
-    const model::ChannelView& channelView,
-    const model::Assets&      assets) const
+    const model::ChannelView&                channelView,
+    const model::Assets&                     assets,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition) const
 {
 	assert(channelView.getChannel().type == ChannelType::MIDI);
-	renderAudioAndMidiPlugins(channelView, assets, m_pluginHost);
+	renderAudioAndMidiPlugins(channelView, assets, pluginPosition, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
