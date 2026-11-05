@@ -28,6 +28,7 @@
 #include "src/core/actions/ActionManager.h"
 #include "src/core/kernelMidi.h"
 #include <cassert>
+#include <utility>
 
 namespace giada::m::rendering
 {
@@ -89,7 +90,7 @@ void sendMidiAllNotesOff(const Channel& ch, KernelMidi& kernelMidi)
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e)
+void sendMidiEventToPlugins(model::Channel::Rendering& rendering, const MidiEvent& e)
 {
 	/* Now all messages are turned into Channel-0 messages. Giada doesn't care
 	about holding MIDI channel information. Moreover, having all internal
@@ -97,7 +98,8 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent
 
 	MidiEvent flat(e);
 	flat.setChannel(0);
-	sendMidiToPlugins_(midiQueue, flat, /*delta=*/0);
+	flat.setDelta(0);
+	rendering.pushMidiEvent(std::move(flat));
 }
 
 /* -------------------------------------------------------------------------- */

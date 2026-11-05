@@ -27,8 +27,9 @@
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/channels/channel.h"
 #include "src/core/const.h"
+#include "src/core/model/assets.h"
+#include "src/core/model/plugin.h"
 #include "src/core/model_DEPR_/model.h"
-#include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/deps/mcl-utils/src/container.hpp"
@@ -63,25 +64,46 @@ void PluginHost::setBufferSize(int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginHost::processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
-    const juce::MidiBuffer* events)
+void PluginHost::processStack(
+    const model::Channel::Rendering& rendering,
+    const std::vector<ID>&           pluginIds,
+    const model::Assets&             assets,
+    const juce::MidiBuffer*          events)
 {
-	assert(outBuf.countFrames() == m_audioBuffer.getNumSamples());
-
-	if (plugins.empty())
+	if (pluginIds.empty())
 		return;
 
-	giadaToJuceTempBuf(outBuf);
+	const mcl::AudioBuffer& buffer = rendering.getAudioBuffer();
 
-	if (events == nullptr)
+	assert(buffer.countFrames() == m_audioBuffer.getNumSamples());
+	assert(buffer.countChannels() == m_audioBuffer.getNumChannels());
+
+	/* Seed the internal working buffer with this channel's current audio. */
+
+	giadaToJuceTempBuf(buffer);
+
+	/* Keep one mutable MIDI stream for the stack so MIDI changes from one
+	plug-in are visible to the next. */
+
+	juce::MidiBuffer chainEvents;
+	if (events != nullptr)
+		chainEvents = *events;
+
+	for (const ID pluginId : pluginIds)
 	{
-		juce::MidiBuffer dummyEvents; // empty
-		processPlugins(plugins, dummyEvents);
-	}
-	else
-		processPlugins(plugins, *events);
+		const auto plugin = assets.plugins.find(pluginId);
+		assert(plugin != nullptr);
 
-	juceToGiadaOutBuf(outBuf);
+		if (!plugin->valid || plugin->isSuspended() || plugin->isBypassed())
+			continue;
+
+		processPlugin(*plugin, chainEvents);
+	}
+
+	/* Write the final chain result back to the channel's rendering buffer. */
+
+	rendering.copyToAudioBufferFrom(
+	    m_audioBuffer, m_audioBuffer.getNumSamples(), 0, 0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -149,52 +171,20 @@ void PluginHost::giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf)
 	}
 }
 
-void PluginHost::juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const
-{
-	assert(outBuf.countChannels() == m_audioBuffer.getNumChannels());
-	assert(outBuf.countFrames() == m_audioBuffer.getNumSamples());
-
-	for (int ch = 0; ch < outBuf.countChannels(); ++ch)
-	{
-		const float* src = m_audioBuffer.getReadPointer(ch);
-		float*       dst = outBuf.getChannelView(ch).data();
-
-		std::copy(src, src + outBuf.countFrames(), dst);
-	}
-}
-
 /* -------------------------------------------------------------------------- */
 
-void PluginHost::processPlugins(const std::vector<Plugin*>& plugins, const juce::MidiBuffer& events)
+void PluginHost::processPlugin(const model::Plugin& plugin, juce::MidiBuffer& events)
 {
-	/* Plugins receive a mutable, local copy of the incoming MIDI buffer so they
-	can modify existing events or generate new ones; the resulting MIDI stream
-	is then passed downstream to the next plugins in the stack. This allows
-	MIDI-generating plugins to forward their output to subsequent plugins. */
+	const model::Plugin::Buffer& output = plugin.process(m_audioBuffer, events);
 
-	juce::MidiBuffer localEvents = events;
-	for (Plugin* p : plugins)
+	/* Preserve the existing channel-layout mapping: the next plug-in receives
+	this plug-in's output in the host's working buffer. */
+
+	for (int hostChannel = 0, pluginChannel = 0; hostChannel < m_audioBuffer.getNumChannels(); ++hostChannel)
 	{
-		if (!p->valid || p->isSuspended() || p->isBypassed())
-			continue;
-		processPlugin(p, localEvents);
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void PluginHost::processPlugin(Plugin* p, juce::MidiBuffer& events)
-{
-	const Plugin::Buffer& pluginBuffer = p->process(m_audioBuffer, events);
-
-	/* Merge the plugin buffer back into the local one. Special care is needed
-	if audio channels mismatch. */
-
-	for (int i = 0, j = 0; i < m_audioBuffer.getNumChannels(); i++)
-	{
-		m_audioBuffer.copyFrom(i, 0, pluginBuffer, j, 0, pluginBuffer.getNumSamples());
-		if (i < p->countMainOutChannels() - 1)
-			j++;
+		m_audioBuffer.copyFrom(hostChannel, 0, output, pluginChannel, 0, output.getNumSamples());
+		if (hostChannel < plugin.countMainOutChannels() - 1)
+			++pluginChannel;
 	}
 }
 } // namespace giada::m
