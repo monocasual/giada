@@ -28,6 +28,7 @@
 #define G_PLUGIN_HOST_H
 
 #include "src/const.h"
+#include "src/core/model/channel.h"
 #include "src/types.h"
 #include <functional>
 /* windows.h, included somewhere, defines 'small' as a macro and it clashes with
@@ -49,11 +50,17 @@ namespace giada::m
 class Plugin;
 }
 
+namespace giada::m::model
+{
+struct Assets;
+class Plugin;
+}
+
 namespace giada::m::model_DEPR_
 {
 class Model;
 class Sequencer;
-} // namespace giada::m::model
+} // namespace giada::m::model_DEPR_
 
 namespace giada::m
 {
@@ -79,11 +86,13 @@ public:
 
 	const Plugin& addPlugin(std::unique_ptr<Plugin> p);
 
-	/* processStack
-	Applies the fx list to the buffer. */
+	/* processStack. */
 
-	void processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
-	    const juce::MidiBuffer* events = nullptr);
+	void processStack(
+	    const model::Channel::Rendering&,
+	    const std::vector<ID>& pluginIds,
+	    const model::Assets&,
+	    const juce::MidiBuffer* events);
 
 	/* freePlugin.
 	Unloads plugin from memory. */
@@ -111,14 +120,7 @@ private:
 
 	void giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf);
 
-	/* juceToGiadaOutBuf
-	Copies the private JUCE buffer to Giada buffer 'outBuf'. */
-
-	void juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const;
-
-	void processPlugins(const std::vector<Plugin*>&, const juce::MidiBuffer& events);
-
-	void processPlugin(Plugin*, juce::MidiBuffer& events);
+	void processPlugin(const model::Plugin&, juce::MidiBuffer& events);
 
 	model_DEPR_::Model& m_model_DEPR_;
 

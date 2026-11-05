@@ -166,7 +166,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	renderTracks(doc.tracks, assets, masterOutView, out, assets.mixerRendering->getInBuffer(),
 	    scene, hasSolos, doc.sequencer.isRunning());
 
-	renderMasterOut(masterOutView, out, doc.kernelAudio.deviceOut.channelsStart);
+	renderMasterOut(masterOutView, assets, out, doc.kernelAudio.deviceOut.channelsStart);
 
 	// TODO
 	// if (mixer.renderPreview)
@@ -270,6 +270,12 @@ void Renderer::renderTracks(
 			{
 				const model::SampleChannelView sampleView = model::makeSampleChannelView(channelView, assets, scene);
 				renderNormalChannel(sampleView, renderInfo, in, seqIsRunning);
+				renderAudioPlugins(channelView, assets, m_pluginHost);
+			}
+			else if (c.type == ChannelType::MIDI)
+			{
+				channelView.getRendering().clearAudioBuffer(0);
+				renderMidiChannel(channelView, assets);
 			}
 			else
 				channelView.getRendering().clearAudioBuffer(0);
@@ -282,8 +288,7 @@ void Renderer::renderTracks(
 				mergeChannel(channelView, hardwareOut, offset);
 		}
 
-		// TODO
-		// renderAudioPlugins(group, m_pluginHost);
+		renderAudioPlugins(groupView, assets, m_pluginHost);
 
 		if (!group.isAudible(hasSolos))
 			continue;
@@ -311,20 +316,13 @@ void Renderer::renderNormalChannel(
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
-{
-	m_pluginHost.processStack(in, ch.plugins, nullptr);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Renderer::renderMasterOut(
     const model::ChannelView& channelView,
+    const model::Assets&      assets,
     mcl::AudioBuffer&         out,
     int                       channelOffset) const
 {
-	// TODO
-	// m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+	renderAudioPlugins(channelView, assets, m_pluginHost);
 	mergeChannel(channelView, out, channelOffset);
 }
 
@@ -357,18 +355,16 @@ void Renderer::renderSampleChannel(
 	// TODO
 	// if (ch.canReceiveAudio())
 	//	renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
-
-	// TODO
-	// renderAudioPlugins(ch, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMidiChannel(const Channel& ch) const
+void Renderer::renderMidiChannel(
+    const model::ChannelView& channelView,
+    const model::Assets&      assets) const
 {
-	assert(ch.type == ChannelType::MIDI);
-
-	renderAudioAndMidiPlugins(ch, m_pluginHost);
+	assert(channelView.getChannel().type == ChannelType::MIDI);
+	renderAudioAndMidiPlugins(channelView, assets, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */

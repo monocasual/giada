@@ -31,6 +31,7 @@
 #include "src/core/channels/channel.h"
 #include "src/core/midiEvent.h"
 #include "src/core/midiMapper.h"
+#include "src/core/model/channel.h"
 
 namespace giada::m
 {
@@ -60,7 +61,7 @@ void sendMidiAllNotesOff(const Channel&, KernelMidi&);
 Enqueue MIDI event to to the MIDI queue, so that it will be processed later
 on by the PluginHost. */
 
-void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
+void sendMidiEventToPlugins(model::Channel::Rendering&, const MidiEvent&);
 
 /* sendMidiToOut
 Sends a MIDI event to the outside world. */

@@ -25,49 +25,30 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/rendering/pluginRendering.h"
-#include "src/core/channels/channel.h"
 #include "src/core/plugins/pluginHost.h"
 
 namespace giada::m::rendering
 {
-namespace
+void renderAudioAndMidiPlugins(
+    const model::ChannelView& channelView,
+    const model::Assets&      assets,
+    PluginHost&               pluginHost)
 {
-/* prepareMidiBuffer_
-Fills the JUCE MIDI buffer with events previously enqueued in the MidiQueue.
-Returns a reference to the JUCE MIDI buffer for convenience. */
+	const model::Channel&            channel   = channelView.getChannel();
+	const model::Channel::Rendering& rendering = channelView.getRendering();
 
-const juce::MidiBuffer& prepareMidiBuffer_(ChannelShared& shared)
-{
-	shared.midiBuffer.clear();
-
-	MidiEvent e;
-	while (shared.midiQueue.try_dequeue(e))
-	{
-		juce::MidiMessage message = juce::MidiMessage(
-		    e.getStatus(),
-		    e.getNote(),
-		    e.getVelocity());
-		shared.midiBuffer.addEvent(message, e.getDelta());
-	}
-
-	return shared.midiBuffer;
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void renderAudioAndMidiPlugins(const Channel& ch, PluginHost& pluginHost)
-{
-	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, &prepareMidiBuffer_(*ch.shared));
-	ch.shared->midiBuffer.clear();
+	pluginHost.processStack(rendering, channel.plugins, assets, &rendering.prepareMidiBuffer());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void renderAudioPlugins(const Channel& ch, PluginHost& pluginHost)
+void renderAudioPlugins(
+    const model::ChannelView& channelView,
+    const model::Assets&      assets,
+    PluginHost&               pluginHost)
 {
-	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+	const model::Channel& channel = channelView.getChannel();
+
+	pluginHost.processStack(channelView.getRendering(), channel.plugins, assets, nullptr);
 }
 } // namespace giada::m::rendering

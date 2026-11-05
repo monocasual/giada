@@ -30,6 +30,7 @@
 #include "src/core/rendering/midiOutput.h"
 #include "src/core/rendering/midiReactions.h"
 #include "src/core/rendering/sampleReactions.h"
+#include <cassert>
 
 namespace giada::m::rendering
 {
@@ -174,6 +175,8 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
     bool canRecordActions, Tick currentTickQuantized)
 {
+// TODO RealtimeModel
+#if 0
 	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
 
 	assert(ch.type == ChannelType::MIDI);
@@ -186,6 +189,7 @@ void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
 	sendMidiEventToPlugins(ch.shared->midiQueue, e);
 	if (ch.canSendMidi())
 		sendMidiToOut(channelId, e, ch.midiChannel->outputFilter, m_kernelMidi); // Also send it back to the outside world
+#endif
 }
 
 /* -------------------------------------------------------------------------- */

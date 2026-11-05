@@ -106,10 +106,9 @@ private:
 	    const mcl::AudioBuffer& in,
 	    bool                    seqIsRunning) const;
 
-	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
-
 	void renderMasterOut(
 	    const model::ChannelView& channelView,
+	    const model::Assets&      assets,
 	    mcl::AudioBuffer&         out,
 	    int                       channelOffset) const;
 
@@ -121,7 +120,7 @@ private:
 	    const mcl::AudioBuffer& in,
 	    bool                    seqIsRunning) const;
 
-	void renderMidiChannel(const Channel&) const;
+	void renderMidiChannel(const model::ChannelView&, const model::Assets&) const;
 
 	/* mergeChannel
 	Merges the 'dest' audio buffer with 'src'. */
