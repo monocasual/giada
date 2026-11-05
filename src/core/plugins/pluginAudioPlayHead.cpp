@@ -25,16 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/pluginAudioPlayHead.h"
-#include "src/core/model_DEPR_/sequencer.h"
 
 namespace giada::m
 {
-PluginAudioPlayHead::PluginAudioPlayHead(const model_DEPR_::Sequencer&, int)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
 juce::Optional<juce::AudioPlayHead::PositionInfo> PluginAudioPlayHead::getPosition() const
 {
 	return {m_positionInfo};

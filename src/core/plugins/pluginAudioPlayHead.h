@@ -29,19 +29,11 @@
 
 #include <juce_audio_basics/juce_audio_basics.h>
 
-namespace giada::m::model_DEPR_
-{
-class Sequencer;
-}
-
 namespace giada::m
 {
 class PluginAudioPlayHead final : public juce::AudioPlayHead
 {
 public:
-	PluginAudioPlayHead() = default;
-	PluginAudioPlayHead(const model_DEPR_::Sequencer&, int sampleRate);
-
 	juce::Optional<juce::AudioPlayHead::PositionInfo> getPosition() const override;
 	bool                                              canControlTransport() override;
 

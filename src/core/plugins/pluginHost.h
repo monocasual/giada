@@ -92,6 +92,7 @@ public:
 	    const model::Channel::Rendering&,
 	    const std::vector<ID>& pluginIds,
 	    const model::Assets&,
+	    const juce::AudioPlayHead::PositionInfo&,
 	    const juce::MidiBuffer* events);
 
 	/* freePlugin.

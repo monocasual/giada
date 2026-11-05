@@ -28,6 +28,7 @@
 #define G_RENDERING_PLUGIN_RENDERING_H
 
 #include "src/core/model/channelView.h"
+#include <juce_audio_basics/juce_audio_basics.h>
 
 namespace giada::m
 {
@@ -40,12 +41,20 @@ namespace giada::m::rendering
 Renders plug-ins using the shared juce::MidiBuffer for MIDI event rendering. It
 renders normal audio plug-ins too. */
 
-void renderAudioAndMidiPlugins(const model::ChannelView&, const model::Assets&, PluginHost&);
+void renderAudioAndMidiPlugins(
+    const model::ChannelView&,
+    const model::Assets&,
+    const juce::AudioPlayHead::PositionInfo&,
+    PluginHost&);
 
 /* renderAudioPlugins
 Renders audio-only plug-ins. */
 
-void renderAudioPlugins(const model::ChannelView&, const model::Assets&, PluginHost&);
+void renderAudioPlugins(
+    const model::ChannelView&,
+    const model::Assets&,
+    const juce::AudioPlayHead::PositionInfo&,
+    PluginHost&);
 } // namespace giada::m::rendering
 
 #endif

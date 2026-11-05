@@ -68,6 +68,7 @@ void PluginHost::processStack(
     const model::Channel::Rendering& rendering,
     const std::vector<ID>&           pluginIds,
     const model::Assets&             assets,
+    const juce::AudioPlayHead::PositionInfo& position,
     const juce::MidiBuffer*          events)
 {
 	if (pluginIds.empty())
@@ -97,6 +98,7 @@ void PluginHost::processStack(
 		if (!plugin->valid || plugin->isSuspended() || plugin->isBypassed())
 			continue;
 
+		plugin->setPlayHeadPosition(position);
 		processPlugin(*plugin, chainEvents);
 	}
 

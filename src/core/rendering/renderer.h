@@ -30,6 +30,7 @@
 #include "src/core/model/channelView.h"
 #include "src/core/model/types.h"
 #include "src/core/sequencer.h"
+#include <juce_audio_basics/juce_audio_basics.h>
 #include <vector>
 
 namespace mcl
@@ -93,6 +94,7 @@ private:
 	void renderTracks(
 	    const model::Tracks&,
 	    const model::Assets&,
+	    const juce::AudioPlayHead::PositionInfo&,
 	    const model::ChannelView& masterOut,
 	    mcl::AudioBuffer&         hardwareOut,
 	    const mcl::AudioBuffer&   in,
@@ -109,6 +111,7 @@ private:
 	void renderMasterOut(
 	    const model::ChannelView& channelView,
 	    const model::Assets&      assets,
+	    const juce::AudioPlayHead::PositionInfo&,
 	    mcl::AudioBuffer&         out,
 	    int                       channelOffset) const;
 
@@ -120,7 +123,10 @@ private:
 	    const mcl::AudioBuffer& in,
 	    bool                    seqIsRunning) const;
 
-	void renderMidiChannel(const model::ChannelView&, const model::Assets&) const;
+	void renderMidiChannel(
+	    const model::ChannelView&,
+	    const model::Assets&,
+	    const juce::AudioPlayHead::PositionInfo&) const;
 
 	/* mergeChannel
 	Merges the 'dest' audio buffer with 'src'. */

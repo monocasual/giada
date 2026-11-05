@@ -32,12 +32,14 @@ namespace giada::m::rendering
 void renderAudioAndMidiPlugins(
     const model::ChannelView& channelView,
     const model::Assets&      assets,
+    const juce::AudioPlayHead::PositionInfo& position,
     PluginHost&               pluginHost)
 {
 	const model::Channel&            channel   = channelView.getChannel();
 	const model::Channel::Rendering& rendering = channelView.getRendering();
 
-	pluginHost.processStack(rendering, channel.plugins, assets, &rendering.prepareMidiBuffer());
+	pluginHost.processStack(
+	    rendering, channel.plugins, assets, position, &rendering.prepareMidiBuffer());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -45,10 +47,11 @@ void renderAudioAndMidiPlugins(
 void renderAudioPlugins(
     const model::ChannelView& channelView,
     const model::Assets&      assets,
+    const juce::AudioPlayHead::PositionInfo& position,
     PluginHost&               pluginHost)
 {
 	const model::Channel& channel = channelView.getChannel();
 
-	pluginHost.processStack(channelView.getRendering(), channel.plugins, assets, nullptr);
+	pluginHost.processStack(channelView.getRendering(), channel.plugins, assets, position, nullptr);
 }
 } // namespace giada::m::rendering
