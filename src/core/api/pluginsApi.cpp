@@ -38,19 +38,18 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginsApi::PluginsApi(model::Model& m, PluginManager& pm, PluginHost& ph, model_DEPR_::Model& m_DEPR_)
+PluginsApi::PluginsApi(model::Model& m, PluginManager& pm, PluginHost& ph)
 : m_model(m)
 , m_pluginManager(pm)
 , m_pluginHost(ph)
-, m_model_DEPR_(m_DEPR_)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-const Plugin* PluginsApi::get(ID pluginId) const
+bool PluginsApi::hasEditor(ID pluginId) const
 {
-	return m_model_DEPR_.findPlugin(pluginId);
+	return m_model.getCurrentAssets()->plugins.get(pluginId)->hasEditor();
 }
 
 /* -------------------------------------------------------------------------- */

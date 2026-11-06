@@ -53,11 +53,7 @@ namespace
 {
 v::gdPluginWindow* getPluginWindowByPluginId_(ID pluginId)
 {
-	const m::Plugin* p = g_engine->getPluginsApi().get(pluginId);
-
-	assert(p != nullptr);
-
-	if (p->hasEditor())
+	if (g_engine->getPluginsApi().hasEditor(pluginId))
 		return nullptr;
 	return static_cast<v::gdPluginWindow*>(g_ui->getSubwindow(v::Ui::getPluginWindowId(pluginId)));
 }
