@@ -29,6 +29,7 @@
 
 #include "src/const.h"
 #include "src/core/model/channel.h"
+#include "src/core/model/types.h"
 #include "src/types.h"
 #include <functional>
 /* windows.h, included somewhere, defines 'small' as a macro and it clashes with
@@ -45,29 +46,18 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m
-{
-class Plugin;
-}
-
 namespace giada::m::model
 {
 struct Assets;
 class Plugin;
-}
-
-namespace giada::m::model_DEPR_
-{
-class Model;
-class Sequencer;
-} // namespace giada::m::model_DEPR_
+} // namespace giada::m::model
 
 namespace giada::m
 {
 class PluginHost final
 {
 public:
-	PluginHost(model_DEPR_::Model&);
+	PluginHost(model::Model&);
 
 	/* reset
 	Brings everything back to the initial state. */
@@ -79,12 +69,6 @@ public:
 	only when mixer is disabled. */
 
 	void setBufferSize(int);
-
-	/* addPlugin
-	Loads a new plugin into memory. Returns a reference to the newly created
-	object. */
-
-	const Plugin& addPlugin(std::unique_ptr<Plugin> p);
 
 	/* processStack. */
 
@@ -98,12 +82,17 @@ public:
 	/* freePlugin.
 	Unloads plugin from memory. */
 
-	void freePlugin(ID pluginId);
+	void freePlugin(ID pluginId, ID channelId);
 
 	/* freePlugins
 	Unloads multiple plugins. Useful when freeing or deleting a channel. */
 
-	void freePlugins(const std::vector<ID>);
+	void freePlugins(ID channelId);
+
+	/* swapPlugins
+	Swap plug-in 1 with plug-in 2 in the channel's plug-ins stack. */
+
+	void swapPlugins(ID pluginId1, ID pluginId2, ID channelId);
 
 	/* freeAllPlugins
 	Just deletes everything. */
@@ -123,8 +112,7 @@ private:
 
 	void processPlugin(const model::Plugin&, juce::MidiBuffer& events);
 
-	model_DEPR_::Model& m_model_DEPR_;
-
+	model::Model&            m_model;
 	juce::AudioBuffer<float> m_audioBuffer;
 };
 } // namespace giada::m

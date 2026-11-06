@@ -29,7 +29,6 @@
 #include "src/core/const.h"
 #include "src/core/model/assets.h"
 #include "src/core/model/plugin.h"
-#include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/deps/mcl-utils/src/container.hpp"
@@ -42,8 +41,8 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginHost::PluginHost(model_DEPR_::Model& m)
-: m_model_DEPR_(m)
+PluginHost::PluginHost(model::Model& m)
+: m_model(m)
 {
 }
 
@@ -65,11 +64,11 @@ void PluginHost::setBufferSize(int bufferSize)
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::processStack(
-    const model::Channel::Rendering& rendering,
-    const std::vector<ID>&           pluginIds,
-    const model::Assets&             assets,
+    const model::Channel::Rendering&         rendering,
+    const std::vector<ID>&                   pluginIds,
+    const model::Assets&                     assets,
     const juce::AudioPlayHead::PositionInfo& position,
-    const juce::MidiBuffer*          events)
+    const juce::MidiBuffer*                  events)
 {
 	if (pluginIds.empty())
 		return;
@@ -110,51 +109,76 @@ void PluginHost::processStack(
 
 /* -------------------------------------------------------------------------- */
 
-const Plugin& PluginHost::addPlugin(std::unique_ptr<Plugin> p)
+void PluginHost::freePlugin(ID pluginId, ID channelId)
 {
-	return m_model_DEPR_.addPlugin(std::move(p));
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [pluginId, channelId](model::Document& doc, model::Assets& assets)
+	{
+		utils::container::removeIf(doc.tracks.getChannel(channelId).plugins, [pluginId](ID id)
+		{ return id == pluginId; });
+
+		assets.plugins.remove(pluginId);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginHost::freePlugin(ID pluginId)
+void PluginHost::freePlugins(ID channelId)
 {
-	m_model_DEPR_.removePlugin(*m_model_DEPR_.findPlugin(pluginId));
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [channelId](model::Document& doc, model::Assets& assets)
+	{
+		for (const ID pluginId : doc.tracks.getChannel(channelId).plugins)
+			assets.plugins.remove(pluginId);
+		doc.tracks.getChannel(channelId).plugins.clear();
+	});
 }
 
-void PluginHost::freePlugins(const std::vector<ID> ids)
+/* -------------------------------------------------------------------------- */
+
+void PluginHost::swapPlugins(ID pluginId1, ID pluginId2, ID channelId)
 {
-	for (const ID id : ids)
-		freePlugin(id);
+	m_model.writeDocument(model::SwapType::HARD, [pluginId1, pluginId2, channelId](model::Document& doc)
+	{
+		auto&             plugins = doc.tracks.getChannel(channelId).plugins;
+		const std::size_t index1  = utils::container::indexOfIf(plugins, [pluginId1](ID id)
+		 { return id == pluginId1; });
+		const std::size_t index2  = utils::container::indexOfIf(plugins, [pluginId2](ID id)
+		 { return id == pluginId2; });
+		std::swap(plugins.at(index1), plugins.at(index2));
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::freeAllPlugins()
 {
-	m_model_DEPR_.clearPlugins();
+	m_model.writeAssets(model::SwapType::HARD, [](model::Assets& assets)
+	{
+		assets.plugins.clear();
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::setPluginParameter(ID pluginId, int paramIndex, float value)
 {
-	m_model_DEPR_.findPlugin(pluginId)->setParameter(paramIndex, value);
+	m_model.getCurrentAssets()->plugins.get(pluginId)->setParameter(paramIndex, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::setPluginProgram(ID pluginId, int programIndex)
 {
-	m_model_DEPR_.findPlugin(pluginId)->setCurrentProgram(programIndex);
+	m_model.getCurrentAssets()->plugins.get(pluginId)->setCurrentProgram(programIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::toggleBypass(ID pluginId)
 {
-	Plugin& plugin = *m_model_DEPR_.findPlugin(pluginId);
-	plugin.setBypass(!plugin.isBypassed());
+	auto plugin = m_model.getCurrentAssets()->plugins.get(pluginId);
+	plugin->setBypass(!plugin->isBypassed());
 }
 
 /* -------------------------------------------------------------------------- */
