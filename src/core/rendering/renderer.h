@@ -103,17 +103,20 @@ private:
 	    bool seqIsRunning) const;
 
 	void renderNormalChannel(
-	    const model::SampleChannelView&,
+	    const model::ChannelView&,
+	    const model::Assets&,
 	    RenderInfo,
+	    const juce::AudioPlayHead::PositionInfo&,
 	    const mcl::AudioBuffer& in,
-	    bool                    seqIsRunning) const;
+	    Scene,
+	    bool seqIsRunning) const;
 
 	void renderMasterOut(
 	    const model::ChannelView& channelView,
 	    const model::Assets&      assets,
 	    const juce::AudioPlayHead::PositionInfo&,
-	    mcl::AudioBuffer&         out,
-	    int                       channelOffset) const;
+	    mcl::AudioBuffer& out,
+	    int               channelOffset) const;
 
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
 
@@ -122,11 +125,6 @@ private:
 	    RenderInfo,
 	    const mcl::AudioBuffer& in,
 	    bool                    seqIsRunning) const;
-
-	void renderMidiChannel(
-	    const model::ChannelView&,
-	    const model::Assets&,
-	    const juce::AudioPlayHead::PositionInfo&) const;
 
 	/* mergeChannel
 	Merges the 'dest' audio buffer with 'src'. */

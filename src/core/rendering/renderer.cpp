@@ -294,22 +294,9 @@ void Renderer::renderTracks(
 		for (const model::Channel& c : track.getChannels().getAll())
 		{
 			const model::ChannelView channelView = model::makeChannelView(c, assets);
+			const RenderInfo         renderInfo  = findRenderInfo_(m_renderCommands, c.id);
 
-			const RenderInfo renderInfo = findRenderInfo_(m_renderCommands, c.id);
-
-			if (c.type == ChannelType::SAMPLE)
-			{
-				const model::SampleChannelView sampleView = model::makeSampleChannelView(channelView, assets, scene);
-				renderNormalChannel(sampleView, renderInfo, in, seqIsRunning);
-				renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
-			}
-			else if (c.type == ChannelType::MIDI)
-			{
-				channelView.getRendering().clearAudioBuffer(0);
-				renderMidiChannel(channelView, assets, pluginPosition);
-			}
-			else
-				channelView.getRendering().clearAudioBuffer(0);
+			renderNormalChannel(channelView, assets, renderInfo, pluginPosition, in, scene, seqIsRunning);
 
 			if (!c.isAudible(hasSolos))
 				continue;
@@ -333,16 +320,25 @@ void Renderer::renderTracks(
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderNormalChannel(
-    const model::SampleChannelView& sampleView,
-    RenderInfo                      renderInfo,
-    const mcl::AudioBuffer&         in,
-    bool                            seqIsRunning) const
+    const model::ChannelView&                channelView,
+    const model::Assets&                     assets,
+    RenderInfo                               renderInfo,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    const mcl::AudioBuffer&                  in,
+    Scene                                    scene,
+    bool                                     seqIsRunning) const
 {
-	const model::Channel::Rendering& rendering = sampleView.getRendering();
+	channelView.getRendering().clearAudioBuffer(0);
 
-	rendering.clearAudioBuffer(0);
-
-	renderSampleChannel(sampleView, renderInfo, in, seqIsRunning);
+	if (channelView.getChannel().type == ChannelType::SAMPLE)
+	{
+		renderSampleChannel(model::makeSampleChannelView(channelView, assets, scene), renderInfo, in, seqIsRunning);
+		renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
+	}
+	else if (channelView.getChannel().type == ChannelType::MIDI)
+	{
+		renderAudioAndMidiPlugins(channelView, assets, pluginPosition, m_pluginHost);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -387,17 +383,6 @@ void Renderer::renderSampleChannel(
 	// TODO
 	// if (ch.canReceiveAudio())
 	//	renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Renderer::renderMidiChannel(
-    const model::ChannelView&                channelView,
-    const model::Assets&                     assets,
-    const juce::AudioPlayHead::PositionInfo& pluginPosition) const
-{
-	assert(channelView.getChannel().type == ChannelType::MIDI);
-	renderAudioAndMidiPlugins(channelView, assets, pluginPosition, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
