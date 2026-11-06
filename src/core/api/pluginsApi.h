@@ -31,11 +31,6 @@
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/types.h"
 
-namespace giada::m::model_DEPR_
-{
-class Model;
-}
-
 namespace giada::m
 {
 class MidiEvent;
@@ -47,9 +42,9 @@ class Plugin;
 class PluginsApi
 {
 public:
-	PluginsApi(model::Model&, PluginManager&, PluginHost&, model_DEPR_::Model&);
+	PluginsApi(model::Model&, PluginManager&, PluginHost&);
 
-	const Plugin*           get(ID pluginId) const;
+	bool                    hasEditor(ID pluginId) const;
 	std::vector<PluginInfo> getInfo() const;
 	int                     countAvailablePlugins() const;
 
@@ -64,10 +59,9 @@ public:
 	void scan(const std::string& dir, const std::function<bool(float)>& progress);
 
 private:
-	model::Model&       m_model;
-	PluginManager&      m_pluginManager;
-	PluginHost&         m_pluginHost;
-	model_DEPR_::Model& m_model_DEPR_;
+	model::Model&  m_model;
+	PluginManager& m_pluginManager;
+	PluginHost&    m_pluginHost;
 };
 } // namespace giada::m
 
