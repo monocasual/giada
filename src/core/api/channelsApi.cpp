@@ -138,21 +138,11 @@ int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 
 void ChannelsApi::remove(ID channelId)
 {
-	// TODO - new model
-	// const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
-	const bool      hasSolos = m_channelManager.hasSolos();
-	std::vector<ID> pluginIds;
-	// for (const Plugin* p : plugins)
-	//     pluginIds.push_back(p->id);
-
+	const bool hasSolos = m_channelManager.hasSolos();
 	m_actionManager.clearChannel(channelId, {});
 	m_channelManager.deleteChannel(channelId);
 	m_mixer.updateSoloCount(hasSolos);
-
-	/* Plug-in destruction must be done in the main thread, due to JUCE and
-	VST3 internal workings. */
-
-	m_pluginHost.freePlugins(pluginIds);
+	m_pluginHost.freePlugins(channelId);
 }
 
 /* -------------------------------------------------------------------------- */

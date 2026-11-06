@@ -35,9 +35,9 @@ Windows. */
 #define NOMINMAX
 #endif
 
+#include "src/aliases.h"
 #include "src/core/midiLearnParam.h"
 #include "src/core/plugins/pluginAudioPlayHead.h"
-#include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginParameter.h"
 #include "src/core/plugins/pluginState.h"
 #include <juce_audio_processors/juce_audio_processors.h>

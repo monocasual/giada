@@ -90,15 +90,7 @@ void PluginsApi::add(const std::string& juceId, ID channelId)
 
 void PluginsApi::swap(ID pluginId1, ID pluginId2, ID channelId)
 {
-	m_model.writeDocument(model::SwapType::HARD, [pluginId1, pluginId2, channelId](model::Document& doc)
-	{
-		auto&             plugins = doc.tracks.getChannel(channelId).plugins;
-		const std::size_t index1  = utils::container::indexOfIf(plugins, [pluginId1](ID id)
-		 { return id == pluginId1; });
-		const std::size_t index2  = utils::container::indexOfIf(plugins, [pluginId2](ID id)
-		 { return id == pluginId2; });
-		std::swap(plugins.at(index1), plugins.at(index2));
-	});
+	m_pluginHost.swapPlugins(pluginId1, pluginId2, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
