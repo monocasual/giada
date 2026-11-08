@@ -104,6 +104,8 @@ public:
 
 	void rebuildSubWindow(ID wid);
 	void refreshSubWindow(ID wid);
+	void refreshSampleEditor();
+	void refreshActionEditor();
 
 	/* getSubwindow
 	Returns a pointer to an open subwindow, otherwise nullptr. */

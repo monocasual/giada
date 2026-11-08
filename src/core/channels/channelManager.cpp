@@ -626,6 +626,8 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId, Scene scene)
 		previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
 		previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(scene), Scene{0});
 		previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(scene), Scene{0});
+
+		doc.mixer.renderPreview = true;
 	});
 }
 
@@ -636,6 +638,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 	m_model.writeDocument(model::SwapType::SOFT, [](model::Document& doc)
 	{
 		doc.tracks.getChannel(PREVIEW_CHANNEL_ID).loadSample({}, Scene{0});
+		doc.mixer.renderPreview = false;
 	});
 }
 
@@ -643,7 +646,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 
 void ChannelManager::setPreviewTracker(Frame f)
 {
-	m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID).shared->tracker.store(f);
+	m_model.getCurrentAssets()->channelsParameters.get(PREVIEW_CHANNEL_ID)->setTracker(f);
 }
 
 /* -------------------------------------------------------------------------- */

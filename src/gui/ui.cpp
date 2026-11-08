@@ -205,7 +205,7 @@ void Ui::refresh()
 
 	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
 
-	// refreshSubWindow(WID_SAMPLE_EDITOR);
+	refreshSampleEditor();
 	// refreshSubWindow(WID_ACTION_EDITOR);
 }
 
@@ -273,6 +273,24 @@ void Ui::refreshSubWindow(ID wid)
 	// v::gdWindow* w = getSubwindow(wid);
 	// if (w != nullptr) // If its open
 	//	w->refresh();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::refreshSampleEditor()
+{
+	auto* w = static_cast<gdSampleEditor*>(getSubwindow(WID_SAMPLE_EDITOR));
+	if (w != nullptr)
+		w->refresh();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::refreshActionEditor()
+{
+	auto* w = static_cast<gdBaseActionEditor*>(getSubwindow(WID_ACTION_EDITOR));
+	if (w != nullptr)
+		w->refresh();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -35,11 +35,10 @@
 
 namespace giada::m
 {
-SampleEditorApi::SampleEditorApi(model::Model& m, KernelAudio& k, model_DEPR_::Model& m_DEPR_, ChannelManager& cm,
+SampleEditorApi::SampleEditorApi(model::Model& m, KernelAudio& k, ChannelManager& cm,
     rendering::Reactor& re, Sequencer& s)
 : m_model(m)
 , m_kernelAudio(k)
-, m_model_DEPR_(m_DEPR_)
 , m_channelManager(cm)
 , m_reactor(re)
 , m_sequencer(s)
@@ -51,8 +50,6 @@ SampleEditorApi::SampleEditorApi(model::Model& m, KernelAudio& k, model_DEPR_::M
 void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 {
 	m_channelManager.loadWaveInPreviewChannel(sourceChannelId, m_sequencer.getCurrentScene());
-	m_model_DEPR_.get().mixer.renderPreview = true;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,8 +57,6 @@ void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 void SampleEditorApi::freePreviewChannel()
 {
 	m_channelManager.freeWaveInPreviewChannel();
-	m_model_DEPR_.get().mixer.renderPreview = false;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -163,56 +158,57 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	// wfx::silence(getWave(channelId), a, b);
+	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	//  wfx::silence(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	// wfx::fade(getWave(channelId), a, b, type);
+	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	//  wfx::fade(getWave(channelId), a, b, type);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	// wfx::smooth(getWave(channelId), a, b);
+	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	//  wfx::smooth(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	// wfx::reverse(getWave(channelId), a, b);
+	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	//  wfx::reverse(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	// wfx::normalize(getWave(channelId), a, b);
+	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	//  wfx::normalize(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	// wfx::trim(getWave(channelId), a, b);
-	resetRange(channelId);
-	loadPreviewChannel(channelId); // Refresh preview channel properties
+	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	//  wfx::trim(getWave(channelId), a, b);
+	// resetRange(channelId);
+	// loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::shift(ID channelId, Frame offset)
 {
+#if 0
 	const Channel& ch       = m_channelManager.getChannel(channelId);
 	const Scene    scene    = m_sequencer.getCurrentScene();
 	const Frame    oldShift = ch.sampleChannel->getShift(scene);
@@ -221,6 +217,7 @@ void SampleEditorApi::shift(ID channelId, Frame offset)
 	// m::wfx::shift(getWave(channelId), offset - oldShift);
 	//  Model has been swapped by DataLock constructor, needs to get Channel again
 	m_channelManager.getChannel(channelId).sampleChannel->setShift(offset, scene);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */

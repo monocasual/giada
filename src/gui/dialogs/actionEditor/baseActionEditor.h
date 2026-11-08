@@ -64,6 +64,8 @@ public:
 
 	const c::actionEditor::Data& getData() const;
 
+	void refresh();
+
 	geGridTool* gridTool;
 
 	Pixel fullWidth; // Full widgets width, i.e. scaled-down full sequencer
@@ -108,8 +110,6 @@ protected:
 	std::optional<c::actionEditor::Data> m_data;
 
 private:
-	void refresh();
-
 	/* zoomAbout
 	Zooms and centers the viewport around the mouse cursor. Wants a function to
 	apply to the current ratio. */
