@@ -27,7 +27,7 @@
 #ifndef G_KERNELAUDIO_H
 #define G_KERNELAUDIO_H
 
-#include "src/core/model_DEPR_/model.h"
+#include "src/core/model/types.h"
 #include "src/core/weakAtomic.h"
 #include "src/deps/rtaudio/RtAudio.h"
 #include <cstddef>
@@ -42,11 +42,6 @@
 namespace mcl
 {
 class AudioBuffer;
-}
-
-namespace giada::m::model_DEPR_
-{
-class KernelAudio;
 }
 
 namespace giada::m
@@ -67,7 +62,7 @@ public:
 		std::vector<unsigned int> sampleRates       = {};
 	};
 
-	KernelAudio(model_DEPR_::Model&);
+	KernelAudio(model::Model&);
 
 	static void logCompiledAPIs();
 
@@ -86,8 +81,8 @@ public:
 	Opens a new stream. Also updates model::KernelAudio data if successful. */
 
 	bool openStream(
-	    const model_DEPR_::KernelAudio::Device& out,
-	    const model_DEPR_::KernelAudio::Device& in,
+	    const model::KernelAudio::Device& out,
+	    const model::KernelAudio::Device& in,
 	    unsigned int                      sampleRate,
 	    unsigned int                      bufferSize);
 
@@ -140,8 +135,8 @@ private:
 	struct OpenStreamResult
 	{
 		bool                       success          = false;
-		model_DEPR_::KernelAudio::Device deviceOut        = {};
-		model_DEPR_::KernelAudio::Device deviceIn         = {};
+		model::KernelAudio::Device deviceOut        = {};
+		model::KernelAudio::Device deviceIn         = {};
 		unsigned int               actualSampleRate = 0;
 		unsigned int               actualBufferSize = 0;
 	};
@@ -159,8 +154,8 @@ private:
 	is set to -1 (chosen automatically by RtAudio). */
 
 	OpenStreamResult openStream_(
-	    const model_DEPR_::KernelAudio::Device& out,
-	    const model_DEPR_::KernelAudio::Device& in,
+	    const model::KernelAudio::Device& out,
+	    const model::KernelAudio::Device& in,
 	    unsigned int                      sampleRate,
 	    unsigned int                      bufferSize);
 
@@ -171,7 +166,7 @@ private:
 
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
-	model_DEPR_::Model&            m_model;
+	model::Model&            m_model;
 	int                      m_jackMaxOutputChannels;
 };
 } // namespace giada::m

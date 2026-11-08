@@ -58,8 +58,8 @@ public:
 	void audio_setAPI(RtAudio::Api);
 
 	bool audio_openStream(
-	    const model_DEPR_::KernelAudio::Device& out,
-	    const model_DEPR_::KernelAudio::Device& in,
+	    const model::KernelAudio::Device& out,
+	    const model::KernelAudio::Device& in,
 	    unsigned int                      sampleRate,
 	    unsigned int                      bufferSize);
 
@@ -87,7 +87,7 @@ public:
 	void behaviors_storeData(const model_DEPR_::Behaviors&);
 
 private:
-	model_DEPR_::Model&           m_model;
+	model_DEPR_::Model&     m_model;
 	KernelAudio&            m_kernelAudio;
 	KernelMidi&             m_kernelMidi;
 	MidiMapper<KernelMidi>& m_midiMapper;

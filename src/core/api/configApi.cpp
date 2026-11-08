@@ -94,8 +94,8 @@ void ConfigApi::audio_setAPI(RtAudio::Api api)
 /* -------------------------------------------------------------------------- */
 
 bool ConfigApi::audio_openStream(
-    const model_DEPR_::KernelAudio::Device& out,
-    const model_DEPR_::KernelAudio::Device& in,
+    const model::KernelAudio::Device& out,
+    const model::KernelAudio::Device& in,
     unsigned int                      sampleRate,
     unsigned int                      bufferSize)
 {

@@ -54,7 +54,7 @@ constexpr int RTAUDIO_MAX_PRIORITY = 99;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-KernelAudio::KernelAudio(model_DEPR_::Model& model)
+KernelAudio::KernelAudio(model::Model& model)
 : onAudioCallback(nullptr)
 , onStreamAboutToOpen(nullptr)
 , onStreamOpened(nullptr)
@@ -67,9 +67,16 @@ KernelAudio::KernelAudio(model_DEPR_::Model& model)
 
 bool KernelAudio::init()
 {
-	model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const model::KernelAudio& kernelAudio = m_model.getCurrentDocument()->kernelAudio;
 
-	kernelAudio.api = setAPI_(kernelAudio.api);
+	const RtAudio::Api api = setAPI_(kernelAudio.api);
+
+	m_model.writeDocument(model::SwapType::NONE, [api](model::Document& doc)
+	{
+		doc.kernelAudio.api = api;
+	});
+
+	m_model.flush();
 
 	OpenStreamResult result = openStream_(
 	    kernelAudio.deviceOut,
@@ -79,13 +86,15 @@ bool KernelAudio::init()
 
 	if (result.success)
 	{
-		kernelAudio.deviceOut  = result.deviceOut;
-		kernelAudio.deviceIn   = result.deviceIn;
-		kernelAudio.samplerate = result.actualSampleRate;
-		kernelAudio.buffersize = result.actualBufferSize;
+		m_model.writeDocument(model::SwapType::NONE, [result](model::Document& doc)
+		{
+			doc.kernelAudio.deviceOut  = result.deviceOut;
+			doc.kernelAudio.deviceIn   = result.deviceIn;
+			doc.kernelAudio.samplerate = result.actualSampleRate;
+			doc.kernelAudio.buffersize = result.actualBufferSize;
+		});
+		m_model.flush();
 	}
-
-	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	return result.success;
 }
@@ -94,9 +103,15 @@ bool KernelAudio::init()
 
 void KernelAudio::setAPI(RtAudio::Api desiredApi)
 {
-	m_model.get().kernelAudio     = {}; // Set API = reset everything
-	m_model.get().kernelAudio.api = setAPI_(desiredApi);
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	const RtAudio::Api api = setAPI_(desiredApi);
+
+	m_model.writeDocument(model::SwapType::NONE, [api](model::Document& doc)
+	{
+		doc.kernelAudio     = {}; // Set API = reset everything
+		doc.kernelAudio.api = api;
+	});
+
+	m_model.flush();
 
 	printDevices(getAvailableDevices());
 }
@@ -104,10 +119,10 @@ void KernelAudio::setAPI(RtAudio::Api desiredApi)
 /* -------------------------------------------------------------------------- */
 
 bool KernelAudio::openStream(
-    const model_DEPR_::KernelAudio::Device& out,
-    const model_DEPR_::KernelAudio::Device& in,
-    unsigned int                            sampleRate,
-    unsigned int                            bufferSize)
+    const model::KernelAudio::Device& out,
+    const model::KernelAudio::Device& in,
+    unsigned int                      sampleRate,
+    unsigned int                      bufferSize)
 {
 	assert(onStreamOpened != nullptr);
 	assert(onStreamAboutToOpen != nullptr);
@@ -118,13 +133,15 @@ bool KernelAudio::openStream(
 	if (!result.success)
 		return false;
 
-	model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	m_model.writeDocument(model::SwapType::NONE, [result](model::Document& doc)
+	{
+		doc.kernelAudio.deviceOut  = result.deviceOut;
+		doc.kernelAudio.deviceIn   = result.deviceIn;
+		doc.kernelAudio.samplerate = result.actualSampleRate;
+		doc.kernelAudio.buffersize = result.actualBufferSize;
+	});
 
-	kernelAudio.deviceOut  = result.deviceOut;
-	kernelAudio.deviceIn   = result.deviceIn;
-	kernelAudio.samplerate = result.actualSampleRate;
-	kernelAudio.buffersize = result.actualBufferSize;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model.flush();
 
 	onStreamOpened();
 
@@ -175,14 +192,14 @@ bool KernelAudio::isReady() const
 
 /* -------------------------------------------------------------------------- */
 
-unsigned int       KernelAudio::getBufferSize() const { return m_model.get().kernelAudio.buffersize; }
-int                KernelAudio::getSampleRate() const { return m_model.get().kernelAudio.samplerate; }
-int                KernelAudio::getChannelsOutCount() const { return m_model.get().kernelAudio.deviceOut.channelsCount; }
-int                KernelAudio::getChannelsInCount() const { return m_model.get().kernelAudio.deviceIn.channelsCount; }
-bool               KernelAudio::isInputEnabled() const { return m_model.get().kernelAudio.deviceIn.id != 0; }
-bool               KernelAudio::isLimitOutput() const { return m_model.get().kernelAudio.limitOutput; }
-float              KernelAudio::getRecTriggerLevel() const { return m_model.get().kernelAudio.recTriggerLevel; }
-Resampler::Quality KernelAudio::getResamplerQuality() const { return m_model.get().kernelAudio.rsmpQuality; }
+unsigned int       KernelAudio::getBufferSize() const { return m_model.getCurrentDocument()->kernelAudio.buffersize; }
+int                KernelAudio::getSampleRate() const { return m_model.getCurrentDocument()->kernelAudio.samplerate; }
+int                KernelAudio::getChannelsOutCount() const { return m_model.getCurrentDocument()->kernelAudio.deviceOut.channelsCount; }
+int                KernelAudio::getChannelsInCount() const { return m_model.getCurrentDocument()->kernelAudio.deviceIn.channelsCount; }
+bool               KernelAudio::isInputEnabled() const { return m_model.getCurrentDocument()->kernelAudio.deviceIn.id != 0; }
+bool               KernelAudio::isLimitOutput() const { return m_model.getCurrentDocument()->kernelAudio.limitOutput; }
+float              KernelAudio::getRecTriggerLevel() const { return m_model.getCurrentDocument()->kernelAudio.recTriggerLevel; }
+Resampler::Quality KernelAudio::getResamplerQuality() const { return m_model.getCurrentDocument()->kernelAudio.rsmpQuality; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -200,7 +217,7 @@ KernelAudio::Device KernelAudio::getCurrentOutDevice() const
 {
 	assert(m_rtAudio != nullptr);
 
-	const model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const model::KernelAudio& kernelAudio = m_model.getCurrentDocument()->kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceOut.id : m_rtAudio->getDefaultOutputDevice());
 	d.channelsStart = kernelAudio.deviceOut.channelsStart;
@@ -214,7 +231,7 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 {
 	assert(m_rtAudio != nullptr);
 
-	const model_DEPR_::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	const model::KernelAudio& kernelAudio = m_model.getCurrentDocument()->kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceIn.id : m_rtAudio->getDefaultInputDevice());
 	d.channelsStart = kernelAudio.deviceIn.channelsStart;
@@ -226,7 +243,7 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 
 double KernelAudio::getCpuLoad() const
 {
-	return m_model.get().kernelAudio.a_getCpuLoad();
+	return m_model.getParameters().kernelAudio.getCpuLoad();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -250,7 +267,7 @@ bool KernelAudio::hasAPI(int API) const
 	return false;
 }
 
-RtAudio::Api KernelAudio::getAPI() const { return m_model.get().kernelAudio.api; }
+RtAudio::Api KernelAudio::getAPI() const { return m_model.getCurrentDocument()->kernelAudio.api; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -325,10 +342,10 @@ RtAudio::Api KernelAudio::setAPI_(RtAudio::Api api)
 /* -------------------------------------------------------------------------- */
 
 KernelAudio::OpenStreamResult KernelAudio::openStream_(
-    const model_DEPR_::KernelAudio::Device& out,
-    const model_DEPR_::KernelAudio::Device& in,
-    unsigned int                            sampleRate,
-    unsigned int                            bufferSize)
+    const model::KernelAudio::Device& out,
+    const model::KernelAudio::Device& in,
+    unsigned int                      sampleRate,
+    unsigned int                      bufferSize)
 
 {
 	assert(onAudioCallback != nullptr);
@@ -344,7 +361,7 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	u::log::print("     SampleRate={}\n", sampleRate);
 	u::log::print("     BufferSize={}\n", bufferSize);
 
-	const RtAudio::Api api = m_model.get().kernelAudio.api;
+	const RtAudio::Api api = m_model.getCurrentDocument()->kernelAudio.api;
 
 	/* Abort here if devices found are zero, both devices are disabled or
 	current API is dummy. */
