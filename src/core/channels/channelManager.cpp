@@ -199,26 +199,6 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, Scene scene)
-{
-#if 0
-	Channel&    channel = m_model_DEPR_.get().tracks.getChannel(channelId);
-	Wave&       newWave = wave;
-	const Wave* oldWave = channel.sampleChannel->getWave(scene);
-
-	loadSampleChannel(channel, &newWave, scene);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
-
-	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is
-	already processing the new Document. */
-
-	if (oldWave != nullptr)
-		m_model_DEPR_.removeWave(*oldWave);
-
-	triggerOnChannelsAltered();
-#endif
-}
-
 void ChannelManager::loadSampleChannel(ID channelId, std::shared_ptr<model::Wave> newWave, Scene scene)
 {
 	m_model.writeDocumentAndAssets(model::SwapType::HARD,

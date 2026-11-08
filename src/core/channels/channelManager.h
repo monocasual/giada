@@ -125,7 +125,6 @@ public:
 	/* loadSampleChannel (2)
 	Loads an existing Wave inside a Sample Channel. */
 
-	void loadSampleChannel(ID channelId, Wave&, Scene);
 	void loadSampleChannel(ID channelId, std::shared_ptr<model::Wave>, Scene);
 
 	/* freeChannel
