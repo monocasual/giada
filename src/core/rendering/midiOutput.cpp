@@ -49,11 +49,11 @@ void sendMidiLightning_(ID channelId, uint32_t learnt, const MidiMap::Message& m
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiToPlugins_(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e, Frame localFrame)
+void sendMidiToPlugins_(const model::Channel::Rendering& rendering, const MidiEvent& e, Frame localFrame)
 {
 	MidiEvent eWithDelta(e);
 	eWithDelta.setDelta(localFrame);
-	midiQueue.enqueue(eWithDelta);
+	rendering.pushMidiEvent(eWithDelta);
 }
 } // namespace
 
@@ -68,22 +68,30 @@ void registerOnSendMidiCb(std::function<void(ID)> f)
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiFromAction(const Channel& ch, Scene scene, const Action& action, Frame delta, KernelMidi& kernelMidi)
+void sendMidiFromAction(
+    const model::ChannelView& channelView,
+    Scene                     scene,
+    const model::Action&      action,
+    Frame                     delta,
+    KernelMidi&               kernelMidi)
 {
+	const model::Channel& ch = channelView.getChannel();
+
 	if (action.channelId != ch.id || action.scene != scene)
 		return;
-	sendMidiToPlugins_(ch.shared->midiQueue, action.event, delta);
+	sendMidiToPlugins_(channelView.getRendering(), action.event, delta);
 	if (ch.canSendMidi())
 		sendMidiToOut(ch.id, action.event, ch.midiChannel->outputFilter, kernelMidi);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiAllNotesOff(const Channel& ch, KernelMidi& kernelMidi)
+void sendMidiAllNotesOff(const model::ChannelView& channelView, KernelMidi& kernelMidi)
 {
-	const MidiEvent e = MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3);
+	const model::Channel& ch = channelView.getChannel();
+	const MidiEvent       e  = MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3);
 
-	sendMidiToPlugins_(ch.shared->midiQueue, e, 0);
+	sendMidiToPlugins_(channelView.getRendering(), e, 0);
 	if (ch.canSendMidi())
 		sendMidiToOut(ch.id, e, ch.midiChannel->outputFilter, kernelMidi);
 }

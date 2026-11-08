@@ -268,7 +268,7 @@ const Sequencer::EventBuffer& Sequencer::advance(
 		const Frame offset = inTail ? audioBlock.head.getLength() : -audioBlock.head.getA();
 		const Frame local  = frame + offset;
 
-		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, &action, sceneChanged ? nextScene : currentScene});
+		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, action, sceneChanged ? nextScene : currentScene});
 	});
 
 	/* Advance this and quantizer after the event parsing. */

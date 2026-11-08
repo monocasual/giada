@@ -42,9 +42,8 @@ void advanceMidiChannel(const model::ChannelView& channelView,
 		break;
 
 	case Sequencer::EventType::ACTIONS:
-		// TODO
-		// if (params.isPlaying())
-		//	sendMidiFromAction(ch, e.scene, *e.action, e.delta, kernelMidi);
+		if (channelView.getParameters().isPlaying())
+			sendMidiFromAction(channelView, e.scene, e.action, e.delta, kernelMidi);
 		break;
 
 	default:

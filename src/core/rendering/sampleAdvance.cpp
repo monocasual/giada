@@ -194,7 +194,7 @@ RenderInfo advanceSampleChannel(
 
 	case Sequencer::EventType::ACTIONS:
 		if (!isLoop && channelView.getParameters().isReadingActions())
-			return parseAction_(channelView, ch.id, e.scene, *e.action, e.delta, mode);
+			return parseAction_(channelView, ch.id, e.scene, e.action, e.delta, mode);
 		return {RenderInfo::Mode::NONE};
 
 	default:

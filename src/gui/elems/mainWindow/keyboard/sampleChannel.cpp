@@ -118,6 +118,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, const c::channel::C
 	fx->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
+	fx->forceValue(!m_channel.plugins.empty());
 	fx->onClick = [this]()
 	{
 		c::layout::openChannelPluginListWindow(m_channel.id);

@@ -55,8 +55,7 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 
 		if (ch.type == ChannelType::MIDI)
 		{
-			// TODO
-			// playMidiChannel(ch.shared->playStatus);
+			playMidiChannel(channelView);
 		}
 		else if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
 		{
@@ -68,8 +67,7 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 			// if (canRecordActions && !isAnyLoopMode)
 			//	recordSampleKeyPress(channelId, scene, *ch.shared, currentTickQuantized, mode, m_actionManager);
 
-			pressSampleChannel(channelView,
-			    mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
+			pressSampleChannel(channelView, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
 		}
 		else if (ch.type == ChannelType::PREVIEW)
 		{
@@ -107,7 +105,7 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick 
 			if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
 			{
 				/* Record a stop event only if channel is SINGLE_PRESS. For any other
-			mode the key release event is meaningless. */
+				mode the key release event is meaningless. */
 
 				recordSampleKeyRelease(channelId, scene, currentTickQuantized, m_actionManager);
 			}
@@ -141,9 +139,8 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 		{
 			if (channelView.getParameters().isPlaying())
 			{
-				// TODO
-				// stopMidiChannel(ch.shared->playStatus);
-				// sendMidiAllNotesOff(ch, m_kernelMidi);
+				stopMidiChannel(channelView);
+				sendMidiAllNotesOff(channelView, m_kernelMidi);
 			}
 		}
 		else if (ch.type == ChannelType::SAMPLE)
@@ -288,9 +285,9 @@ void Reactor::toggleSolo(ID channelId)
 
 void Reactor::stopAll()
 {
-	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [](model::Document& doc, model::Assets& assets)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [this](model::Document& doc, model::Assets& assets)
 	{
-		doc.tracks.forEachChannel([&doc, &assets](model::Channel& ch)
+		doc.tracks.forEachChannel([this, &doc, &assets](model::Channel& ch)
 		{
 			const model::ChannelView channelView = model::makeChannelView(ch, assets);
 
@@ -298,8 +295,8 @@ void Reactor::stopAll()
 			{
 				if (channelView.getParameters().isPlaying())
 				{
-					// stopMidiChannel(ch.shared->playStatus);
-					// sendMidiAllNotesOff(ch, m_kernelMidi);
+					stopMidiChannel(channelView);
+					sendMidiAllNotesOff(channelView, m_kernelMidi);
 				}
 			}
 			else if (ch.type == ChannelType::SAMPLE)
@@ -316,14 +313,13 @@ void Reactor::stopAll()
 
 void Reactor::rewindAll()
 {
-	/*
-	TODO
-	for (const model_DEPR_::Track& track : m_model.get().tracks.getAll())
-	    for (const Channel& ch : track.getChannels().getAll())
-	        if (ch.type == ChannelType::MIDI)
-	            rewindMidiChannel(ch.shared->playStatus);
-	m_model.swap(model_DEPR_::SwapType::SOFT);
-	*/
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [this](model::Document& doc, model::Assets& assets)
+	{
+		for (const model::Track& track : doc.tracks.getAll())
+			for (const model::Channel& ch : track.getChannels().getAll())
+				if (ch.type == ChannelType::MIDI)
+					rewindMidiChannel(model::makeChannelView(ch, assets));
+	});
 }
 
 /* -------------------------------------------------------------------------- */

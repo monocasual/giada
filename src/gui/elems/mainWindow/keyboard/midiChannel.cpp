@@ -99,13 +99,11 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, const c::channel::Chann
 	fx->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
-	/*
-	fx->forceValue(m_channel_DEPR_.plugins.size() > 0);
+	fx->forceValue(!m_channel.plugins.empty());
 	fx->onClick = [this]()
 	{
-	    c::layout::openChannelPluginListWindow(m_channel_DEPR_.id);
+		c::layout::openChannelPluginListWindow(m_channel.id);
 	};
-	*/
 
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
 	playButton->onClick = [this]()
