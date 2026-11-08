@@ -26,7 +26,7 @@
 
 #include "src/core/rendering/reactor.h"
 #include "src/core/mixer.h"
-#include "src/core/model_DEPR_/model.h"
+#include "src/core/model/modelView.h"
 #include "src/core/rendering/midiOutput.h"
 #include "src/core/rendering/midiReactions.h"
 #include "src/core/rendering/sampleReactions.h"
@@ -34,9 +34,8 @@
 
 namespace giada::m::rendering
 {
-Reactor::Reactor(model::Model& model, model_DEPR_::Model& model_DEPR_, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
+Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
 : m_model(model)
-, m_model_DEPR_(model_DEPR_)
 , m_kernelMidi(km)
 , m_actionManager(a)
 , m_midiMapper(m)
@@ -172,21 +171,18 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
     bool canRecordActions, Tick currentTickQuantized)
 {
-// TODO RealtimeModel
-#if 0
-	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
+	const model::ModelView modelView = model::makeModelView(m_model);
+	const model::Channel&  ch        = modelView.getDocument().tracks.getChannel(channelId);
+	const auto             rendering = modelView.getAssets().channelsRendering.get(channelId);
 
 	assert(ch.type == ChannelType::MIDI);
 
 	if (canRecordActions)
-	{
 		recordMidiAction(channelId, scene, e, currentTickQuantized, m_actionManager);
-		m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
-	}
-	sendMidiEventToPlugins(ch.shared->midiQueue, e);
+
+	sendMidiEventToPlugins(*rendering, e);
 	if (ch.canSendMidi())
 		sendMidiToOut(channelId, e, ch.midiChannel->outputFilter, m_kernelMidi); // Also send it back to the outside world
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -206,10 +202,10 @@ void Reactor::killReadActions(ID channelId)
 	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful
 	only when the treatRecsAsLoops flag is true. */
 
-	if (!m_model_DEPR_.get().behaviors.treatRecsAsLoops)
+	if (!m_model.getCurrentDocument()->behaviors.treatRecsAsLoops)
 		return;
-	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
-	killSampleReadActions(*ch.shared);
+	const auto& params = m_model.getCurrentAssets()->channelsParameters.get(channelId);
+	killSampleReadActions(*params);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -29,7 +29,6 @@
 
 #include "src/core/midiMapper.h"
 #include "src/core/model/types.h"
-#include "src/core/types.h"
 #include "src/scene.h"
 #include "src/types.h"
 
@@ -40,17 +39,12 @@ class ActionManager;
 class KernelMidi;
 } // namespace giada::m
 
-namespace giada::m::model_DEPR_
-{
-class Model;
-}
-
 namespace giada::m::rendering
 {
 class Reactor
 {
 public:
-	Reactor(model::Model&, model_DEPR_::Model&, MidiMapper<KernelMidi>&, ActionManager&, KernelMidi&);
+	Reactor(model::Model&, MidiMapper<KernelMidi>&, ActionManager&, KernelMidi&);
 
 	void keyPress(ID channelId, Scene, float velocity, bool canRecordActions, bool canQuantize, Tick currentTickQuantized);
 	void keyRelease(ID channelId, Scene, bool canRecordActions, Tick currentTickQuantized);
@@ -70,7 +64,6 @@ public:
 
 private:
 	model::Model&           m_model;
-	model_DEPR_::Model&     m_model_DEPR_;
 	KernelMidi&             m_kernelMidi;
 	ActionManager&          m_actionManager;
 	MidiMapper<KernelMidi>& m_midiMapper;

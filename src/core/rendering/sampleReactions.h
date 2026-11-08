@@ -43,7 +43,7 @@ namespace giada::m::rendering
 void recordSampleKeyPress(ID channelId, Scene, ChannelShared&, Tick currentTickQuantized, SamplePlayerMode, ActionManager&);
 void recordSampleKeyRelease(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
 void recordSampleKeyKill(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
-void killSampleReadActions(ChannelShared&);
+void killSampleReadActions(const model::Channel::Parameters&);
 
 void toggleSampleReadActions(
     const model::Channel::Parameters&,

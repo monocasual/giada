@@ -63,7 +63,7 @@ void sendMidiAllNotesOff(const model::ChannelView&, KernelMidi&);
 Enqueue MIDI event to to the MIDI queue, so that it will be processed later
 on by the PluginHost. */
 
-void sendMidiEventToPlugins(model::Channel::Rendering&, const MidiEvent&);
+void sendMidiEventToPlugins(const model::Channel::Rendering&, const MidiEvent&);
 
 /* sendMidiToOut
 Sends a MIDI event to the outside world. */

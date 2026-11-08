@@ -165,10 +165,10 @@ void recordSampleKeyKill(ID channelId, Scene scene, Tick currentTickQuantized, A
 
 /* -------------------------------------------------------------------------- */
 
-void killSampleReadActions(ChannelShared& shared)
+void killSampleReadActions(const model::Channel::Parameters& params)
 {
-	shared.recStatus.store(ChannelStatus::OFF);
-	shared.readActions.store(false);
+	params.setRecStatus(ChannelStatus::OFF);
+	params.setReadActions(false);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -98,7 +98,7 @@ void sendMidiAllNotesOff(const model::ChannelView& channelView, KernelMidi& kern
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiEventToPlugins(model::Channel::Rendering& rendering, const MidiEvent& e)
+void sendMidiEventToPlugins(const model::Channel::Rendering& rendering, const MidiEvent& e)
 {
 	/* Now all messages are turned into Channel-0 messages. Giada doesn't care
 	about holding MIDI channel information. Moreover, having all internal
