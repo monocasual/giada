@@ -46,7 +46,6 @@ public:
 	bool       hasWave(Scene) const;
 	bool       hasWaves() const;
 	ID         getWaveId(Scene) const;
-	Frame      getWaveSize(Scene) const;
 	FrameRange getRange(Scene) const;
 	Frame      getShift(Scene) const;
 	float      getPitch(Scene) const;

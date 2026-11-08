@@ -53,7 +53,7 @@ SampleChannelView makeSampleChannelView(const ChannelView& channelView, const As
 {
 	const Channel& channel = channelView.getChannel();
 
-	assert(channel.type == ChannelType::SAMPLE);
+	assert(channel.type == ChannelType::SAMPLE || channel.type == ChannelType::PREVIEW);
 	assert(channel.sampleChannel.has_value());
 
 	std::shared_ptr<const Wave> wave;

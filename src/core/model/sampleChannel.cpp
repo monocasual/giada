@@ -128,15 +128,6 @@ const Sample& SampleChannel::getSample(Scene scene) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame SampleChannel::getWaveSize(Scene scene) const
-{
-	assert(false);
-	return 0;
-	// return hasWave(scene) ? m_samples[scene.getIndex()].wave->getBuffer().countFrames() : 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void SampleChannel::loadSample(const Sample& s, Scene scene)
 {
 	m_samples[scene.getIndex()] = s;

@@ -363,8 +363,8 @@ std::string Channel::debug() const
 		out += fmt::format(" mode={}", u::string::toString(sampleChannel->mode));
 		out += "\n\twaves:\n";
 		for (const Sample& s : sampleChannel->getSamples())
-			if (s.wave != nullptr)
-				out += fmt::format("\t\tID={} ({}), range=[{}, {})\n", s.wave->id.getValue(), (void*)s.wave, s.range.getA(), s.range.getB());
+			if (s.waveId.isValid())
+				out += fmt::format("\t\tID={}, range=[{}, {})\n", s.waveId.getValue(), s.range.getA(), s.range.getB());
 	}
 
 	return out;
