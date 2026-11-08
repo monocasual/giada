@@ -66,11 +66,6 @@ public:
 
 	ChannelManager(model::Model&, model_DEPR_::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
 
-	/* getChannel
-	Returns channel object by ID. */
-
-	Channel& getChannel(ID);
-
 	/* hasInputRecordableChannels
 	Tells whether Mixer has one or more input-recordable channels. */
 

@@ -63,13 +63,6 @@ ChannelManager::ChannelManager(model::Model& model, model_DEPR_::Model& model_de
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelManager::getChannel(ID channelId)
-{
-	return m_model_DEPR_.get().tracks.getChannel(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 {
 	const bool               overdubProtection = false;
@@ -111,8 +104,11 @@ void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 
 void ChannelManager::setBufferSize(int bufferSize)
 {
-	for (auto& channelShared : m_model_DEPR_.getAllChannelsShared())
-		channelShared->setBufferSize(bufferSize);
+	m_model.writeAssets(model::SwapType::NONE, [bufferSize](model::Assets& assets)
+	{
+		for (const auto& [id, rendering] : assets.channelsRendering)
+			rendering->setAudioBufferSize(bufferSize);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -443,14 +439,14 @@ void ChannelManager::setPitch(ID channelId, float value, Scene scene)
 
 void ChannelManager::increasePitchBySemitone(ID channelId, Scene scene)
 {
-	const Channel& ch = getChannel(channelId);
+	const model::Channel& ch = m_model.getCurrentDocument()->tracks.getChannel(channelId);
 	assert(ch.sampleChannel);
 	setPitch(channelId, ch.sampleChannel->getPitch(scene) * G_SEMITONE_RATIO, scene);
 }
 
 void ChannelManager::decreasePitchBySemitone(ID channelId, Scene scene)
 {
-	const Channel& ch = getChannel(channelId);
+	const model::Channel& ch = m_model.getCurrentDocument()->tracks.getChannel(channelId);
 	assert(ch.sampleChannel);
 	setPitch(channelId, ch.sampleChannel->getPitch(scene) / G_SEMITONE_RATIO, scene);
 }
@@ -459,76 +455,88 @@ void ChannelManager::decreasePitchBySemitone(ID channelId, Scene scene)
 
 void ChannelManager::setTime(ID channelId, float value, Scene scene)
 {
-	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
-	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, value, scene](model::Document& doc)
+	{
+		model::Channel& ch      = doc.tracks.getChannel(channelId);
+		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	assert(c.sampleChannel);
+		assert(ch.sampleChannel);
 
-	const float time = std::clamp(value, G_MIN_TIME, G_MAX_TIME);
+		const float time = std::clamp(value, G_MIN_TIME, G_MAX_TIME);
 
-	c.sampleChannel->setTime(time, scene);
-	preview.sampleChannel->setTime(time, Scene{0});
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+		ch.sampleChannel->setTime(time, scene);
+		preview.sampleChannel->setTime(time, Scene{0});
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setPlaybackMode(ID channelId, PlaybackMode playbackMode, Scene scene)
 {
-	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
-	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, playbackMode, scene](model::Document& doc)
+	{
+		model::Channel& ch      = doc.tracks.getChannel(channelId);
+		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	assert(c.sampleChannel);
+		assert(ch.sampleChannel);
 
-	c.sampleChannel->setPlaybackMode(playbackMode, scene);
-	preview.sampleChannel->setPlaybackMode(playbackMode, Scene{0});
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+		ch.sampleChannel->setPlaybackMode(playbackMode, scene);
+		preview.sampleChannel->setPlaybackMode(playbackMode, Scene{0});
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setPan(ID channelId, float value)
 {
-	m_model_DEPR_.get().tracks.getChannel(channelId).pan = std::clamp(value, 0.0f, G_MAX_PAN);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, value](model::Document& doc)
+	{
+		doc.tracks.getChannel(channelId).pan = std::clamp(value, 0.0f, G_MAX_PAN);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 {
-#if 0
-	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
-	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [channelId, range, scene](model::Document& doc, model::Assets& assets) mutable
+	{
+		model::Channel& ch      = doc.tracks.getChannel(channelId);
+		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	assert(c.sampleChannel);
+		assert(ch.sampleChannel);
+		assert(ch.sampleChannel->hasWave(scene));
 
-	range.setA(std::clamp(range.getA(), 0, c.sampleChannel->getWaveSize(scene) - 1));
-	range.setB(std::clamp(range.getB(), 1, c.sampleChannel->getWaveSize(scene)));
-	if (range.getA() >= range.getB())
-		range.setA(range.getB() - 1);
-	else if (range.getB() < range.getA())
-		range.setB(range.getA() + 1);
+		const auto wave = assets.waves.get(ch.sampleChannel->getWaveId(scene));
 
-	if (c.shared->tracker.load() < range.getA())
-		c.shared->tracker.store(range.getA());
+		range.setA(std::clamp(range.getA(), 0, wave->getBuffer().countFrames() - 1));
+		range.setB(std::clamp(range.getB(), 1, wave->getBuffer().countFrames()));
+		if (range.getA() >= range.getB())
+			range.setA(range.getB() - 1);
+		else if (range.getB() < range.getA())
+			range.setB(range.getA() + 1);
 
-	c.sampleChannel->setRange(range, scene);
-	preview.sampleChannel->setRange(range, Scene{0});
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
-#endif
+		assets.channelsParameters.get(channelId)->setTracker(range.getA());
+
+		ch.sampleChannel->setRange(range, scene);
+		preview.sampleChannel->setRange(range, Scene{0});
+	});
 }
 
 void ChannelManager::resetRange(ID channelId, Scene scene)
 {
-#if 0
-	Channel& c = m_model_DEPR_.get().tracks.getChannel(channelId);
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [channelId, scene](model::Document& doc, model::Assets& assets)
+	{
+		model::Channel& ch = doc.tracks.getChannel(channelId);
 
-	assert(c.sampleChannel);
+		assert(ch.sampleChannel);
 
-	c.sampleChannel->setRange({0, c.sampleChannel->getWaveSize(scene)}, scene);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
-#endif
+		const auto wave = assets.waves.get(ch.sampleChannel->getWaveId(scene));
+
+		ch.sampleChannel->setRange({0, wave->getBuffer().countFrames()}, scene);
+	});
 }
 
 /* -------------------------------------------------------------------------- */

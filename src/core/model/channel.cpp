@@ -130,6 +130,13 @@ void Channel::Rendering::setPendingRenderMode(rendering::RenderInfo::Mode m) con
 
 /* -------------------------------------------------------------------------- */
 
+void Channel::Rendering::setAudioBufferSize(int bufferSize) const
+{
+	m_audioBuffer.alloc(bufferSize, m_audioBuffer.countChannels());
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Channel::Rendering::copyToAudioBufferFrom(
     const mcl::AudioBuffer& src,
     Frame                   frames,

@@ -89,14 +89,14 @@ void SampleEditorApi::togglePreview()
 
 Frame SampleEditorApi::getPreviewTracker()
 {
-	return m_channelManager.getChannel(PREVIEW_CHANNEL_ID).shared->tracker.load();
+	return m_model.getCurrentAssets()->channelsParameters.get(PREVIEW_CHANNEL_ID)->getTracker();
 }
 
 /* -------------------------------------------------------------------------- */
 
 ChannelStatus SampleEditorApi::getPreviewStatus()
 {
-	return m_channelManager.getChannel(PREVIEW_CHANNEL_ID).shared->playStatus.load();
+	return m_model.getCurrentAssets()->channelsParameters.get(PREVIEW_CHANNEL_ID)->getPlayStatus();
 }
 
 /* -------------------------------------------------------------------------- */

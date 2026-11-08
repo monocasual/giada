@@ -93,6 +93,7 @@ public:
 		const mcl::AudioBuffer&     getAudioBuffer() const;
 		rendering::RenderInfo::Mode getPendingRenderMode() const;
 		void                        setPendingRenderMode(rendering::RenderInfo::Mode) const;
+		void                        setAudioBufferSize(int) const;
 
 		/* copyToAudioBufferFrom (1)
 		Copy 'frames' frames from 'src' starting at 'srcStart' into the private
@@ -147,8 +148,6 @@ public:
 		before a rewind or a stop. */
 
 		void notifyLastChunk() const;
-
-		// TODO...
 
 	private:
 		using MidiQueue = moodycamel::ConcurrentQueue<MidiEvent>;
