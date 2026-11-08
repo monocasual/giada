@@ -47,11 +47,13 @@ class gdSampleEditor : public gdWindow
 	friend class geWaveform;
 
 public:
-	gdSampleEditor(ID channelId, const Model&);
+	gdSampleEditor(const c::sampleEditor::Data&, const Model&);
 	~gdSampleEditor();
 
-	void rebuild();
+	void rebuild(const c::sampleEditor::Data&);
 	void refresh();
+
+	ID getChannelId() const;
 
 	void refreshPitch();
 
@@ -78,8 +80,7 @@ private:
 	geImageButton* m_rewind;
 	geCheck*       m_loop;
 
-	ID                    m_channelId;
-	c::sampleEditor::Data m_data;
+	std::optional<c::sampleEditor::Data> m_data;
 };
 } // namespace giada::v
 

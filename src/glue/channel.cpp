@@ -220,8 +220,7 @@ void loadChannel(ID channelId, const std::string& fname)
 	if (res != G_RES_OK)
 		printLoadError_(res);
 
-	if (auto* w = sampleEditor::getWindow(); w != nullptr)
-		w->rebuild();
+	g_ui->rebuildSampleEditorWindow();
 }
 
 /* -------------------------------------------------------------------------- */

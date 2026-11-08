@@ -28,8 +28,10 @@
 
 #include "dialogs/actionEditor/baseActionEditor.h"
 #include "src/glue/plugin.h"
+#include "src/glue/sampleEditor.h"
 #include "src/gui/const.h"
 #include "src/gui/dialogs/pluginList.h"
+#include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/keyboard/track.h"
@@ -211,7 +213,6 @@ void Ui::refresh()
 
 void Ui::rebuild()
 {
-	// rebuildSubWindow(WID_SAMPLE_EDITOR);
 	// rebuildSubWindow(WID_CHANNEL_ROUTING);
 }
 
@@ -238,6 +239,15 @@ void Ui::rebuildActionEditorWindow()
 	auto* w = static_cast<gdBaseActionEditor*>(getSubwindow(WID_ACTION_EDITOR));
 	if (w != nullptr)
 		w->rebuild(c::actionEditor::getData(w->getChannelId()));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::rebuildSampleEditorWindow()
+{
+	auto* w = static_cast<gdSampleEditor*>(getSubwindow(WID_SAMPLE_EDITOR));
+	if (w != nullptr)
+		w->rebuild(c::sampleEditor::getData(w->getChannelId()));
 }
 
 /* -------------------------------------------------------------------------- */

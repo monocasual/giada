@@ -205,6 +205,7 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 
 void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, Scene scene)
 {
+#if 0
 	Channel&    channel = m_model_DEPR_.get().tracks.getChannel(channelId);
 	Wave&       newWave = wave;
 	const Wave* oldWave = channel.sampleChannel->getWave(scene);
@@ -219,6 +220,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, Scene scene)
 		m_model_DEPR_.removeWave(*oldWave);
 
 	triggerOnChannelsAltered();
+#endif
 }
 
 void ChannelManager::loadSampleChannel(ID channelId, std::shared_ptr<model::Wave> newWave, Scene scene)
@@ -264,7 +266,7 @@ void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int
 			auto          oldWave   = assets.waves.get(oldWaveId);
 			auto          newWave   = waveFactory::createFromWave(*oldWave);
 			assets.waves.set(newWave->id, newWave);
-			newChannelData.channel.loadSample({nullptr, newWave->id, oldRange, oldShift}, scene);
+			newChannelData.channel.loadSample({newWave->id, oldRange, oldShift}, scene);
 		}
 
 		// TODO plug-ins
@@ -493,6 +495,7 @@ void ChannelManager::setPan(ID channelId, float value)
 
 void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 {
+#if 0
 	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
 	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
@@ -511,16 +514,19 @@ void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 	c.sampleChannel->setRange(range, scene);
 	preview.sampleChannel->setRange(range, Scene{0});
 	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+#endif
 }
 
 void ChannelManager::resetRange(ID channelId, Scene scene)
 {
+#if 0
 	Channel& c = m_model_DEPR_.get().tracks.getChannel(channelId);
 
 	assert(c.sampleChannel);
 
 	c.sampleChannel->setRange({0, c.sampleChannel->getWaveSize(scene)}, scene);
 	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -681,18 +687,12 @@ bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Scene scene) const
-{
-	ch.loadSample({w, {}}, scene);
-	ch.setName(w != nullptr ? w->getBasename(/*ext=*/false) : "", scene);
-}
-
 void ChannelManager::loadSampleChannel(model::Channel& ch, model::Wave* w, Scene scene) const
 {
 	const ID         waveId    = w != nullptr ? w->id : ID{};
 	const auto       waveName  = w != nullptr ? w->getBasename(/*ext=*/false) : "";
 	const FrameRange waveRange = w != nullptr ? FrameRange{0, w->getBuffer().countFrames()} : FrameRange{};
-	ch.loadSample({nullptr, waveId, waveRange}, scene);
+	ch.loadSample({waveId, waveRange}, scene);
 	ch.setName(waveName, scene);
 }
 
@@ -757,6 +757,7 @@ void ChannelManager::setupChannelPostRecording(Channel& ch, Frame currentFrame)
 
 void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame, Scene scene)
 {
+#if 0
 	assert(onChannelRecorded != nullptr);
 
 	std::unique_ptr<Wave> wave = onChannelRecorded(recordedFrames);
@@ -773,12 +774,14 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 	setupChannelPostRecording(ch, currentFrame);
 
 	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame currentFrame, Scene scene)
 {
+#if 0
 	Wave* wave = ch.sampleChannel->getWave(scene);
 
 	/* Need model::DataLock here, as data might be being read by the audio
@@ -790,6 +793,7 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 	wave->setLogical(true);
 
 	setupChannelPostRecording(ch, currentFrame);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -809,11 +813,12 @@ void ChannelManager::copyChannelToScene(Channel& ch, Scene srcScene, Scene dstSc
 	of Wave and set it to the new scene. */
 
 	Sample sample = ch.sampleChannel->getSample(srcScene);
-	Wave&  wave   = m_model_DEPR_.addWave(waveFactory::createFromWave_DEPR_(*sample.wave));
+	// TODO
+	// Wave&  wave   = m_model_DEPR_.addWave(waveFactory::createFromWave_DEPR_(*sample.wave));
 
-	sample.wave = &wave;
-	ch.loadSample(sample, dstScene);
-	ch.setName(ch.getName(srcScene), dstScene);
+	// sample.wave = &wave;
+	// ch.loadSample(sample, dstScene);
+	// ch.setName(ch.getName(srcScene), dstScene);
 }
 
 /* -------------------------------------------------------------------------- */

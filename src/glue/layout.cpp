@@ -189,7 +189,7 @@ void openSampleEditor(ID channelId)
 	resulting in a broken Editor (gdSampleEditor's destructor frees the loaded
 	sample). */
 	g_ui->closeSubWindow(WID_SAMPLE_EDITOR);
-	g_ui->openSubWindow(new v::gdSampleEditor(channelId, g_ui->model));
+	g_ui->openSubWindow(new v::gdSampleEditor(c::sampleEditor::getData(channelId), g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */

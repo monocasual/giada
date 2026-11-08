@@ -24,67 +24,87 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/gui/dialogs/sampleEditor.h"
+#include "src/glue/sampleEditor.h"
 #include "src/core/engine.h"
+#include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/ui.h"
+#include "src/utils/time.h"
 
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
 
 namespace giada::c::sampleEditor
 {
-Data::Data(const m::Channel& c, Scene scene)
-: channelId(c.id)
-, scene(scene)
-, name(c.getName(scene))
-, volume(c.volume)
-, pan(c.pan.asFloat())
+Data::Data(const m::model::ModelView& view, ID channelId)
+: channelId(channelId)
+, scene(view.getParameters().sequencer.getCurrentScene())
+, name(view.getDocument().tracks.getChannel(channelId).getName(scene))
+, volume(view.getDocument().tracks.getChannel(channelId).volume)
+, pan(view.getDocument().tracks.getChannel(channelId).pan.asFloat())
 , waveSize(0)
 , waveBits(0)
 , waveDuration(0.0f)
 , waveRate(0)
 , isLogical(false)
-, m_channel(&c)
+, m_view(view)
+, m_sampleChannelView(m::model::makeSampleChannelView(
+      m_view.getDocument().tracks.getChannel(channelId), m_view.getAssets(), scene))
+, m_previewChannelView(m::model::makeSampleChannelView(
+      m_view.getDocument().tracks.getChannel(PREVIEW_CHANNEL_ID), m_view.getAssets(), scene))
 {
-	if (!isValid())
+	if (!m_sampleChannelView.hasWave())
 		return;
-	waveSize     = c.sampleChannel->getWave(scene)->getBuffer().countFrames();
-	waveBits     = c.sampleChannel->getWave(scene)->getBits();
-	waveDuration = c.sampleChannel->getWave(scene)->getDuration();
-	waveRate     = c.sampleChannel->getWave(scene)->getRate();
-	wavePath     = c.sampleChannel->getWave(scene)->getPath();
-	isLogical    = c.sampleChannel->getWave(scene)->isLogical();
+
+	const m::model::Wave* wave = m_sampleChannelView.getWave();
+
+	waveSize     = wave->getBuffer().countFrames();
+	waveBits     = wave->getBits();
+	waveDuration = wave->getDuration();
+	waveRate     = wave->getRate();
+	wavePath     = wave->getPath();
+	isLogical    = wave->isLogical();
 }
 
 bool Data::isValid() const
 {
-	return getSample().wave != nullptr;
+	return getWave() != nullptr;
 }
 
-ChannelStatus Data::a_getPreviewStatus() const
+ChannelStatus Data::getPreviewStatus() const
 {
-	return g_engine->getSampleEditorApi().getPreviewStatus();
+	return m_previewChannelView.getParameters().getPlayStatus();
 }
 
-Frame Data::a_getPreviewTracker() const
+Frame Data::getPreviewTracker() const
 {
-	return g_engine->getSampleEditorApi().getPreviewTracker();
+	return m_previewChannelView.getParameters().getTracker();
 }
 
 Frame Data::getFramesInBar() const
 {
-	return g_engine->getMainApi().getFramesInBar();
+	const auto& document  = m_view.getDocument();
+	const auto& sequencer = document.sequencer;
+	return u::time::tickToFrame(sequencer.getTicksInBar(), document.kernelAudio.samplerate,
+	    sequencer.getBpm());
 }
 
 Frame Data::getFramesInLoop() const
 {
-	return g_engine->getMainApi().getFramesInLoop();
+	const auto& document  = m_view.getDocument();
+	const auto& sequencer = document.sequencer;
+	return u::time::tickToFrame(sequencer.getTicksInLoop(), document.kernelAudio.samplerate,
+	    sequencer.getBpm());
 }
 
 Sample Data::getSample() const
 {
-	return m_channel->sampleChannel->getSample(scene);
+	return m_sampleChannelView.getSample();
+}
+
+const m::model::Wave* Data::getWave() const
+{
+	return m_sampleChannelView.getWave();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -93,10 +113,7 @@ Sample Data::getSample() const
 
 Data getData(ID channelId)
 {
-	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
-	const Scene       scene   = g_engine->getMainApi().getCurrentScene();
-
-	return Data(channel, scene);
+	return Data(g_engine->getModelView(), channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -132,7 +149,6 @@ void copy(ID channelId, Frame a, Frame b)
 void paste(ID channelId, Frame a)
 {
 	g_engine->getSampleEditorApi().paste(channelId, a);
-	getWindow()->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

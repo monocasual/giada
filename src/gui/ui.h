@@ -91,6 +91,7 @@ public:
 	void rebuildMainWindow();
 	void rebuildPluginListWindow();
 	void rebuildActionEditorWindow();
+	void rebuildSampleEditorWindow();
 
 	/* update
 	Updates part of the UI. Used when a model property has been modified, e.g.

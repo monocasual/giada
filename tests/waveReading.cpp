@@ -23,7 +23,6 @@ TEST_CASE("WaveReading")
 	m::Stretcher stretcher(/*sampleRate=*/44100);
 
 	const Sample sample = {
-	    .wave  = &wave,
 	    .range = {0, BUFFER_SIZE},
 	    .shift = 0,
 	    .pitch = 1.0f};

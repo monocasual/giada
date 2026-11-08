@@ -222,7 +222,6 @@ public:
 	std::function<void(ID, ChannelStatus)> onChannelPlayStatusChanged;
 
 private:
-	void loadSampleChannel(Channel&, Wave*, Scene) const;
 	void loadSampleChannel(model::Channel&, model::Wave*, Scene) const;
 
 	/* setupChannelCallbacks

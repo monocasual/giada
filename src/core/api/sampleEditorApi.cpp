@@ -35,10 +35,11 @@
 
 namespace giada::m
 {
-SampleEditorApi::SampleEditorApi(KernelAudio& k, model_DEPR_::Model& m, ChannelManager& cm,
+SampleEditorApi::SampleEditorApi(model::Model& m, KernelAudio& k, model_DEPR_::Model& m_DEPR_, ChannelManager& cm,
     rendering::Reactor& re, Sequencer& s)
-: m_kernelAudio(k)
-, m_model(m)
+: m_model(m)
+, m_kernelAudio(k)
+, m_model_DEPR_(m_DEPR_)
 , m_channelManager(cm)
 , m_reactor(re)
 , m_sequencer(s)
@@ -50,8 +51,8 @@ SampleEditorApi::SampleEditorApi(KernelAudio& k, model_DEPR_::Model& m, ChannelM
 void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 {
 	m_channelManager.loadWaveInPreviewChannel(sourceChannelId, m_sequencer.getCurrentScene());
-	m_model.get().mixer.renderPreview = true;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.renderPreview = true;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -59,8 +60,8 @@ void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 void SampleEditorApi::freePreviewChannel()
 {
 	m_channelManager.freeWaveInPreviewChannel();
-	m_model.get().mixer.renderPreview = false;
-	m_model.swap(model_DEPR_::SwapType::NONE);
+	m_model_DEPR_.get().mixer.renderPreview = false;
+	m_model_DEPR_.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -107,24 +108,27 @@ ChannelStatus SampleEditorApi::getPreviewStatus()
 
 void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 {
+	/*
 	copy(channelId, a, b);
-	model_DEPR_::SharedLock lock = m_model.lockShared();
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
 	wfx::cut(getWave(channelId), a, b);
 	resetRange(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
+	*/
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::copy(ID channelId, Frame a, Frame b)
 {
-	m_waveBuffer = waveFactory::createFromWave_DEPR_(getWave(channelId), a, b);
+	// m_waveBuffer = waveFactory::createFromWave_DEPR_(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::paste(ID channelId, Frame a)
 {
+#if 0
 	if (m_waveBuffer == nullptr)
 	{
 		u::log::print("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
@@ -138,7 +142,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 	/* Temporary disable wave reading in channel. From now on, the audio
 	    thread won't be reading any wave, so editing it is safe.  */
 
-	model_DEPR_::SharedLock lock = m_model.lockShared();
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
 
 	/* Paste copied data to destination wave. */
 
@@ -152,54 +156,55 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 	resetRange(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model.lockShared();
-	wfx::silence(getWave(channelId), a, b);
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	// wfx::silence(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
-	model_DEPR_::SharedLock lock = m_model.lockShared();
-	wfx::fade(getWave(channelId), a, b, type);
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	// wfx::fade(getWave(channelId), a, b, type);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model.lockShared();
-	wfx::smooth(getWave(channelId), a, b);
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	// wfx::smooth(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model.lockShared();
-	wfx::reverse(getWave(channelId), a, b);
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	// wfx::reverse(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model.lockShared();
-	wfx::normalize(getWave(channelId), a, b);
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	// wfx::normalize(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
-	model_DEPR_::SharedLock lock = m_model.lockShared();
-	wfx::trim(getWave(channelId), a, b);
+	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	// wfx::trim(getWave(channelId), a, b);
 	resetRange(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
@@ -212,9 +217,9 @@ void SampleEditorApi::shift(ID channelId, Frame offset)
 	const Scene    scene    = m_sequencer.getCurrentScene();
 	const Frame    oldShift = ch.sampleChannel->getShift(scene);
 
-	m::model_DEPR_::SharedLock lock = m_model.lockShared();
-	m::wfx::shift(getWave(channelId), offset - oldShift);
-	// Model has been swapped by DataLock constructor, needs to get Channel again
+	m::model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
+	// m::wfx::shift(getWave(channelId), offset - oldShift);
+	//  Model has been swapped by DataLock constructor, needs to get Channel again
 	m_channelManager.getChannel(channelId).sampleChannel->setShift(offset, scene);
 }
 
@@ -222,14 +227,17 @@ void SampleEditorApi::shift(ID channelId, Frame offset)
 
 ID SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 {
+	/*
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	Wave&     wave       = m_model.addWave(waveFactory::createFromWave_DEPR_(getWave(channelId), a, b));
+	Wave&     wave       = m_model_DEPR_.addWave(waveFactory::createFromWave_DEPR_(getWave(channelId), a, b));
 
 	const ID newChannelId = m_channelManager.addChannel(ChannelType::SAMPLE, 0, sampleRate, bufferSize); // TODO trackIndex
 	m_channelManager.loadSampleChannel(newChannelId, wave, m_sequencer.getCurrentScene());
 
 	return newChannelId;
+	*/
+	return {};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -248,18 +256,12 @@ void SampleEditorApi::resetRange(ID channelId)
 
 void SampleEditorApi::reload(ID channelId)
 {
+	/*
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
-	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
+	const Resampler::Quality rsmpQuality = m_model_DEPR_.get().kernelAudio.rsmpQuality;
 	// TODO - error checking
 	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality, Scene{0});
 	loadPreviewChannel(channelId); // Refresh preview channel properties
-}
-
-/* -------------------------------------------------------------------------- */
-
-Wave& SampleEditorApi::getWave(ID channelId) const
-{
-	const Scene currentScene = m_sequencer.getCurrentScene();
-	return *m_channelManager.getChannel(channelId).sampleChannel->getWave(currentScene);
+	*/
 }
 } // namespace giada::m

@@ -27,6 +27,7 @@
 #ifndef G_SAMPLE_EDITOR_API_H
 #define G_SAMPLE_EDITOR_API_H
 
+#include "src/core/model/types.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/types.h"
 #include "src/core/waveFx.h"
@@ -46,7 +47,7 @@ class Sequencer;
 class SampleEditorApi
 {
 public:
-	SampleEditorApi(KernelAudio&, model_DEPR_::Model&, ChannelManager&, rendering::Reactor&, Sequencer&);
+	SampleEditorApi(model::Model&, KernelAudio&, model_DEPR_::Model&, ChannelManager&, rendering::Reactor&, Sequencer&);
 
 	void          loadPreviewChannel(ID sourceChannelId);
 	void          freePreviewChannel();
@@ -72,10 +73,9 @@ public:
 	void reload(ID channelId);
 
 private:
-	Wave& getWave(ID channelId) const;
-
+	model::Model&       m_model;
 	KernelAudio&        m_kernelAudio;
-	model_DEPR_::Model&       m_model;
+	model_DEPR_::Model& m_model_DEPR_;
 	ChannelManager&     m_channelManager;
 	rendering::Reactor& m_reactor;
 	Sequencer&          m_sequencer;

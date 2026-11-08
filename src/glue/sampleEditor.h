@@ -27,6 +27,8 @@
 #ifndef G_GLUE_SAMPLE_EDITOR_H
 #define G_GLUE_SAMPLE_EDITOR_H
 
+#include "src/core/model/channelView.h"
+#include "src/core/model/modelView.h"
 #include "src/core/types.h"
 #include "src/core/waveFx.h"
 #include "src/deps/geompp/src/range.hpp"
@@ -35,12 +37,11 @@
 #include <string>
 
 /* giada::c::sampleEditor
-Functions to interact with the Sample Editor. Only the main thread can use these! */
+Functions to interact with the Sample Editor. */
 
 namespace giada::m
 {
 class Wave;
-class Channel;
 } // namespace giada::m
 
 namespace giada::v
@@ -52,14 +53,15 @@ namespace giada::c::sampleEditor
 {
 struct Data
 {
-	Data(const m::Channel&, Scene scene);
+	Data(const m::model::ModelView&, ID channelId);
 
-	bool          isValid() const;
-	ChannelStatus a_getPreviewStatus() const;
-	Frame         a_getPreviewTracker() const;
-	Frame         getFramesInBar() const;
-	Frame         getFramesInLoop() const;
-	Sample        getSample() const;
+	bool                  isValid() const;
+	ChannelStatus         getPreviewStatus() const;
+	Frame                 getPreviewTracker() const;
+	Frame                 getFramesInBar() const;
+	Frame                 getFramesInLoop() const;
+	Sample                getSample() const;
+	const m::model::Wave* getWave() const;
 
 	ID          channelId;
 	Scene       scene;
@@ -74,7 +76,9 @@ struct Data
 	bool        isLogical;
 
 private:
-	const m::Channel* m_channel;
+	m::model::ModelView         m_view;
+	m::model::SampleChannelView m_sampleChannelView;
+	m::model::SampleChannelView m_previewChannelView;
 };
 
 /* getData

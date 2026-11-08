@@ -100,7 +100,6 @@ range by default. */
 
 struct Sample
 {
-	m::Wave*     wave = nullptr;
 	ID           waveId;
 	FrameRange   range;
 	Frame        shift        = 0;

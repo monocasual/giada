@@ -204,7 +204,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 		{
 			const Sample& sample = c.sampleChannel->getSample(Scene{i});
 			pc.samples[i]        = {
-			           .waveId       = sample.wave != nullptr ? sample.wave->id : utils::Id{0},
+			           .waveId       = sample.waveId,
 			           .range        = sample.range,
 			           .shift        = sample.shift,
 			           .pitch        = sample.pitch,

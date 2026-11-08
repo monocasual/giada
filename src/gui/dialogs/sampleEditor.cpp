@@ -65,10 +65,9 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
+gdSampleEditor::gdSampleEditor(const c::sampleEditor::Data& data, const Model& model)
 : gdWindow(u::gui::getCenterWinBounds(model.sampleEditorBounds), g_ui->getI18Text(LangMap::SAMPLEEDITOR_TITLE), WID_SAMPLE_EDITOR)
-, m_channelId(channelId)
-, m_data(c::sampleEditor::getData(channelId))
+, m_data(data)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -92,7 +91,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 			top->end();
 		}
 
-		m_waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal, m_data);
+		m_waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal, m_data.value());
 		m_waveTools->rebuild(); // TODO - crappy temporary workaround for WaveTools
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
@@ -110,12 +109,12 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 			geFlex* tools = new geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 			{
-				m_pitchTool = new gePitchTool(m_data);
+				m_pitchTool = new gePitchTool(m_data.value());
 
 				geFlex* rangeShift = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 				{
-					m_rangeTool = new geRangeTool(m_data);
-					m_shiftTool = new geShiftTool(m_data);
+					m_rangeTool = new geRangeTool(m_data.value());
+					m_shiftTool = new geShiftTool(m_data.value());
 					rangeShift->addWidget(m_rangeTool, 272);
 					rangeShift->addWidget(m_shiftTool);
 					rangeShift->end();
@@ -144,15 +143,15 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	m_infoBtn->onClick = [this]()
 	{
 		std::string text = fmt::format(fmt::runtime(g_ui->getI18Text(LangMap::SAMPLEEDITOR_INFO)),
-		    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
-		    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
+		    m_data->wavePath, m_data->waveSize, m_data->waveDuration,
+		    m_data->waveBits != 0 ? std::to_string(m_data->waveBits) : "?", m_data->waveRate);
 
 		c::layout::openInfoWindow(text, 300, 120);
 	};
 
 	m_reload->onClick = [this]()
 	{
-		c::sampleEditor::reload(m_data.channelId);
+		c::sampleEditor::reload(m_data->channelId);
 		redraw();
 	};
 
@@ -200,7 +199,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	m_rewind->onClick = [this]()
 	{
-		c::sampleEditor::setPreviewTracker(m_data.getSample().range.getA());
+		c::sampleEditor::setPreviewTracker(m_data->getSample().range.getA());
 	};
 
 	m_loop->onChange = [](bool shouldLoop)
@@ -208,7 +207,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	size_range(720, 480);
 	set_non_modal();
-	rebuild();
+	rebuild(data);
 	show();
 }
 
@@ -225,19 +224,20 @@ gdSampleEditor::~gdSampleEditor()
 
 /* -------------------------------------------------------------------------- */
 
-void gdSampleEditor::rebuild()
+void gdSampleEditor::rebuild(const c::sampleEditor::Data& data)
 {
-	c::sampleEditor::preparePreview(m_channelId);
+	m_data.emplace(data);
 
-	m_data = c::sampleEditor::getData(m_channelId);
+	c::sampleEditor::preparePreview(m_data->channelId);
+
 	m_waveTools->rebuild();
 	m_pitchTool->rebuild();
 	m_rangeTool->rebuild();
 	m_shiftTool->rebuild();
 
-	updateTitleWithScene(m_data.scene);
+	updateTitleWithScene(m_data->scene);
 
-	if (!m_data.isValid())
+	if (!m_data->isValid())
 	{
 		m_rangeTool->deactivate();
 		m_pitchTool->deactivate();
@@ -252,7 +252,7 @@ void gdSampleEditor::rebuild()
 		m_reload->activate();
 	}
 
-	if (m_data.isLogical) // Logical samples (aka takes) cannot be reloaded.
+	if (m_data->isLogical) // Logical samples (aka takes) cannot be reloaded.
 		m_reload->deactivate();
 }
 
@@ -261,8 +261,12 @@ void gdSampleEditor::rebuild()
 void gdSampleEditor::refresh()
 {
 	m_waveTools->refresh();
-	m_play->setValue(m_data.a_getPreviewStatus() == ChannelStatus::PLAY);
+	m_play->setValue(m_data->getPreviewStatus() == ChannelStatus::PLAY);
 }
+
+/* -------------------------------------------------------------------------- */
+
+ID gdSampleEditor::getChannelId() const { return m_data->channelId; }
 
 /* -------------------------------------------------------------------------- */
 
