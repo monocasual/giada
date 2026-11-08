@@ -34,6 +34,143 @@
 
 namespace giada::m::rendering
 {
+namespace
+{
+void keyPress_(
+    model::Document& doc,
+    model::Assets&   assets,
+    ID               channelId,
+    Scene            scene,
+    float            velocity,
+    bool             canRecordActions,
+    bool             canQuantize,
+    Tick             currentTickQuantized)
+{
+	model::Channel&    ch          = doc.tracks.getChannel(channelId);
+	model::ChannelView channelView = model::makeChannelView(ch, assets);
+
+	if (ch.type == ChannelType::MIDI)
+	{
+		playMidiChannel(channelView);
+	}
+	else if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
+	{
+		const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
+		const bool             velocityAsVol = ch.sampleChannel->velocityAsVol;
+		const SamplePlayerMode mode          = ch.sampleChannel->mode;
+
+		// TODO
+		// if (canRecordActions && !isAnyLoopMode)
+		//	recordSampleKeyPress(channelId, scene, *ch.shared, currentTickQuantized, mode, m_actionManager);
+
+		pressSampleChannel(channelView, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
+	}
+	else if (ch.type == ChannelType::PREVIEW)
+	{
+		pressSampleChannel(channelView,
+		    SamplePlayerMode::SINGLE_BASIC_PAUSE, /*velocity=*/0.0f,
+		    /*canQuantize=*/false, /*isAnyLoopMode=*/false,
+		    /*velocityAsVol=*/false);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const model::Channel& child : doc.tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyPress_(doc, assets, child.id, scene, velocity, canRecordActions, canQuantize, currentTickQuantized);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void keyRelease_(
+    model::Document& doc,
+    model::Assets&   assets,
+    ID               channelId,
+    Scene            scene,
+    bool             canRecordActions,
+    Tick             currentTickQuantized,
+    ActionManager&   actionManager)
+{
+	model::Channel&    ch          = doc.tracks.getChannel(channelId);
+	model::ChannelView channelView = model::makeChannelView(ch, assets);
+
+	if (ch.type == ChannelType::MIDI)
+		return;
+
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
+	{
+		const SamplePlayerMode mode = ch.sampleChannel->mode;
+
+		if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		{
+			/* Record a stop event only if channel is SINGLE_PRESS. For any other
+			mode the key release event is meaningless. */
+
+			recordSampleKeyRelease(channelId, scene, currentTickQuantized, actionManager);
+		}
+
+		releaseSampleChannel(channelView, mode);
+	}
+	else if (ch.type == ChannelType::PREVIEW)
+	{
+		releaseSampleChannel(channelView, SamplePlayerMode::SINGLE_BASIC_PAUSE);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const model::Channel& child : doc.tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyRelease_(doc, assets, child.id, scene, canRecordActions, currentTickQuantized, actionManager);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void keyKill_(
+    model::Document& doc,
+    model::Assets&   assets,
+    ID               channelId,
+    Scene            scene,
+    bool             canRecordActions,
+    Tick             currentTickQuantized,
+    ActionManager&   actionManager,
+    KernelMidi&      kernelMidi)
+{
+	model::Channel&    ch          = doc.tracks.getChannel(channelId);
+	model::ChannelView channelView = model::makeChannelView(ch, assets);
+
+	if (ch.type == ChannelType::MIDI)
+	{
+		if (channelView.getParameters().isPlaying())
+		{
+			stopMidiChannel(channelView);
+			sendMidiAllNotesOff(channelView, kernelMidi);
+		}
+	}
+	else if (ch.type == ChannelType::SAMPLE)
+	{
+		const SamplePlayerMode mode = ch.sampleChannel->mode;
+
+		if (ch.hasWave(scene) && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		{
+			/* Record a stop event only if channel is SINGLE_PRESS. For any other
+			mode the key release event is meaningless. */
+
+			recordSampleKeyKill(channelId, scene, currentTickQuantized, actionManager);
+		}
+
+		killSampleChannel(channelView, mode);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const model::Channel& child : doc.tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyKill_(doc, assets, child.id, scene, canRecordActions, currentTickQuantized, actionManager, kernelMidi);
+	}
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+
 Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
 : m_model(model)
 , m_kernelMidi(km)
@@ -47,41 +184,9 @@ Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionManager& 
 void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecordActions,
     bool canQuantize, Tick currentTickQuantized)
 {
-	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=, this](model::Document& doc, model::Assets& assets)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=](model::Document& doc, model::Assets& assets)
 	{
-		model::Channel&    ch          = doc.tracks.getChannel(channelId);
-		model::ChannelView channelView = model::makeChannelView(ch, assets);
-
-		if (ch.type == ChannelType::MIDI)
-		{
-			playMidiChannel(channelView);
-		}
-		else if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
-		{
-			const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
-			const bool             velocityAsVol = ch.sampleChannel->velocityAsVol;
-			const SamplePlayerMode mode          = ch.sampleChannel->mode;
-
-			// TODO
-			// if (canRecordActions && !isAnyLoopMode)
-			//	recordSampleKeyPress(channelId, scene, *ch.shared, currentTickQuantized, mode, m_actionManager);
-
-			pressSampleChannel(channelView, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
-		}
-		else if (ch.type == ChannelType::PREVIEW)
-		{
-			pressSampleChannel(channelView,
-			    SamplePlayerMode::SINGLE_BASIC_PAUSE, /*velocity=*/0.0f,
-			    /*canQuantize=*/false, /*isAnyLoopMode=*/false,
-			    /*velocityAsVol=*/false);
-		}
-		else if (ch.type == ChannelType::GROUP)
-		{
-			// TODO recursion not allowed
-			// for (const model::Channel& child : doc.tracks.getByChannel(ch.id).getChannels().getAll())
-			//	if (child.type != ChannelType::GROUP)
-			//		keyPress(child.id, scene, velocity, canRecordActions, canQuantize, currentTickQuantized);
-		}
+		keyPress_(doc, assets, channelId, scene, velocity, canRecordActions, canQuantize, currentTickQuantized);
 	});
 }
 
@@ -89,39 +194,9 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 
 void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick currentTickQuantized)
 {
-	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=](model::Document& doc, model::Assets& assets)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=, this](model::Document& doc, model::Assets& assets)
 	{
-		model::Channel&    ch          = doc.tracks.getChannel(channelId);
-		model::ChannelView channelView = model::makeChannelView(ch, assets);
-
-		if (ch.type == ChannelType::MIDI)
-			return;
-
-		if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
-		{
-			const SamplePlayerMode mode = ch.sampleChannel->mode;
-
-			if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
-			{
-				/* Record a stop event only if channel is SINGLE_PRESS. For any other
-				mode the key release event is meaningless. */
-
-				recordSampleKeyRelease(channelId, scene, currentTickQuantized, m_actionManager);
-			}
-
-			releaseSampleChannel(channelView, mode);
-		}
-		else if (ch.type == ChannelType::PREVIEW)
-		{
-			releaseSampleChannel(channelView, SamplePlayerMode::SINGLE_BASIC_PAUSE);
-		}
-		else if (ch.type == ChannelType::GROUP)
-		{
-			// TODO recursion not allowed
-			// for (const Channel& child : m_model_DEPR_.get().tracks.getByChannel(ch.id).getChannels().getAll())
-			//	if (child.type != ChannelType::GROUP)
-			//		keyRelease(child.id, scene, canRecordActions, currentTickQuantized);
-		}
+		keyRelease_(doc, assets, channelId, scene, canRecordActions, currentTickQuantized, m_actionManager);
 	});
 }
 
@@ -129,40 +204,9 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick 
 
 void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick currentTickQuantized)
 {
-	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=](model::Document& doc, model::Assets& assets)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [=, this](model::Document& doc, model::Assets& assets)
 	{
-		model::Channel&    ch          = doc.tracks.getChannel(channelId);
-		model::ChannelView channelView = model::makeChannelView(ch, assets);
-
-		if (ch.type == ChannelType::MIDI)
-		{
-			if (channelView.getParameters().isPlaying())
-			{
-				stopMidiChannel(channelView);
-				sendMidiAllNotesOff(channelView, m_kernelMidi);
-			}
-		}
-		else if (ch.type == ChannelType::SAMPLE)
-		{
-			const SamplePlayerMode mode = ch.sampleChannel->mode;
-
-			if (ch.hasWave(scene) && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
-			{
-				/* Record a stop event only if channel is SINGLE_PRESS. For any other
-				mode the key release event is meaningless. */
-
-				recordSampleKeyKill(channelId, scene, currentTickQuantized, m_actionManager);
-			}
-
-			killSampleChannel(channelView, mode);
-		}
-		else if (ch.type == ChannelType::GROUP)
-		{
-			// TODO recursion not allowed
-			// for (const Channel& child : m_model_DEPR_.get().tracks.getByChannel(ch.id).getChannels().getAll())
-			//	if (child.type != ChannelType::GROUP)
-			//		keyKill(child.id, scene, canRecordActions, currentTickQuantized);
-		}
+		keyKill_(doc, assets, channelId, scene, canRecordActions, currentTickQuantized, m_actionManager, m_kernelMidi);
 	});
 }
 
@@ -309,7 +353,7 @@ void Reactor::stopAll()
 
 void Reactor::rewindAll()
 {
-	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [this](model::Document& doc, model::Assets& assets)
+	m_model.writeDocumentAndAssets(model::SwapType::SOFT, [](model::Document& doc, model::Assets& assets)
 	{
 		for (const model::Track& track : doc.tracks.getAll())
 			for (const model::Channel& ch : track.getChannels().getAll())
