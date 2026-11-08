@@ -118,7 +118,7 @@ private:
 	    mcl::AudioBuffer& out,
 	    int               channelOffset) const;
 
-	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
+	void renderPreview(const model::SampleChannelView&, mcl::AudioBuffer& out) const;
 
 	void renderSampleChannel(
 	    const model::SampleChannelView&,

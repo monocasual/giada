@@ -198,9 +198,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	renderMasterOut(masterOutView, assets, pluginPosition, out, doc.kernelAudio.deviceOut.channelsStart);
 
-	// TODO
-	// if (mixer.renderPreview)
-	//	renderPreview(previewCh, out);
+	if (doc.mixer.renderPreview)
+		renderPreview(model::makeSampleChannelView(previewCh, assets, scene), out);
 
 	m_mixer.updateOutputPeak(params.mixer, masterOutView.getRendering().getAudioBuffer());
 
@@ -356,15 +355,16 @@ void Renderer::renderMasterOut(
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
+void Renderer::renderPreview(const model::SampleChannelView& sampleView, mcl::AudioBuffer& out) const
 {
-	// TODO
-	// ch.shared->audioBuffer.clear();
+	const model::Channel::Rendering& rendering = sampleView.getRendering();
 
-	// if (ch.isPlaying())
-	//	rendering::renderSampleChannel(ch, Scene{0}, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
+	rendering.clearAudioBuffer(0);
 
-	// out.sumAll(ch.shared->audioBuffer, ch.volume);
+	if (sampleView.getParameters().isPlaying())
+		rendering::renderSampleChannel(sampleView, {}, /*seqIsRunning=*/false);
+
+	out.sumAll(rendering.getAudioBuffer(), sampleView.getChannel().volume);
 }
 
 /* -------------------------------------------------------------------------- */
