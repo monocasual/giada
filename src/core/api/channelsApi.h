@@ -28,16 +28,11 @@
 #define G_CHANNELS_API_H
 
 #include "src/core/channels/channelFactory.h"
+#include "src/core/model/types.h"
 #include "src/core/patch.h"
 #include "src/core/types.h"
 #include <string>
 #include <vector>
-
-namespace giada::m::model_DEPR_
-{
-class Model;
-class Tracks;
-} // namespace giada::m::model
 
 namespace giada::m::rendering
 {
@@ -61,7 +56,7 @@ class Wave;
 class ChannelsApi
 {
 public:
-	ChannelsApi(model_DEPR_::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
+	ChannelsApi(model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
 	    Recorder&, ActionManager&, PluginHost&, PluginManager&, rendering::Reactor&);
 
 	/* hasChannelsWithAudioData
@@ -71,9 +66,6 @@ public:
 
 	bool canRemoveTrack(std::size_t trackIndex) const;
 	bool hasActions(ID channelId) const;
-
-	Channel&       get(ID);
-	model_DEPR_::Tracks& getTracks();
 
 	void addTrack();
 	void removeTrack(std::size_t trackIndex);
@@ -114,7 +106,7 @@ public:
 	void sendMidi(ID, const MidiEvent&);
 
 private:
-	model_DEPR_::Model&       m_model;
+	model::Model&       m_model;
 	KernelAudio&        m_kernelAudio;
 	Mixer&              m_mixer;
 	Sequencer&          m_sequencer;

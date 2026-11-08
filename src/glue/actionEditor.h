@@ -28,6 +28,7 @@
 #define G_GLUE_ACTION_EDITOR_H
 
 #include "src/core/model/action.h"
+#include "src/core/model/modelView.h"
 #include "src/core/types.h"
 #include <optional>
 #include <string>
@@ -76,11 +77,11 @@ public:
 	Data(const m::model::ModelView&, ID channelId);
 
 	Tick getCurrentTick() const;
-	bool isChannelPlaying() const;
 
 	ID                  channelId;
 	Scene               scene;
 	std::string         channelName;
+	bool                isChannelPlaying;
 	Tick                ticksInSeq;
 	Tick                ticksInBeat;
 	Tick                ticksInBar;
@@ -88,6 +89,9 @@ public:
 	std::vector<Action> actions;
 
 	std::optional<SampleData> sample;
+
+private:
+	m::model::ModelView m_view;
 };
 
 Data getData(ID channelId);

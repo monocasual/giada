@@ -153,14 +153,16 @@ Master_InputData::Master_InputData(const m::model_DEPR_::MidiIn& midiIn)
 
 Channel_InputData channel_getInputData(ID channelId)
 {
-	return Channel_InputData(g_engine->getChannelsApi().get(channelId));
+	return {};
+	//return Channel_InputData(g_engine->getChannelsApi().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
 Channel_OutputData channel_getOutputData(ID channelId)
 {
-	return Channel_OutputData(g_engine->getChannelsApi().get(channelId));
+	return {};
+	// return Channel_OutputData(g_engine->getChannelsApi().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */

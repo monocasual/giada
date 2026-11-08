@@ -154,7 +154,7 @@ SceneStatus   Sequencer::getSceneStatus() const { return m_model.getParameters()
 
 /* -------------------------------------------------------------------------- */
 
-Tick Sequencer::getCurrentTick() const { return m_model_DEPR_.get().sequencer.a_getCurrentTick(m_currentSampleRate); }
+Tick Sequencer::getCurrentTick() const { return m_model.getParameters().sequencer.getCurrentTick(m_currentSampleRate, getBpm()); }
 Tick Sequencer::getCurrentTickQuantized() const { return quantize(getCurrentTick()); }
 
 /* -------------------------------------------------------------------------- */

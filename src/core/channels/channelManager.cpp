@@ -425,16 +425,18 @@ void ChannelManager::setVolume(ID channelId, float value)
 
 void ChannelManager::setPitch(ID channelId, float value, Scene scene)
 {
-	Channel& c       = m_model_DEPR_.get().tracks.getChannel(channelId);
-	Channel& preview = m_model_DEPR_.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
+	m_model.writeDocument(model::SwapType::SOFT, [channelId, value, scene](model::Document& doc)
+	{
+		model::Channel& ch      = doc.tracks.getChannel(channelId);
+		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	assert(c.sampleChannel);
+		assert(ch.sampleChannel);
 
-	const float pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
+		const float pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
 
-	c.sampleChannel->setPitch(pitch, scene);
-	preview.sampleChannel->setPitch(pitch, Scene{0});
-	m_model_DEPR_.swap(model_DEPR_::SwapType::SOFT);
+		ch.sampleChannel->setPitch(pitch, scene);
+		preview.sampleChannel->setPitch(pitch, Scene{0});
+	});
 }
 
 /* -------------------------------------------------------------------------- */

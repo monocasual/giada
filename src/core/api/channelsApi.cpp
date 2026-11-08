@@ -34,7 +34,7 @@
 
 namespace giada::m
 {
-ChannelsApi::ChannelsApi(model_DEPR_::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
+ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
     ChannelManager& cm, Recorder& r, ActionManager& ar, PluginHost& ph, PluginManager& pm,
     rendering::Reactor& re)
 : m_model(m)
@@ -69,20 +69,6 @@ bool ChannelsApi::canRemoveTrack(std::size_t trackIndex) const
 bool ChannelsApi::hasActions(ID channelId) const
 {
 	return m_recorder.hasActions(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Channel& ChannelsApi::get(ID channelId)
-{
-	return m_channelManager.getChannel(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-model_DEPR_::Tracks& ChannelsApi::getTracks()
-{
-	return m_model.get().tracks;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,7 +116,7 @@ int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {
 	const Scene              scene       = m_sequencer.getCurrentScene();
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
-	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
+	const Resampler::Quality rsmpQuality = m_kernelAudio.getResamplerQuality();
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality, scene);
 }
 
@@ -176,11 +162,11 @@ void ChannelsApi::clone(ID channelId)
 
 void ChannelsApi::copyToScene(ID channelId, Scene dstScene)
 {
-	const Channel& ch       = m_channelManager.getChannel(channelId);
-	const Scene    srcScene = m_sequencer.getCurrentScene();
+	const model::Channel& ch       = m_model.getCurrentDocument()->tracks.getChannel(channelId);
+	const Scene           srcScene = m_sequencer.getCurrentScene();
 
 	if (ch.type == ChannelType::GROUP)
-		for (const Channel& child : getTracks().getByChannel(ch.id).getChannels().getAll())
+		for (const model::Channel& child : m_model.getCurrentDocument()->tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
 				copyToScene(child.id, dstScene);
 

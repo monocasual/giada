@@ -196,6 +196,7 @@ std::vector<Track> getTracks(
 
 RoutingData getRoutingData(ID channelId)
 {
+#if 0
 	const m::Channel&             channel   = g_engine->getChannelsApi().get(channelId);
 	const m::KernelAudio::Device& outDevice = g_engine->getConfigApi().audio_getCurrentOutDevice();
 
@@ -208,6 +209,8 @@ RoutingData getRoutingData(ID channelId)
 	    .outputMaxNumChannels = outDevice.maxOutputChannels,
 	    .extraOutputs         = channel.extraOutputs,
 	    .outputDeviceName     = outDevice.name};
+#endif
+	return {};
 }
 
 /* -------------------------------------------------------------------------- */
