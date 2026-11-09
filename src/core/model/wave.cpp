@@ -57,19 +57,6 @@ Wave::Wave(ID id, mcl::AudioBuffer&& buffer, int rate, int bits, const std::stri
 
 /* -------------------------------------------------------------------------- */
 
-Wave::Wave(const Wave& other)
-: id(other.id)
-, m_buffer(other.getBuffer())
-, m_rate(other.m_rate)
-, m_bits(other.m_bits)
-, m_logical(false)
-, m_edited(false)
-, m_path(other.m_path)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Wave::alloc(Frame size, int channels, int rate, int bits, const std::string& path)
 {
 	m_buffer.alloc(size, channels);

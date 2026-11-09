@@ -39,10 +39,10 @@ class Wave
 public:
 	Wave(ID id);
 	Wave(ID id, mcl::AudioBuffer&&, int rate, int bits, const std::string& path);
-	Wave(const Wave& o);
-	Wave(Wave&& o) = default;
+	Wave(const Wave&) = default;
+	Wave(Wave&&)      = default;
 
-	Wave& operator=(Wave&& o) = default;
+	Wave& operator=(Wave&&) = default;
 
 	std::string getBasename(bool ext = false) const;
 	std::string getExtension() const;
