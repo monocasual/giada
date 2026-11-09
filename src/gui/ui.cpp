@@ -213,6 +213,10 @@ void Ui::refresh()
 
 void Ui::rebuild()
 {
+	rebuildMainWindow();
+	rebuildPluginListWindow();
+	rebuildActionEditorWindow();
+	rebuildSampleEditorWindow();
 	// rebuildSubWindow(WID_CHANNEL_ROUTING);
 }
 

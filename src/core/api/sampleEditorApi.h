@@ -28,7 +28,7 @@
 #define G_SAMPLE_EDITOR_API_H
 
 #include "src/core/model/types.h"
-#include "src/core/model_DEPR_/model.h"
+#include "src/core/model/wave.h"
 #include "src/core/types.h"
 #include "src/core/waveFx.h"
 #include <memory>
@@ -82,7 +82,7 @@ private:
 	/* waveBuffer
 	A Wave used during cut/copy/paste operations. */
 
-	std::unique_ptr<m::Wave> m_waveBuffer;
+	std::unique_ptr<model::Wave> m_waveBuffer;
 };
 } // namespace giada::m
 

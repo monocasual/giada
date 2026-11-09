@@ -35,6 +35,30 @@
 
 namespace giada::m
 {
+namespace
+{
+template <typename Edit>
+void editWave(model::Model& model, ID channelId, Scene scene, Edit edit)
+{
+	model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [channelId, scene, edit = std::move(edit)](model::Document& doc, model::Assets& assets)
+	{
+		model::Channel& channel      = doc.tracks.getChannel(channelId);
+		const ID        waveId       = channel.sampleChannel->getWaveId(scene);
+		const auto      originalWave = assets.waves.get(waveId);
+		auto            editedWave   = std::make_shared<model::Wave>(*originalWave);
+
+		edit(*editedWave);
+
+		assets.waves.set(waveId, std::move(editedWave));
+	});
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 SampleEditorApi::SampleEditorApi(model::Model& m, KernelAudio& k, ChannelManager& cm,
     rendering::Reactor& re, Sequencer& s)
 : m_model(m)
@@ -116,7 +140,12 @@ void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::copy(ID channelId, Frame a, Frame b)
 {
-	// m_waveBuffer = waveFactory::createFromWave_DEPR_(getWave(channelId), a, b);
+	const Scene           scene   = m_sequencer.getCurrentScene();
+	const model::Channel& channel = m_model.getCurrentDocument()->tracks.getChannel(channelId);
+	const ID              waveId  = channel.sampleChannel->getWaveId(scene);
+	const auto            wave    = m_model.getCurrentAssets()->waves.get(waveId);
+
+	m_waveBuffer = std::make_unique<model::Wave>(*waveFactory::createFromWave(*wave, a, b));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -158,50 +187,77 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 {
-	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	//  wfx::silence(getWave(channelId), a, b);
+	const Scene scene = m_sequencer.getCurrentScene();
+
+	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	{
+		wfx::silence(wave, a, b);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
-	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	//  wfx::fade(getWave(channelId), a, b, type);
+	const Scene scene = m_sequencer.getCurrentScene();
+
+	editWave(m_model, channelId, scene, [a, b, type](model::Wave& wave)
+	{
+		wfx::fade(wave, a, b, type);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 {
-	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	//  wfx::smooth(getWave(channelId), a, b);
+	const Scene scene = m_sequencer.getCurrentScene();
+
+	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	{
+		wfx::smooth(wave, a, b);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 {
-	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	//  wfx::reverse(getWave(channelId), a, b);
+	const Scene scene = m_sequencer.getCurrentScene();
+
+	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	{
+		wfx::reverse(wave, a, b);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 {
-	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	//  wfx::normalize(getWave(channelId), a, b);
+	const Scene scene = m_sequencer.getCurrentScene();
+
+	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	{
+		wfx::normalize(wave, a, b);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
-	// model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	//  wfx::trim(getWave(channelId), a, b);
-	// resetRange(channelId);
-	// loadPreviewChannel(channelId); // Refresh preview channel properties
+	const Scene scene = m_sequencer.getCurrentScene();
+
+	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	{
+		wfx::smooth(wave, a, b);
+	});
+
+	m_model.flush();
+
+	resetRange(channelId);
+	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
 /* -------------------------------------------------------------------------- */

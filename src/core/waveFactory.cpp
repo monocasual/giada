@@ -119,6 +119,7 @@ void reset()
 
 Result createFromFile_DEPR_(const std::string& path, ID id, int samplerate, Resampler::Quality quality)
 {
+#if 0
 	auto result = audioFileIO::read(path);
 	if (!result)
 		return {.status = G_RES_ERR_IO};
@@ -145,6 +146,8 @@ Result createFromFile_DEPR_(const std::string& path, ID id, int samplerate, Resa
 	u::log::print("[waveFactory::create] new Wave created, {} frames\n", wave->getBuffer().countFrames());
 
 	return {G_RES_OK, std::move(wave)};
+#endif
+	return {};
 }
 
 Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality quality)

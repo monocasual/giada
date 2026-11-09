@@ -29,7 +29,7 @@
 
 #include "src/types.h"
 
-namespace giada::m
+namespace giada::m::model
 {
 class Wave;
 }
@@ -50,38 +50,38 @@ enum class Fade
 /* monoToStereo
 Converts a 1-channel Wave to a 2-channels wave. */
 
-int monoToStereo(Wave& w);
+int monoToStereo(model::Wave& w);
 
 /* normalize
 Normalizes the wave in range a-b by altering values in memory. */
 
-void normalize(Wave& w, int a, int b);
+void normalize(model::Wave& w, int a, int b);
 
-void silence(Wave& w, int a, int b);
-void cut(Wave& w, int a, int b);
-void trim(Wave& w, int a, int b);
+void silence(model::Wave& w, int a, int b);
+void cut(model::Wave& w, int a, int b);
+void trim(model::Wave& w, int a, int b);
 
 /* paste
 Pastes Wave 'src' into Wave 'dest', starting from frame 'a'. */
 
-void paste(const Wave& src, Wave& dest, Frame a);
+void paste(const model::Wave& src, model::Wave& dest, Frame a);
 
 /* fade
 Fades in or fades out selection. Can be Fade::IN or Fade::OUT. */
 
-void fade(Wave& w, int a, int b, Fade type);
+void fade(model::Wave& w, int a, int b, Fade type);
 
 /* smooth
 Smooth edges of selection. */
 
-void smooth(Wave& w, int a, int b);
+void smooth(model::Wave& w, int a, int b);
 
 /* reverse
 Flips Wave's data. */
 
-void reverse(Wave& v, Frame a, Frame b);
+void reverse(model::Wave& v, Frame a, Frame b);
 
-void shift(Wave& w, Frame offset);
+void shift(model::Wave& w, Frame offset);
 } // namespace giada::m::wfx
 
 #endif

@@ -119,11 +119,7 @@ void startup()
 		const auto assetsSwapType   = g_engine->pollAssetsChanges();
 
 		if (documentSwapType == model::SwapType::HARD || assetsSwapType == model::SwapType::HARD)
-		{
-			g_ui->rebuildMainWindow();
-			g_ui->rebuildPluginListWindow();
-			g_ui->rebuildActionEditorWindow();
-		}
+			g_ui->rebuild();
 		else if (documentSwapType == model::SwapType::SOFT || assetsSwapType == model::SwapType::SOFT)
 			g_ui->update();
 		g_ui->refresh();

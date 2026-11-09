@@ -26,7 +26,7 @@
 
 #include "src/core/waveFx.h"
 #include "src/core/const.h"
-#include "src/core/wave.h"
+#include "src/core/model/wave.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/utils/log.h"
 #include <algorithm>
@@ -43,7 +43,11 @@ namespace giada::m::wfx
 {
 namespace
 {
-void fadeFrame_(Wave& w, int i, float val)
+constexpr int SMOOTH_SIZE = 32;
+
+/* -------------------------------------------------------------------------- */
+
+void fadeFrame_(model::Wave& w, int i, float val)
 {
 	for (int j = 0; j < w.getBuffer().countChannels(); j++)
 		w.getBuffer().at(i, j) *= val;
@@ -51,7 +55,7 @@ void fadeFrame_(Wave& w, int i, float val)
 
 /* -------------------------------------------------------------------------- */
 
-float getPeak_(const Wave& w, int a, int b)
+float getPeak_(const model::Wave& w, int a, int b)
 {
 	float peak = 0.0f;
 	float abs  = 0.0f;
@@ -70,9 +74,7 @@ float getPeak_(const Wave& w, int a, int b)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-constexpr int SMOOTH_SIZE = 32;
-
-void normalize(Wave& w, int a, int b)
+void normalize(model::Wave& w, int a, int b)
 {
 	float peak = getPeak_(w, a, b);
 	if (peak == 0.0f || peak > 1.0f)
@@ -88,7 +90,7 @@ void normalize(Wave& w, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-int monoToStereo(Wave& w)
+int monoToStereo(model::Wave& w)
 {
 	if (w.getBuffer().countChannels() >= G_MAX_IO_CHANS)
 		return G_RES_OK;
@@ -107,7 +109,7 @@ int monoToStereo(Wave& w)
 
 /* -------------------------------------------------------------------------- */
 
-void silence(Wave& w, int a, int b)
+void silence(model::Wave& w, int a, int b)
 {
 	u::log::print("[wfx::silence] silencing from {} to {}\n", a, b);
 
@@ -119,7 +121,7 @@ void silence(Wave& w, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-void cut(Wave& w, int a, int b)
+void cut(model::Wave& w, int a, int b)
 {
 	if (a < 0)
 		a = 0;
@@ -152,7 +154,7 @@ void cut(Wave& w, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-void trim(Wave& w, Frame a, Frame b)
+void trim(model::Wave& w, Frame a, Frame b)
 {
 	if (a < 0)
 		a = 0;
@@ -176,7 +178,7 @@ void trim(Wave& w, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void paste(const Wave& src, Wave& des, Frame a)
+void paste(const model::Wave& src, model::Wave& des, Frame a)
 {
 	const mcl::AudioBuffer& srcBuffer = src.getBuffer();
 	const mcl::AudioBuffer& desBuffer = des.getBuffer();
@@ -199,7 +201,7 @@ void paste(const Wave& src, Wave& des, Frame a)
 
 /* -------------------------------------------------------------------------- */
 
-void fade(Wave& w, int a, int b, Fade type)
+void fade(model::Wave& w, int a, int b, Fade type)
 {
 	u::log::print("[wfx::fade] fade from {} to {} (range = {})\n", a, b, b - a);
 
@@ -218,7 +220,7 @@ void fade(Wave& w, int a, int b, Fade type)
 
 /* -------------------------------------------------------------------------- */
 
-void smooth(Wave& w, int a, int b)
+void smooth(model::Wave& w, int a, int b)
 {
 	/* Do nothing if fade edges (both of SMOOTH_SIZE samples) are > than selected
 	portion of wave. SMOOTH_SIZE*2 to count both edges. */
@@ -235,7 +237,7 @@ void smooth(Wave& w, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-void shift(Wave& w, Frame offset)
+void shift(model::Wave& w, Frame offset)
 {
 	const int frames   = w.getBuffer().countFrames();
 	const int channels = w.getBuffer().countChannels();
@@ -258,7 +260,7 @@ void shift(Wave& w, Frame offset)
 
 /* -------------------------------------------------------------------------- */
 
-void reverse(Wave& w, Frame a, Frame b)
+void reverse(model::Wave& w, Frame a, Frame b)
 {
 	for (int ch = 0; ch < w.getBuffer().countChannels(); ++ch)
 	{
