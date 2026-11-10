@@ -36,22 +36,22 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::sampleEditor
 {
-Data::Data(const m::model::ModelView& view, ID channelId)
+Data::Data(const m::model::RealtimeModel::Snapshot& snapshot, ID channelId)
 : channelId(channelId)
-, scene(view.getParameters().sequencer.getCurrentScene())
-, name(view.getDocument().tracks.getChannel(channelId).getName(scene))
-, volume(view.getDocument().tracks.getChannel(channelId).volume)
-, pan(view.getDocument().tracks.getChannel(channelId).pan.asFloat())
+, scene(snapshot.getParameters().sequencer.getCurrentScene())
+, name(snapshot.getDocument().tracks.getChannel(channelId).getName(scene))
+, volume(snapshot.getDocument().tracks.getChannel(channelId).volume)
+, pan(snapshot.getDocument().tracks.getChannel(channelId).pan.asFloat())
 , waveSize(0)
 , waveBits(0)
 , waveDuration(0.0f)
 , waveRate(0)
 , isLogical(false)
-, m_view(view)
+, m_snapshot(snapshot)
 , m_sampleChannelView(m::model::makeSampleChannelView(
-      m_view.getDocument().tracks.getChannel(channelId), m_view.getAssets(), scene))
+      m_snapshot.getDocument().tracks.getChannel(channelId), m_snapshot.getAssets(), scene))
 , m_previewChannelView(m::model::makeSampleChannelView(
-      m_view.getDocument().tracks.getChannel(PREVIEW_CHANNEL_ID), m_view.getAssets(), scene))
+      m_snapshot.getDocument().tracks.getChannel(PREVIEW_CHANNEL_ID), m_snapshot.getAssets(), scene))
 {
 	if (!m_sampleChannelView.hasWave())
 		return;
@@ -83,7 +83,7 @@ Frame Data::getPreviewTracker() const
 
 Frame Data::getFramesInBar() const
 {
-	const auto& document  = m_view.getDocument();
+	const auto& document  = m_snapshot.getDocument();
 	const auto& sequencer = document.sequencer;
 	return u::time::tickToFrame(sequencer.getTicksInBar(), document.kernelAudio.samplerate,
 	    sequencer.getBpm());
@@ -91,7 +91,7 @@ Frame Data::getFramesInBar() const
 
 Frame Data::getFramesInLoop() const
 {
-	const auto& document  = m_view.getDocument();
+	const auto& document  = m_snapshot.getDocument();
 	const auto& sequencer = document.sequencer;
 	return u::time::tickToFrame(sequencer.getTicksInLoop(), document.kernelAudio.samplerate,
 	    sequencer.getBpm());
@@ -113,7 +113,8 @@ const m::model::Wave* Data::getWave() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getModelView(), channelId);
+	const auto snapshot = g_engine->getModelSnapshot();
+	return Data(snapshot, channelId);
 }
 
 /* -------------------------------------------------------------------------- */

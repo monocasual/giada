@@ -52,6 +52,11 @@ class JackTransport;
 #endif
 } // namespace giada::m
 
+namespace giada::m::model
+{
+class ModelView;
+}
+
 namespace giada::m::model_DEPR_
 {
 class Model;
@@ -79,8 +84,7 @@ private:
 
 	void advanceTracks(
 	    const Sequencer::EventBuffer&,
-	    const model::Tracks&,
-	    const model::Assets&,
+	    const model::ModelView&,
 	    FrameRange range,
 	    Frame      quantizerStep,
 	    RenderCommands&) const;
@@ -92,8 +96,7 @@ private:
 	    Frame quantizerStep) const;
 
 	void renderTracks(
-	    const model::Tracks&,
-	    const model::Assets&,
+	    const model::ModelView&,
 	    const juce::AudioPlayHead::PositionInfo&,
 	    const model::ChannelView& masterOut,
 	    mcl::AudioBuffer&         hardwareOut,
@@ -104,7 +107,7 @@ private:
 
 	void renderNormalChannel(
 	    const model::ChannelView&,
-	    const model::Assets&,
+	    const model::ModelView&,
 	    RenderInfo,
 	    const juce::AudioPlayHead::PositionInfo&,
 	    const mcl::AudioBuffer& in,

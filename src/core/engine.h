@@ -78,7 +78,7 @@ public:
 	model::SwapType pollDocumentChanges();
 	model::SwapType pollAssetsChanges();
 
-	model::ModelView getModelView() const;
+	model::RealtimeModel::Snapshot getModelSnapshot() const;
 
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process

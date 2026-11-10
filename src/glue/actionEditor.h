@@ -74,7 +74,7 @@ public:
 class Data
 {
 public:
-	Data(const m::model::ModelView&, ID channelId);
+	Data(const m::model::RealtimeModel::Snapshot&, ID channelId);
 
 	Tick getCurrentTick() const;
 
@@ -91,7 +91,7 @@ public:
 	std::optional<SampleData> sample;
 
 private:
-	m::model::ModelView m_view;
+	m::model::RealtimeModel::Snapshot m_snapshot;
 };
 
 Data getData(ID channelId);

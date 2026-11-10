@@ -140,7 +140,9 @@ Plugins::Plugins(const m::model::ModelView& view, ID channelId)
 
 Plugins getPlugins(ID channelId)
 {
-	return Plugins(g_engine->getModelView(), channelId);
+	const auto snapshot = g_engine->getModelSnapshot();
+	const auto view     = m::model::makeModelView(snapshot);
+	return Plugins(view, channelId);
 }
 
 std::vector<PluginInfo> getPluginsInfo()

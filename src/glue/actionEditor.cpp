@@ -60,17 +60,18 @@ SampleData::SampleData(const m::model::SampleChannel& s)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::model::ModelView& view, ID channelId)
+Data::Data(const m::model::RealtimeModel::Snapshot& snapshot, ID channelId)
 : channelId(channelId)
-, scene(view.getParameters().sequencer.getCurrentScene())
-, channelName(view.getDocument().tracks.getChannel(channelId).getName(scene))
-, isChannelPlaying(view.getAssets().channelsParameters.get(channelId)->isPlaying())
-, ticksInSeq(view.getDocument().sequencer.getTicksInSeq())
-, ticksInBeat(view.getDocument().sequencer.getTicksInBeat())
-, ticksInBar(view.getDocument().sequencer.getTicksInBar())
-, ticksInLoop(view.getDocument().sequencer.getTicksInLoop())
-, m_view(view)
+, scene(snapshot.getParameters().sequencer.getCurrentScene())
+, channelName(snapshot.getDocument().tracks.getChannel(channelId).getName(scene))
+, isChannelPlaying(snapshot.getAssets().channelsParameters.get(channelId)->isPlaying())
+, ticksInSeq(snapshot.getDocument().sequencer.getTicksInSeq())
+, ticksInBeat(snapshot.getDocument().sequencer.getTicksInBeat())
+, ticksInBar(snapshot.getDocument().sequencer.getTicksInBar())
+, ticksInLoop(snapshot.getDocument().sequencer.getTicksInLoop())
+, m_snapshot(snapshot)
 {
+	const auto view = m::model::makeModelView(m_snapshot);
 	const m::model::Channel& ch = view.getDocument().tracks.getChannel(channelId);
 	if (ch.type == ChannelType::SAMPLE)
 		sample = std::make_optional<SampleData>(ch.sampleChannel.value());
@@ -83,9 +84,10 @@ Data::Data(const m::model::ModelView& view, ID channelId)
 
 Tick Data::getCurrentTick() const
 {
-	return m_view.getParameters().sequencer.getCurrentTick(
-	    m_view.getDocument().kernelAudio.samplerate,
-	    m_view.getDocument().sequencer.getBpm());
+	const auto view = m::model::makeModelView(m_snapshot);
+	return view.getParameters().sequencer.getCurrentTick(
+	    view.getDocument().kernelAudio.samplerate,
+	    view.getDocument().sequencer.getBpm());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -94,7 +96,8 @@ Tick Data::getCurrentTick() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getModelView(), channelId);
+	const auto snapshot = g_engine->getModelSnapshot();
+	return Data(snapshot, channelId);
 }
 
 /* -------------------------------------------------------------------------- */

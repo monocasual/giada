@@ -96,7 +96,7 @@ private:
 class Transport
 {
 public:
-	Transport(const m::model::ModelView&);
+	Transport(const m::model::RealtimeModel::Snapshot&);
 
 	bool           isRunning;
 	bool           isRecordingActions;
@@ -110,7 +110,7 @@ public:
 	bool canEnableRecOnSignal() const;
 
 private:
-	m::model::ModelView m_view;
+	m::model::RealtimeModel::Snapshot m_snapshot;
 };
 
 class Scenes
@@ -131,7 +131,7 @@ private:
 class Main
 {
 public:
-	Main(const m::model::ModelView&);
+	Main(const m::model::RealtimeModel::Snapshot&);
 
 	std::vector<channel::Track> tracks;
 	Timer                       timer;

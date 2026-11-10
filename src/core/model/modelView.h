@@ -1,42 +1,67 @@
 #ifndef G_MODEL_MODEL_VIEW_H
 #define G_MODEL_MODEL_VIEW_H
 
+#include "src/core/model/channelView.h"
 #include "src/core/model/types.h"
-#include <memory>
 
 namespace giada::m::model
 {
 class ModelView;
 
 /* makeModelView
-Builds a view of the latest published Document and Assets, plus the live
-Parameters. For non-realtime threads only. */
+Builds a view of the Document, Assets and Parameters.
 
-ModelView makeModelView(const RealtimeModel&);
+Keep the Snapshot or RealtimeReadLock alive for as long as you use the view or
+anything obtained from it. For example:
+
+    const auto snapshot = model.getSnapshot();
+    const auto view = makeModelView(snapshot);
+
+The same applies to a RealtimeReadLock in the audio callback. Temporaries such
+as makeModelView(model.getSnapshot()) are not allowed. The model must also
+remain alive because the view uses its live Parameters. */
+
+ModelView makeModelView(const RealtimeModel::Snapshot&);
+ModelView makeModelView(const RealtimeModel::RealtimeReadLock&);
+ModelView makeModelView(const RealtimeModel::Snapshot&&)         = delete;
+ModelView makeModelView(const RealtimeModel::RealtimeReadLock&&) = delete;
 
 /* ModelView
-Read-only bundle of Document, Assets and Parameters, so they can be passed
-around as one object. Document and Assets are snapshots kept alive by the view;
-Parameters is live and can change while the view exists. */
+Gives read-only access to the Document, Assets and Parameters together.
+Parameters can change while the view is in use. See makeModelView above for
+how long to keep the data alive. */
 
 class ModelView final
 {
 public:
-	const Document&   getDocument() const { return *m_document; }
-	const Assets&     getAssets() const { return *m_assets; }
+	const Document&   getDocument() const { return m_document; }
+	const Assets&     getAssets() const { return m_assets; }
 	const Parameters& getParameters() const { return m_parameters; }
 
+	/* makeChannelView
+	Builds a view of a channel and its associated parameters and rendering.
+	Pass a channel from this view's Document and keep it alive while using the
+	returned view. Asserts if the associated objects are missing. */
+
+	ChannelView makeChannelView(const Channel&) const;
+
+	/* makeSampleChannelView
+	Builds a view of a sample (or preview) channel and its wave for one scene.
+	Pass a channel from this view's Document and keep it alive while using the
+	returned view. Asserts if required objects are missing. */
+
+	SampleChannelView makeSampleChannelView(const Channel&, Scene) const;
+	SampleChannelView makeSampleChannelView(const ChannelView&, Scene) const;
+
 private:
-	friend ModelView makeModelView(const RealtimeModel&);
+	friend ModelView makeModelView(const RealtimeModel::Snapshot&);
+	friend ModelView makeModelView(const RealtimeModel::RealtimeReadLock&);
 
-	ModelView(
-	    std::shared_ptr<const Document> document,
-	    std::shared_ptr<const Assets>   assets,
-	    const Parameters&               parameters);
+	ModelView(const Document& document, const Assets& assets, const Parameters& parameters);
 
-	std::shared_ptr<const Document> m_document;
-	std::shared_ptr<const Assets>   m_assets;
-	const Parameters&               m_parameters;
+	const Document&   m_document;
+	const Assets&     m_assets;
+	const Parameters& m_parameters;
 };
 } // namespace giada::m::model
 

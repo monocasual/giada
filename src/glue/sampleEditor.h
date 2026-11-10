@@ -53,7 +53,7 @@ namespace giada::c::sampleEditor
 {
 struct Data
 {
-	Data(const m::model::ModelView&, ID channelId);
+	Data(const m::model::RealtimeModel::Snapshot&, ID channelId);
 
 	bool                  isValid() const;
 	ChannelStatus         getPreviewStatus() const;
@@ -76,9 +76,9 @@ struct Data
 	bool        isLogical;
 
 private:
-	m::model::ModelView         m_view;
-	m::model::SampleChannelView m_sampleChannelView;
-	m::model::SampleChannelView m_previewChannelView;
+	m::model::RealtimeModel::Snapshot m_snapshot;
+	m::model::SampleChannelView       m_sampleChannelView;
+	m::model::SampleChannelView       m_previewChannelView;
 };
 
 /* getData

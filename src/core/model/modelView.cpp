@@ -1,32 +1,46 @@
 #include "src/core/model/modelView.h"
-#include <cassert>
-#include <utility>
 
 namespace giada::m::model
 {
-ModelView::ModelView(
-    std::shared_ptr<const Document> document,
-    std::shared_ptr<const Assets>   assets,
-    const Parameters&               parameters)
-: m_document(std::move(document))
-, m_assets(std::move(assets))
+ModelView::ModelView(const Document& document, const Assets& assets, const Parameters& parameters)
+: m_document(document)
+, m_assets(assets)
 , m_parameters(parameters)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-ModelView makeModelView(const RealtimeModel& model)
+ChannelView ModelView::makeChannelView(const Channel& channel) const
 {
-	/* Same order as RealtimeModel::read(): Document first, then Assets, so every
-	asset the Document refers to is already in the Assets we get. */
+	return model::makeChannelView(channel, m_assets);
+}
 
-	auto document = model.getCurrentDocument();
-	auto assets   = model.getCurrentAssets();
+/* -------------------------------------------------------------------------- */
 
-	assert(document != nullptr);
-	assert(assets != nullptr);
+SampleChannelView ModelView::makeSampleChannelView(const Channel& channel, Scene scene) const
+{
+	return model::makeSampleChannelView(channel, m_assets, scene);
+}
 
-	return ModelView(std::move(document), std::move(assets), model.getParameters());
+/* -------------------------------------------------------------------------- */
+
+SampleChannelView ModelView::makeSampleChannelView(const ChannelView& channelView, Scene scene) const
+{
+	return model::makeSampleChannelView(channelView, m_assets, scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
+ModelView makeModelView(const RealtimeModel::Snapshot& snapshot)
+{
+	return ModelView(snapshot.getDocument(), snapshot.getAssets(), snapshot.getParameters());
+}
+
+/* -------------------------------------------------------------------------- */
+
+ModelView makeModelView(const RealtimeModel::RealtimeReadLock& lock)
+{
+	return ModelView(lock.getDocument(), lock.getAssets(), lock.getParameters());
 }
 } // namespace giada::m::model

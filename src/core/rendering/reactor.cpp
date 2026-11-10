@@ -215,7 +215,8 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick cur
 void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
     bool canRecordActions, Tick currentTickQuantized)
 {
-	const model::ModelView modelView = model::makeModelView(m_model);
+	const auto             snapshot  = m_model.getSnapshot();
+	const model::ModelView modelView = model::makeModelView(snapshot);
 	const model::Channel&  ch        = modelView.getDocument().tracks.getChannel(channelId);
 	const auto             rendering = modelView.getAssets().channelsRendering.get(channelId);
 

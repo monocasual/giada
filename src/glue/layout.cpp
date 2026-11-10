@@ -112,7 +112,9 @@ void openKeyGrabberWindow(int key, std::function<bool(int)> f)
 
 void openBpmWindow()
 {
-	const float bpm = g_engine->getModelView().getDocument().sequencer.getBpm();
+	const auto  snapshot = g_engine->getModelSnapshot();
+	const auto  view     = m::model::makeModelView(snapshot);
+	const float bpm      = view.getDocument().sequencer.getBpm();
 	g_ui->openSubWindow(new v::gdBpmInput(bpm));
 }
 
@@ -120,7 +122,9 @@ void openBpmWindow()
 
 void openBeatsWindow()
 {
-	const TimeSignature sig = g_engine->getModelView().getDocument().sequencer.getTimeSignature();
+	const auto          snapshot = g_engine->getModelSnapshot();
+	const auto          view     = m::model::makeModelView(snapshot);
+	const TimeSignature sig      = view.getDocument().sequencer.getTimeSignature();
 	g_ui->openSubWindow(new v::gdBeatsInput(sig));
 }
 

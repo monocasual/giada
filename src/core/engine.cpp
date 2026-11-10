@@ -281,9 +281,9 @@ model::SwapType Engine::pollAssetsChanges()
 
 /* -------------------------------------------------------------------------- */
 
-model::ModelView Engine::getModelView() const
+model::RealtimeModel::Snapshot Engine::getModelSnapshot() const
 {
-	return model::makeModelView(m_model);
+	return m_model.getSnapshot();
 }
 
 /* -------------------------------------------------------------------------- */
