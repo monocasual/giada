@@ -12,7 +12,7 @@ class ModelView;
 Builds a view of the latest published Document and Assets, plus the live
 Parameters. For non-realtime threads only. */
 
-ModelView makeModelView(const Model&);
+ModelView makeModelView(const RealtimeModel&);
 
 /* ModelView
 Read-only bundle of Document, Assets and Parameters, so they can be passed
@@ -27,7 +27,7 @@ public:
 	const Parameters& getParameters() const { return m_parameters; }
 
 private:
-	friend ModelView makeModelView(const Model&);
+	friend ModelView makeModelView(const RealtimeModel&);
 
 	ModelView(
 	    std::shared_ptr<const Document> document,

@@ -171,7 +171,7 @@ void keyKill_(
 
 /* -------------------------------------------------------------------------- */
 
-Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
+Reactor::Reactor(model::RealtimeModel& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
 : m_model(model)
 , m_kernelMidi(km)
 , m_actionManager(a)

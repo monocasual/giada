@@ -47,7 +47,7 @@ constexpr int CH_RIGHT = 1;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Mixer::Mixer(model_DEPR_::Model& m_DEPR_, model::Model& m)
+Mixer::Mixer(model_DEPR_::Model& m_DEPR_, model::RealtimeModel& m)
 : onSignalTresholdReached(nullptr)
 , onEndOfRecording(nullptr)
 , m_model_DEPR_(m_DEPR_)

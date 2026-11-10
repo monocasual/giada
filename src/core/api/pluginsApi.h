@@ -42,7 +42,7 @@ class Plugin;
 class PluginsApi
 {
 public:
-	PluginsApi(model::Model&, PluginManager&, PluginHost&);
+	PluginsApi(model::RealtimeModel&, PluginManager&, PluginHost&);
 
 	bool                    hasEditor(ID pluginId) const;
 	std::vector<PluginInfo> getInfo() const;
@@ -59,7 +59,7 @@ public:
 	void scan(const std::string& dir, const std::function<bool(float)>& progress);
 
 private:
-	model::Model&  m_model;
+	model::RealtimeModel&  m_model;
 	PluginManager& m_pluginManager;
 	PluginHost&    m_pluginHost;
 };

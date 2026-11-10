@@ -62,7 +62,7 @@ public:
 		std::vector<unsigned int> sampleRates       = {};
 	};
 
-	KernelAudio(model::Model&);
+	KernelAudio(model::RealtimeModel&);
 
 	static void logCompiledAPIs();
 
@@ -166,7 +166,7 @@ private:
 
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
-	model::Model&            m_model;
+	model::RealtimeModel&            m_model;
 	int                      m_jackMaxOutputChannels;
 };
 } // namespace giada::m

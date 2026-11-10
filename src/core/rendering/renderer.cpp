@@ -124,7 +124,7 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::Model& model) const
+void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::RealtimeModel& model) const
 {
 	const Now startTime = std::chrono::high_resolution_clock::now();
 

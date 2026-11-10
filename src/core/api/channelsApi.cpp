@@ -34,7 +34,7 @@
 
 namespace giada::m
 {
-ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
+ChannelsApi::ChannelsApi(model::RealtimeModel& m, KernelAudio& k, Mixer& mx, Sequencer& s,
     ChannelManager& cm, Recorder& r, ActionManager& ar, PluginHost& ph, PluginManager& pm,
     rendering::Reactor& re)
 : m_model(m)

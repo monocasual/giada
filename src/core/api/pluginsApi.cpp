@@ -38,7 +38,7 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginsApi::PluginsApi(model::Model& m, PluginManager& pm, PluginHost& ph)
+PluginsApi::PluginsApi(model::RealtimeModel& m, PluginManager& pm, PluginHost& ph)
 : m_model(m)
 , m_pluginManager(pm)
 , m_pluginHost(ph)

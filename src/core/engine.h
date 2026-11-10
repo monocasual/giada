@@ -131,7 +131,7 @@ public:
 private:
 	void registerThread(Thread, bool isRealtime) const;
 
-	model::Model           m_model;
+	model::RealtimeModel           m_model;
 	model_DEPR_::Model     m_model_DEPR_;
 	KernelAudio            m_kernelAudio;
 	KernelMidi             m_kernelMidi;

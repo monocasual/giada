@@ -44,7 +44,7 @@ namespace giada::m::rendering
 class Reactor
 {
 public:
-	Reactor(model::Model&, MidiMapper<KernelMidi>&, ActionManager&, KernelMidi&);
+	Reactor(model::RealtimeModel&, MidiMapper<KernelMidi>&, ActionManager&, KernelMidi&);
 
 	void keyPress(ID channelId, Scene, float velocity, bool canRecordActions, bool canQuantize, Tick currentTickQuantized);
 	void keyRelease(ID channelId, Scene, bool canRecordActions, Tick currentTickQuantized);
@@ -63,7 +63,7 @@ public:
 	void killEmptySampleChannels(Scene);
 
 private:
-	model::Model&           m_model;
+	model::RealtimeModel&           m_model;
 	KernelMidi&             m_kernelMidi;
 	ActionManager&          m_actionManager;
 	MidiMapper<KernelMidi>& m_midiMapper;

@@ -112,7 +112,7 @@ struct ActionsBlock
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Sequencer::Sequencer(model::Model& m, model_DEPR_::Model& m_DEPR_, MidiSynchronizer& s, JackTransport& j)
+Sequencer::Sequencer(model::RealtimeModel& m, model_DEPR_::Model& m_DEPR_, MidiSynchronizer& s, JackTransport& j)
 : onAboutStart(nullptr)
 , onAboutStop(nullptr)
 , onSceneChanged(nullptr)

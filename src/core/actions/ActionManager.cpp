@@ -72,7 +72,7 @@ Tick sanitizeTick_(Tick t, Tick ticksInLoop)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ActionManager::ActionManager(model::Model& m)
+ActionManager::ActionManager(model::RealtimeModel& m)
 : m_model(m)
 {
 	m_liveActions.reserve(MAX_LIVE_RECS_CHUNK);

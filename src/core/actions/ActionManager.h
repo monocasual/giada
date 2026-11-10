@@ -43,7 +43,7 @@ struct Action;
 class ActionManager
 {
 public:
-	ActionManager(model::Model&);
+	ActionManager(model::RealtimeModel&);
 
 	/* reset
 	Brings everything back to the initial state. */
@@ -137,7 +137,7 @@ private:
 
 	void copyActions(ID channelId, Scene src, Scene dst, ID newChannelId);
 
-	model::Model&              m_model;
+	model::RealtimeModel&              m_model;
 	std::vector<model::Action> m_liveActions;
 };
 } // namespace giada::m

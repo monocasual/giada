@@ -47,7 +47,7 @@ class Sequencer;
 class SampleEditorApi
 {
 public:
-	SampleEditorApi(model::Model&, KernelAudio&, ChannelManager&, rendering::Reactor&, Sequencer&);
+	SampleEditorApi(model::RealtimeModel&, KernelAudio&, ChannelManager&, rendering::Reactor&, Sequencer&);
 
 	void          loadPreviewChannel(ID sourceChannelId);
 	void          freePreviewChannel();
@@ -73,7 +73,7 @@ public:
 	void reload(ID channelId);
 
 private:
-	model::Model&       m_model;
+	model::RealtimeModel&       m_model;
 	KernelAudio&        m_kernelAudio;
 	ChannelManager&     m_channelManager;
 	rendering::Reactor& m_reactor;

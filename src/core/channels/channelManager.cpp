@@ -53,7 +53,7 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ChannelManager::ChannelManager(model::Model& model, model_DEPR_::Model& model_depr_, MidiMapper<KernelMidi>& m, KernelMidi& km)
+ChannelManager::ChannelManager(model::RealtimeModel& model, model_DEPR_::Model& model_depr_, MidiMapper<KernelMidi>& m, KernelMidi& km)
 : m_model(model)
 , m_model_DEPR_(model_depr_)
 , m_kernelMidi(km)

@@ -57,7 +57,7 @@ namespace giada::m
 class PluginHost final
 {
 public:
-	PluginHost(model::Model&);
+	PluginHost(model::RealtimeModel&);
 
 	/* reset
 	Brings everything back to the initial state. */
@@ -112,7 +112,7 @@ private:
 
 	void processPlugin(const model::Plugin&, juce::MidiBuffer& events);
 
-	model::Model&            m_model;
+	model::RealtimeModel&            m_model;
 	juce::AudioBuffer<float> m_audioBuffer;
 };
 } // namespace giada::m

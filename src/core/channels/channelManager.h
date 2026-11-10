@@ -64,7 +64,7 @@ class ChannelManager final
 public:
 	friend Engine;
 
-	ChannelManager(model::Model&, model_DEPR_::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
+	ChannelManager(model::RealtimeModel&, model_DEPR_::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
 
 	/* hasInputRecordableChannels
 	Tells whether Mixer has one or more input-recordable channels. */
@@ -250,7 +250,7 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	model::Model&           m_model;
+	model::RealtimeModel&           m_model;
 	model_DEPR_::Model&     m_model_DEPR_;
 	KernelMidi&             m_kernelMidi;
 	MidiMapper<KernelMidi>& m_midiMapper;

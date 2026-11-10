@@ -56,7 +56,7 @@ class Wave;
 class ChannelsApi
 {
 public:
-	ChannelsApi(model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
+	ChannelsApi(model::RealtimeModel&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
 	    Recorder&, ActionManager&, PluginHost&, PluginManager&, rendering::Reactor&);
 
 	/* hasChannelsWithAudioData
@@ -106,7 +106,7 @@ public:
 	void sendMidi(ID, const MidiEvent&);
 
 private:
-	model::Model&       m_model;
+	model::RealtimeModel&       m_model;
 	KernelAudio&        m_kernelAudio;
 	Mixer&              m_mixer;
 	Sequencer&          m_sequencer;

@@ -38,7 +38,7 @@ namespace giada::m
 namespace
 {
 template <typename Edit>
-void editWave(model::Model& model, ID channelId, Scene scene, Edit edit)
+void editWave(model::RealtimeModel& model, ID channelId, Scene scene, Edit edit)
 {
 	model.writeDocumentAndAssets(model::SwapType::HARD,
 	    [channelId, scene, edit = std::move(edit)](model::Document& doc, model::Assets& assets)
@@ -59,7 +59,7 @@ void editWave(model::Model& model, ID channelId, Scene scene, Edit edit)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleEditorApi::SampleEditorApi(model::Model& m, KernelAudio& k, ChannelManager& cm,
+SampleEditorApi::SampleEditorApi(model::RealtimeModel& m, KernelAudio& k, ChannelManager& cm,
     rendering::Reactor& re, Sequencer& s)
 : m_model(m)
 , m_kernelAudio(k)

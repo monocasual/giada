@@ -41,7 +41,7 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginHost::PluginHost(model::Model& m)
+PluginHost::PluginHost(model::RealtimeModel& m)
 : m_model(m)
 {
 }

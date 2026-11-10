@@ -34,7 +34,7 @@
 
 namespace giada::m::model
 {
-using Model        = mcl::RealtimeModel<model::Document, model::Assets, model::Parameters>;
+using RealtimeModel = mcl::RealtimeModel<model::Document, model::Assets, model::Parameters>;
 using RealtimeLock = mcl::RealtimeModel<model::Document, model::Assets, model::Parameters>::RealtimeReadLock;
 using SwapType     = mcl::SwapType;
 } // namespace giada::m::model

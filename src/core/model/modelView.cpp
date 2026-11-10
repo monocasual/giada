@@ -16,7 +16,7 @@ ModelView::ModelView(
 
 /* -------------------------------------------------------------------------- */
 
-ModelView makeModelView(const Model& model)
+ModelView makeModelView(const RealtimeModel& model)
 {
 	/* Same order as RealtimeModel::read(): Document first, then Assets, so every
 	asset the Document refers to is already in the Assets we get. */

@@ -64,7 +64,7 @@ public:
 		int   maxLength;
 	};
 
-	Mixer(model_DEPR_::Model&, model::Model&);
+	Mixer(model_DEPR_::Model&, model::RealtimeModel&);
 
 	Peak getPeakOut() const;
 	Peak getPeakIn() const;
@@ -200,7 +200,7 @@ private:
 	void limit(mcl::AudioBuffer& outBuf) const;
 
 	model_DEPR_::Model& m_model_DEPR_;
-	model::Model&       m_model;
+	model::RealtimeModel&       m_model;
 
 	/* m_signalCbFired, m_endOfRecCbFired
 	Boolean guards to determine whether the callbacks have been fired or not,

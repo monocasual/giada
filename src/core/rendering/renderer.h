@@ -70,7 +70,7 @@ public:
 	Renderer(Sequencer&, Mixer&, PluginHost&, KernelMidi&);
 #endif
 
-	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::Model&) const;
+	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::RealtimeModel&) const;
 
 private:
 	/* advanceTracks

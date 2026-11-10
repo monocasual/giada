@@ -54,7 +54,7 @@ constexpr int RTAUDIO_MAX_PRIORITY = 99;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-KernelAudio::KernelAudio(model::Model& model)
+KernelAudio::KernelAudio(model::RealtimeModel& model)
 : onAudioCallback(nullptr)
 , onStreamAboutToOpen(nullptr)
 , onStreamOpened(nullptr)
