@@ -53,6 +53,12 @@ public:
 	SampleChannelView makeSampleChannelView(const Channel&, Scene) const;
 	SampleChannelView makeSampleChannelView(const ChannelView&, Scene) const;
 
+	/* findWave
+	Returns the wave used by a channel in the given scene, or nullptr if the wave
+	is missing. */
+
+	std::shared_ptr<const Wave> findWave(ID channelId, Scene scene) const;
+
 private:
 	friend ModelView makeModelView(const RealtimeModel::Snapshot&);
 	friend ModelView makeModelView(const RealtimeModel::RealtimeReadLock&);

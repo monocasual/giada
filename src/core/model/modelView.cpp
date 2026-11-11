@@ -32,6 +32,17 @@ SampleChannelView ModelView::makeSampleChannelView(const ChannelView& channelVie
 
 /* -------------------------------------------------------------------------- */
 
+std::shared_ptr<const Wave> ModelView::findWave(ID channelId, Scene scene) const
+{
+	const Channel& channel = m_document.tracks.getChannel(channelId);
+
+	assert(channel.sampleChannel);
+
+	return m_assets.waves.find(channel.sampleChannel->getWaveId(scene));
+}
+
+/* -------------------------------------------------------------------------- */
+
 ModelView makeModelView(const RealtimeModel::Snapshot& snapshot)
 {
 	return ModelView(snapshot.getDocument(), snapshot.getAssets(), snapshot.getParameters());

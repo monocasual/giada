@@ -178,7 +178,7 @@ ID ChannelManager::addChannel(ChannelType type, std::size_t trackIndex,
 
 	m_model.flush();
 
-	triggerOnChannelsAltered();
+		triggerOnChannelsAltered();
 
 	return channelId;
 }

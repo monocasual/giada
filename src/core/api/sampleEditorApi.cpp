@@ -28,6 +28,7 @@
 #include "src/core/channels/channelManager.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/mixer.h"
+#include "src/core/model/modelView.h"
 #include "src/core/rendering/reactor.h"
 #include "src/core/waveFactory.h"
 #include "src/core/waveFx.h"
@@ -38,7 +39,7 @@ namespace giada::m
 namespace
 {
 template <typename Edit>
-void editWave(model::RealtimeModel& model, ID channelId, Scene scene, Edit edit)
+void editWave_(model::RealtimeModel& model, ID channelId, Scene scene, Edit edit)
 {
 	model.writeDocumentAndAssets(model::SwapType::HARD,
 	    [channelId, scene, edit = std::move(edit)](model::Document& doc, model::Assets& assets)
@@ -127,23 +128,30 @@ ChannelStatus SampleEditorApi::getPreviewStatus()
 
 void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 {
-	/*
+	const Scene scene = m_sequencer.getCurrentScene();
+
 	copy(channelId, a, b);
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	wfx::cut(getWave(channelId), a, b);
+
+	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
+	{
+		wfx::cut(wave, a, b);
+	});
+
+	m_model.flush();
+
 	resetRange(channelId);
-	loadPreviewChannel(channelId); // Refresh preview channel properties
-	*/
+	loadPreviewChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleEditorApi::copy(ID channelId, Frame a, Frame b)
 {
-	const Scene           scene   = m_sequencer.getCurrentScene();
-	const model::Channel& channel = m_model.getCurrentDocument()->tracks.getChannel(channelId);
-	const ID              waveId  = channel.sampleChannel->getWaveId(scene);
-	const auto            wave    = m_model.getCurrentAssets()->waves.get(waveId);
+	const auto snapshot = m_model.getSnapshot();
+	const auto view     = model::makeModelView(snapshot);
+	const auto wave     = view.findWave(channelId, m_sequencer.getCurrentScene());
+
+	assert(wave != nullptr);
 
 	m_waveBuffer = std::make_unique<model::Wave>(*waveFactory::createFromWave(*wave, a, b));
 }
@@ -152,35 +160,24 @@ void SampleEditorApi::copy(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::paste(ID channelId, Frame a)
 {
-#if 0
 	if (m_waveBuffer == nullptr)
 	{
 		u::log::print("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
 		return;
 	}
 
-	/* Get the existing wave in channel. */
+	const Scene scene  = m_sequencer.getCurrentScene();
+	const auto* buffer = m_waveBuffer.get();
 
-	Wave& wave = getWave(channelId);
+	editWave_(m_model, channelId, scene, [buffer, a](model::Wave& wave)
+	{
+		wfx::paste(*buffer, wave, a);
+	});
 
-	/* Temporary disable wave reading in channel. From now on, the audio
-	    thread won't be reading any wave, so editing it is safe.  */
-
-	model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-
-	/* Paste copied data to destination wave. */
-
-	wfx::paste(*m_waveBuffer, wave, a);
-
-	/* Pass the old wave that contains the pasted data to channel. */
-
-	m_channelManager.getChannel(channelId).setWave(&wave, Scene{0}, 1.0f); // TODO - scenes
-
-	/* Just brutally restore begin/end points. */
+	m_model.flush();
 
 	resetRange(channelId);
-	loadPreviewChannel(channelId); // Refresh preview channel properties
-#endif
+	loadPreviewChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -189,7 +186,7 @@ void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 {
 	const Scene scene = m_sequencer.getCurrentScene();
 
-	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
 	{
 		wfx::silence(wave, a, b);
 	});
@@ -201,7 +198,7 @@ void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
 	const Scene scene = m_sequencer.getCurrentScene();
 
-	editWave(m_model, channelId, scene, [a, b, type](model::Wave& wave)
+	editWave_(m_model, channelId, scene, [a, b, type](model::Wave& wave)
 	{
 		wfx::fade(wave, a, b, type);
 	});
@@ -213,7 +210,7 @@ void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 {
 	const Scene scene = m_sequencer.getCurrentScene();
 
-	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
 	{
 		wfx::smooth(wave, a, b);
 	});
@@ -225,7 +222,7 @@ void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 {
 	const Scene scene = m_sequencer.getCurrentScene();
 
-	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
 	{
 		wfx::reverse(wave, a, b);
 	});
@@ -237,7 +234,7 @@ void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 {
 	const Scene scene = m_sequencer.getCurrentScene();
 
-	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
 	{
 		wfx::normalize(wave, a, b);
 	});
@@ -249,7 +246,7 @@ void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
 	const Scene scene = m_sequencer.getCurrentScene();
 
-	editWave(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
 	{
 		wfx::smooth(wave, a, b);
 	});
@@ -264,33 +261,43 @@ void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::shift(ID channelId, Frame offset)
 {
-#if 0
-	const Channel& ch       = m_channelManager.getChannel(channelId);
-	const Scene    scene    = m_sequencer.getCurrentScene();
-	const Frame    oldShift = ch.sampleChannel->getShift(scene);
+	const auto  snapshot = m_model.getSnapshot();
+	const auto  view     = model::makeModelView(snapshot);
+	const auto& channel  = view.getDocument().tracks.getChannel(channelId);
 
-	m::model_DEPR_::SharedLock lock = m_model_DEPR_.lockShared();
-	// m::wfx::shift(getWave(channelId), offset - oldShift);
-	//  Model has been swapped by DataLock constructor, needs to get Channel again
-	m_channelManager.getChannel(channelId).sampleChannel->setShift(offset, scene);
-#endif
+	assert(channel.sampleChannel);
+
+	const Scene scene    = view.getParameters().sequencer.getCurrentScene();
+	const Frame oldShift = channel.sampleChannel->getShift(scene);
+
+	editWave_(m_model, channelId, scene, [offset, oldShift](model::Wave& wave)
+	{
+		wfx::shift(wave, offset - oldShift);
+	});
+
+	m_model.writeDocument(model::SwapType::HARD, [channelId, scene, offset](model::Document& doc)
+	{
+		doc.tracks.getChannel(channelId).sampleChannel->setShift(offset, scene);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 ID SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 {
-	/*
-	const int sampleRate = m_kernelAudio.getSampleRate();
-	const int bufferSize = m_kernelAudio.getBufferSize();
-	Wave&     wave       = m_model_DEPR_.addWave(waveFactory::createFromWave_DEPR_(getWave(channelId), a, b));
+	const auto snapshot = m_model.getSnapshot();
+	const auto view     = model::makeModelView(snapshot);
 
-	const ID newChannelId = m_channelManager.addChannel(ChannelType::SAMPLE, 0, sampleRate, bufferSize); // TODO trackIndex
-	m_channelManager.loadSampleChannel(newChannelId, wave, m_sequencer.getCurrentScene());
+	const int  sampleRate   = view.getDocument().kernelAudio.samplerate;
+	const int  bufferSize   = view.getDocument().kernelAudio.buffersize;
+	const auto trackIndex   = view.getDocument().tracks.getByChannel(channelId).getIndex();
+	const auto originalWave = view.findWave(channelId, m_sequencer.getCurrentScene());
+	const auto clonedWave   = waveFactory::createFromWave(*originalWave, a, b);
+
+	const ID newChannelId = m_channelManager.addChannel(ChannelType::SAMPLE, trackIndex, sampleRate, bufferSize);
+	m_channelManager.loadSampleChannel(newChannelId, std::move(clonedWave), m_sequencer.getCurrentScene());
 
 	return newChannelId;
-	*/
-	return {};
 }
 
 /* -------------------------------------------------------------------------- */
