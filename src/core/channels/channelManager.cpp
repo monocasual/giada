@@ -50,6 +50,39 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 
 /* -------------------------------------------------------------------------- */
 
+void loadSampleChannel_(model::Channel& ch, model::Wave* w, Scene scene)
+{
+	const ID         waveId    = w != nullptr ? w->id : ID{};
+	const auto       waveName  = w != nullptr ? w->getBasename(/*ext=*/false) : "";
+	const FrameRange waveRange = w != nullptr ? FrameRange{0, w->getBuffer().countFrames()} : FrameRange{};
+	ch.loadSample({waveId, waveRange}, scene);
+	ch.setName(waveName, scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void freeSampleChannel_(model::Channel& ch, model::Assets& assets, Scene sceneToFree)
+{
+	assert(ch.sampleChannel);
+
+	std::vector<ID> wavesToRemove;
+	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
+	{
+		if (sceneToFree.isValid() && sceneToFree.getIndex() != sceneIndex)
+			continue;
+		const ID waveId = ch.sampleChannel->getWaveId(Scene{sceneIndex});
+		if (!waveId.isValid())
+			continue;
+		wavesToRemove.push_back(waveId);
+		loadSampleChannel_(ch, nullptr, Scene{sceneIndex});
+	}
+
+	for (const ID waveId : wavesToRemove)
+		assets.waves.remove(waveId);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void copyChannelToScene_(model::Channel& ch, model::Assets& assets,
     Scene srcScene, Scene dstScene)
 {
@@ -60,7 +93,8 @@ void copyChannelToScene_(model::Channel& ch, model::Assets& assets,
 		return;
 
 	/* Ideally we could just copy the Sample structure to the new scene, so that
-	the Sample::waveId points to the original, and now shared, Wave object.
+	the Sample::waveId points to the original Wave object. This way we would end
+	up with the same Wave object shared across two scenes.
 	This would be very confusing for the user, though, especially when destructively
 	editing the Wave (e.g. cut/copy/paste). It's better to just create a new copy
 	of Wave and set it to the new scene. */
@@ -80,11 +114,9 @@ void copyChannelToScene_(model::Channel& ch, model::Assets& assets,
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ChannelManager::ChannelManager(model::RealtimeModel& model, model_DEPR_::Model& model_depr_, MidiMapper<KernelMidi>& m, KernelMidi& km)
+ChannelManager::ChannelManager(model::RealtimeModel& model, model_DEPR_::Model& model_depr_)
 : m_model(model)
 , m_model_DEPR_(model_depr_)
-, m_kernelMidi(km)
-, m_midiMapper(m)
 {
 }
 
@@ -229,11 +261,11 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 void ChannelManager::loadSampleChannel(ID channelId, std::shared_ptr<model::Wave> newWave, Scene scene)
 {
 	m_model.writeDocumentAndAssets(model::SwapType::HARD,
-	    [this, channelId, newWave, scene](model::Document& doc, model::Assets& assets) mutable
+	    [channelId, newWave, scene](model::Document& doc, model::Assets& assets) mutable
 	{
 		model::Channel& channel   = doc.tracks.getChannel(channelId);
 		const ID        oldWaveId = channel.sampleChannel->getWaveId(scene);
-		loadSampleChannel(channel, newWave.get(), scene);
+		loadSampleChannel_(channel, newWave.get(), scene);
 		assets.waves.set(newWave->id, std::move(newWave));
 		assets.waves.remove(oldWaveId);
 	});
@@ -311,26 +343,9 @@ void ChannelManager::copyAllChannelsToScene(Scene srcScene, Scene dstScene)
 void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 {
 	m_model.writeDocumentAndAssets(model::SwapType::HARD,
-	    [this, channelId, sceneToFree](model::Document& doc, model::Assets& assets) mutable
+	    [channelId, sceneToFree](model::Document& doc, model::Assets& assets)
 	{
-		model::Channel& ch = doc.tracks.getChannel(channelId);
-
-		assert(ch.sampleChannel);
-
-		std::vector<ID> wavesToRemove;
-		for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
-		{
-			if (sceneToFree.isValid() && sceneToFree.getIndex() != sceneIndex)
-				continue;
-			const ID waveId = ch.sampleChannel->getWaveId(Scene{sceneIndex});
-			if (!waveId.isValid())
-				continue;
-			wavesToRemove.push_back(waveId);
-			loadSampleChannel(ch, nullptr, Scene{sceneIndex});
-		}
-
-		for (const ID waveId : wavesToRemove)
-			assets.waves.remove(waveId);
+		freeSampleChannel_(doc.tracks.getChannel(channelId), assets, sceneToFree);
 	});
 
 	m_model.flush();
@@ -342,13 +357,18 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 
 void ChannelManager::freeAllSampleChannels(Scene scene)
 {
-	// TODO - not super optmized, will swap model for each sample channel
-	m_model_DEPR_.get().tracks.forEachChannel([this, scene](Channel& ch)
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [scene](model::Document& doc, model::Assets& assets)
 	{
-		if (ch.sampleChannel)
-			freeSampleChannel(ch.id, scene);
-		return true;
+		doc.tracks.forEachChannel([&assets, scene](model::Channel& ch)
+		{
+			if (ch.sampleChannel)
+				freeSampleChannel_(ch, assets, scene);
+			return true;
+		});
 	});
+
+	m_model.flush();
 
 	triggerOnChannelsAltered();
 }
@@ -415,8 +435,10 @@ void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame reco
 
 void ChannelManager::setInputMonitor(ID channelId, bool value)
 {
-	m_model_DEPR_.get().tracks.getChannel(channelId).sampleChannel->inputMonitor = value;
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocument(model::SwapType::HARD, [channelId, value](model::Document& doc)
+	{
+		doc.tracks.getChannel(channelId).sampleChannel->inputMonitor = value;
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -675,15 +697,19 @@ void ChannelManager::setPreviewTracker(Frame f)
 
 void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 {
-	for (ID id : ids)
+	m_model.writeDocumentAndAssets(model::SwapType::HARD, [&ids](model::Document& doc, model::Assets& assets)
 	{
-		Channel& ch = m_model_DEPR_.get().tracks.getChannel(id);
-		ch.shared->readActions.store(true);
-		ch.shared->recStatus.store(ChannelStatus::PLAY);
-		if (ch.type == ChannelType::MIDI)
-			ch.shared->playStatus.store(ChannelStatus::PLAY);
-	}
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+		for (ID id : ids)
+		{
+			model::Channel& ch     = doc.tracks.getChannel(id);
+			auto            params = assets.channelsParameters.get(id);
+
+			params->setReadActions(true);
+			params->setRecStatus(ChannelStatus::PLAY);
+			if (ch.type == ChannelType::MIDI)
+				params->setPlayStatus(ChannelStatus::PLAY);
+		}
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -708,17 +734,6 @@ bool ChannelManager::hasSolos() const
 bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 {
 	return m_model.getCurrentDocument()->tracks.get(trackIndex).getNumChannels() == 1;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::loadSampleChannel(model::Channel& ch, model::Wave* w, Scene scene) const
-{
-	const ID         waveId    = w != nullptr ? w->id : ID{};
-	const auto       waveName  = w != nullptr ? w->getBasename(/*ext=*/false) : "";
-	const FrameRange waveRange = w != nullptr ? FrameRange{0, w->getBuffer().countFrames()} : FrameRange{};
-	ch.loadSample({waveId, waveRange}, scene);
-	ch.setName(waveName, scene);
 }
 
 /* -------------------------------------------------------------------------- */

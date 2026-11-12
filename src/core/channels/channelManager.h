@@ -55,16 +55,13 @@ class Channel;
 struct ChannelShared;
 class Wave;
 class Plugin;
-class MidiEvent;
 class Engine;
-class ActionManager;
-class KernelMidi;
 class ChannelManager final
 {
 public:
 	friend Engine;
 
-	ChannelManager(model::RealtimeModel&, model_DEPR_::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
+	ChannelManager(model::RealtimeModel&, model_DEPR_::Model&);
 
 	/* hasInputRecordableChannels
 	Tells whether Mixer has one or more input-recordable channels. */
@@ -216,8 +213,6 @@ public:
 	std::function<void(ID, ChannelStatus)> onChannelPlayStatusChanged;
 
 private:
-	void loadSampleChannel(model::Channel&, model::Wave*, Scene) const;
-
 	/* setupChannelCallbacks
 	Prepares the channel with the necessary callbacks. Call this whenever a
 	new channel is created. */
@@ -245,10 +240,8 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	model::RealtimeModel&   m_model;
-	model_DEPR_::Model&     m_model_DEPR_;
-	KernelMidi&             m_kernelMidi;
-	MidiMapper<KernelMidi>& m_midiMapper;
+	model::RealtimeModel& m_model;
+	model_DEPR_::Model&   m_model_DEPR_;
 };
 } // namespace giada::m
 
