@@ -27,8 +27,8 @@
 #include "src/core/channels/channelManager.h"
 #include "src/core/channels/channel.h"
 #include "src/core/channels/channelFactory.h"
-#include "src/core/midiEvent.h"
 #include "src/core/mixer.h"
+#include "src/core/model/modelView.h"
 #include "src/core/model/wave.h"
 #include "src/core/model_DEPR_/model.h"
 #include "src/core/rendering/midiOutput.h"
@@ -47,6 +47,33 @@ namespace
 {
 constexpr int Q_ACTION_PLAY   = 0;
 constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + channelId
+
+/* -------------------------------------------------------------------------- */
+
+void copyChannelToScene_(model::Channel& ch, model::Assets& assets,
+    Scene srcScene, Scene dstScene)
+{
+	if (ch.type != ChannelType::SAMPLE) // Currently relevant for Sample Channels only.
+		return;
+
+	if (!ch.sampleChannel->hasWave(srcScene) || ch.sampleChannel->hasWave(dstScene))
+		return;
+
+	/* Ideally we could just copy the Sample structure to the new scene, so that
+	the Sample::waveId points to the original, and now shared, Wave object.
+	This would be very confusing for the user, though, especially when destructively
+	editing the Wave (e.g. cut/copy/paste). It's better to just create a new copy
+	of Wave and set it to the new scene. */
+
+	Sample sample = ch.sampleChannel->getSample(srcScene);
+	auto   wave   = waveFactory::createFromWave(*assets.waves.get(sample.waveId));
+
+	sample.waveId = wave->id;
+	ch.sampleChannel->loadSample(sample, dstScene);
+	ch.setName(ch.getName(srcScene), dstScene);
+
+	assets.waves.set(wave->id, std::move(wave));
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -178,7 +205,7 @@ ID ChannelManager::addChannel(ChannelType type, std::size_t trackIndex,
 
 	m_model.flush();
 
-		triggerOnChannelsAltered();
+	triggerOnChannelsAltered();
 
 	return channelId;
 }
@@ -257,21 +284,26 @@ void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int
 
 void ChannelManager::copyChannelToScene(ID channelId, Scene srcScene, Scene dstScene)
 {
-	Channel& ch = m_model_DEPR_.get().tracks.getChannel(channelId);
-	copyChannelToScene(ch, srcScene, dstScene);
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [channelId, srcScene, dstScene](model::Document& doc, model::Assets& assets)
+	{
+		copyChannelToScene_(doc.tracks.getChannel(channelId), assets, srcScene, dstScene);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::copyAllChannelsToScene(Scene srcScene, Scene dstScene)
 {
-	m_model_DEPR_.get().tracks.forEachChannel([this, srcScene, dstScene](Channel& ch)
+	m_model.writeDocumentAndAssets(model::SwapType::HARD,
+	    [srcScene, dstScene](model::Document& doc, model::Assets& assets)
 	{
-		copyChannelToScene(ch, srcScene, dstScene);
-		return true;
+		doc.tracks.forEachChannel([&](model::Channel& channel)
+		{
+			copyChannelToScene_(channel, assets, srcScene, dstScene);
+			return true;
+		});
 	});
-	m_model_DEPR_.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -787,31 +819,6 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 
 	setupChannelPostRecording(ch, currentFrame);
 #endif
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::copyChannelToScene(Channel& ch, Scene srcScene, Scene dstScene)
-{
-	if (ch.type != ChannelType::SAMPLE) // Currently relevant for Sample Channels only.
-		return;
-
-	if (!ch.sampleChannel->hasWave(srcScene) || ch.sampleChannel->hasWave(dstScene))
-		return;
-
-	/* Ideally we could just copy the Sample structure to the new scene, so that
-	the Sample::wave pointer points to the original, and now shared, Wave object.
-	This would be very confusing for the user, though, especially when destructively
-	editing the Wave (e.g. cut/copy/paste). It's better to just create a new copy
-	of Wave and set it to the new scene. */
-
-	Sample sample = ch.sampleChannel->getSample(srcScene);
-	// TODO
-	// Wave&  wave   = m_model_DEPR_.addWave(waveFactory::createFromWave_DEPR_(*sample.wave));
-
-	// sample.wave = &wave;
-	// ch.loadSample(sample, dstScene);
-	// ch.setName(ch.getName(srcScene), dstScene);
 }
 
 /* -------------------------------------------------------------------------- */

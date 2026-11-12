@@ -41,6 +41,20 @@ std::shared_ptr<const Wave> ModelView::findWave(ID channelId, Scene scene) const
 	return m_assets.waves.find(channel.sampleChannel->getWaveId(scene));
 }
 
+std::shared_ptr<const Wave> ModelView::getWave(ID channelId, Scene scene) const
+{
+	auto w = findWave(channelId, scene);
+	assert(w != nullptr);
+	return w;
+}
+
+/* -------------------------------------------------------------------------- */
+
+const Channel& ModelView::getChannel(ID channelId) const
+{
+	return m_document.tracks.getChannel(channelId);
+}
+
 /* -------------------------------------------------------------------------- */
 
 ModelView makeModelView(const RealtimeModel::Snapshot& snapshot)

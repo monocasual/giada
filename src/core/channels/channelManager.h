@@ -243,14 +243,9 @@ private:
 
 	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame, Scene);
 
-	/* copyChannelToScene
-	Internal method that does not swap model. */
-
-	void copyChannelToScene(Channel&, Scene srcScene, Scene dstScene);
-
 	void triggerOnChannelsAltered();
 
-	model::RealtimeModel&           m_model;
+	model::RealtimeModel&   m_model;
 	model_DEPR_::Model&     m_model_DEPR_;
 	KernelMidi&             m_kernelMidi;
 	MidiMapper<KernelMidi>& m_midiMapper;

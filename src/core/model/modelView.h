@@ -59,6 +59,16 @@ public:
 
 	std::shared_ptr<const Wave> findWave(ID channelId, Scene scene) const;
 
+	/* getWave
+	Returns the wave used by a channel in the given scene. Asserts if not found.*/
+
+	std::shared_ptr<const Wave> getWave(ID channelId, Scene scene) const;
+
+	/* getChannel
+	Returns the channel object given its ID. Asserts if not found. */
+
+	const Channel& getChannel(ID channelId) const;
+
 private:
 	friend ModelView makeModelView(const RealtimeModel::Snapshot&);
 	friend ModelView makeModelView(const RealtimeModel::RealtimeReadLock&);
