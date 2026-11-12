@@ -85,6 +85,17 @@ void Mixer::disable()
 
 /* -------------------------------------------------------------------------- */
 
+void Mixer::prepareAudioInput(
+    const mcl::AudioBuffer&        hardwareInput,
+    const model::Mixer::Rendering& rendering,
+    float                          masterInputGain) const
+{
+	rendering.prepareInputBufferFrom(hardwareInput, masterInputGain);
+	m_model.getParameters().mixer.setPeakIn(makePeak(rendering.getInBuffer()));
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Mixer::allocRecBuffer(int frames)
 {
 	m_model_DEPR_.get().mixer.getRecBuffer().alloc(frames, G_MAX_IO_CHANS);

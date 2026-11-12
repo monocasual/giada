@@ -137,6 +137,16 @@ const mcl::AudioBuffer& Mixer::Rendering::getInBuffer() const { return m_inBuffe
 const mcl::AudioBuffer& Mixer::Rendering::getRecBuffer() const { return m_recBuffer; }
 
 /* -------------------------------------------------------------------------- */
+
+void Mixer::Rendering::prepareInputBufferFrom(const mcl::AudioBuffer& src, float gain) const
+{
+	m_inBuffer.clear();
+
+	if (src.isAllocd())
+		m_inBuffer.setAll(src, gain);
+}
+
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 

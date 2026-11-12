@@ -186,6 +186,9 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	const model::Channel&    masterInCh     = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
 	const model::Channel&    previewCh      = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
+	/* Prepare this block's audio input before rendering channels. */
+
+	m_mixer.prepareAudioInput(in, *assets.mixerRendering, masterInCh.volume);
 	// TODO
 	// m_mixer.render(in, document_RT, maxFramesToRec);
 

@@ -69,6 +69,8 @@ public:
 		const mcl::AudioBuffer& getInBuffer() const;
 		const mcl::AudioBuffer& getRecBuffer() const;
 
+		void prepareInputBufferFrom(const mcl::AudioBuffer& src, float gain) const;
+
 	private:
 		/* recBuffer
 		Working buffer for audio recording. */

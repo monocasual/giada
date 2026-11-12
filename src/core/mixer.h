@@ -98,6 +98,16 @@ public:
 	void enable();
 	void disable();
 
+	/* prepareAudioInput
+	Copies the audio input for the current block into the mixer's input buffer,
+	applies the Master Input channel volume, and updates the input peak.
+	Does not process plug-ins or record input. */
+
+	void prepareAudioInput(
+	    const mcl::AudioBuffer& input,
+	    const model::Mixer::Rendering&,
+	    float masterInputGain) const;
+
 	/* allocRecBuffer
 	Allocates new memory for the virtual input channel. */
 
@@ -199,8 +209,8 @@ private:
 
 	void limit(mcl::AudioBuffer& outBuf) const;
 
-	model_DEPR_::Model& m_model_DEPR_;
-	model::RealtimeModel&       m_model;
+	model_DEPR_::Model&   m_model_DEPR_;
+	model::RealtimeModel& m_model;
 
 	/* m_signalCbFired, m_endOfRecCbFired
 	Boolean guards to determine whether the callbacks have been fired or not,
