@@ -39,8 +39,10 @@ namespace giada::m
 namespace
 {
 template <typename Edit>
-void editWave_(model::RealtimeModel& model, ID channelId, Scene scene, Edit edit)
+void editWave_(model::RealtimeModel& model, ID channelId, Edit edit)
 {
+	const Scene scene = model.getParameters().sequencer.getCurrentScene();
+
 	model.writeDocumentAndAssets(model::SwapType::HARD,
 	    [channelId, scene, edit = std::move(edit)](model::Document& doc, model::Assets& assets)
 	{
@@ -128,11 +130,9 @@ ChannelStatus SampleEditorApi::getPreviewStatus()
 
 void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 {
-	const Scene scene = m_sequencer.getCurrentScene();
-
 	copy(channelId, a, b);
 
-	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, [a, b](model::Wave& wave)
 	{
 		wfx::cut(wave, a, b);
 	});
@@ -166,10 +166,9 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 		return;
 	}
 
-	const Scene scene  = m_sequencer.getCurrentScene();
 	const auto* buffer = m_waveBuffer.get();
 
-	editWave_(m_model, channelId, scene, [buffer, a](model::Wave& wave)
+	editWave_(m_model, channelId, [buffer, a](model::Wave& wave)
 	{
 		wfx::paste(*buffer, wave, a);
 	});
@@ -184,9 +183,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 {
-	const Scene scene = m_sequencer.getCurrentScene();
-
-	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, [a, b](model::Wave& wave)
 	{
 		wfx::silence(wave, a, b);
 	});
@@ -196,9 +193,7 @@ void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
-	const Scene scene = m_sequencer.getCurrentScene();
-
-	editWave_(m_model, channelId, scene, [a, b, type](model::Wave& wave)
+	editWave_(m_model, channelId, [a, b, type](model::Wave& wave)
 	{
 		wfx::fade(wave, a, b, type);
 	});
@@ -208,9 +203,7 @@ void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 
 void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 {
-	const Scene scene = m_sequencer.getCurrentScene();
-
-	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, [a, b](model::Wave& wave)
 	{
 		wfx::smooth(wave, a, b);
 	});
@@ -220,9 +213,7 @@ void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 {
-	const Scene scene = m_sequencer.getCurrentScene();
-
-	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, [a, b](model::Wave& wave)
 	{
 		wfx::reverse(wave, a, b);
 	});
@@ -232,9 +223,7 @@ void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 {
-	const Scene scene = m_sequencer.getCurrentScene();
-
-	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, [a, b](model::Wave& wave)
 	{
 		wfx::normalize(wave, a, b);
 	});
@@ -244,9 +233,7 @@ void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
-	const Scene scene = m_sequencer.getCurrentScene();
-
-	editWave_(m_model, channelId, scene, [a, b](model::Wave& wave)
+	editWave_(m_model, channelId, [a, b](model::Wave& wave)
 	{
 		wfx::smooth(wave, a, b);
 	});
@@ -270,7 +257,7 @@ void SampleEditorApi::shift(ID channelId, Frame offset)
 	const Scene scene    = view.getParameters().sequencer.getCurrentScene();
 	const Frame oldShift = channel.sampleChannel->getShift(scene);
 
-	editWave_(m_model, channelId, scene, [offset, oldShift](model::Wave& wave)
+	editWave_(m_model, channelId, [offset, oldShift](model::Wave& wave)
 	{
 		wfx::shift(wave, offset - oldShift);
 	});
@@ -316,12 +303,15 @@ void SampleEditorApi::resetRange(ID channelId)
 
 void SampleEditorApi::reload(ID channelId)
 {
-	/*
-	const int                sampleRate  = m_kernelAudio.getSampleRate();
-	const Resampler::Quality rsmpQuality = m_model_DEPR_.get().kernelAudio.rsmpQuality;
+	const auto snapshot = m_model.getSnapshot();
+	const auto view     = model::makeModelView(snapshot);
+
+	const int                sampleRate  = view.getDocument().kernelAudio.samplerate;
+	const Resampler::Quality rsmpQuality = view.getDocument().kernelAudio.rsmpQuality;
+	const Scene              scene       = view.getParameters().sequencer.getCurrentScene();
+	const std::string        wavePath    = view.findWave(channelId, scene)->getPath();
 	// TODO - error checking
-	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality, Scene{0});
+	m_channelManager.loadSampleChannel(channelId, wavePath, sampleRate, rsmpQuality, scene);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
-	*/
 }
 } // namespace giada::m
