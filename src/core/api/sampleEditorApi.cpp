@@ -62,13 +62,11 @@ void editWave_(model::RealtimeModel& model, ID channelId, Edit edit)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleEditorApi::SampleEditorApi(model::RealtimeModel& m, KernelAudio& k, ChannelManager& cm,
-    rendering::Reactor& re, Sequencer& s)
+SampleEditorApi::SampleEditorApi(model::RealtimeModel& m, ChannelManager& cm,
+    rendering::Reactor& re)
 : m_model(m)
-, m_kernelAudio(k)
 , m_channelManager(cm)
 , m_reactor(re)
-, m_sequencer(s)
 {
 }
 
@@ -76,7 +74,8 @@ SampleEditorApi::SampleEditorApi(model::RealtimeModel& m, KernelAudio& k, Channe
 
 void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 {
-	m_channelManager.loadWaveInPreviewChannel(sourceChannelId, m_sequencer.getCurrentScene());
+	const Scene scene = m_model.getParameters().sequencer.getCurrentScene();
+	m_channelManager.loadWaveInPreviewChannel(sourceChannelId, scene);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -108,7 +107,7 @@ void SampleEditorApi::togglePreview()
 	const bool  canQuantize      = false;
 	const Tick  currentTickQ     = Tick{0};
 	const float velocity         = G_MAX_VELOCITY_FLOAT;
-	const Scene scene            = m_sequencer.getCurrentScene();
+	const Scene scene            = m_model.getParameters().sequencer.getCurrentScene();
 	m_reactor.keyPress(PREVIEW_CHANNEL_ID, scene, velocity, canRecordActions, canQuantize, currentTickQ);
 }
 
@@ -149,7 +148,9 @@ void SampleEditorApi::copy(ID channelId, Frame a, Frame b)
 {
 	const auto snapshot = m_model.getSnapshot();
 	const auto view     = model::makeModelView(snapshot);
-	const auto wave     = view.findWave(channelId, m_sequencer.getCurrentScene());
+
+	const Scene scene = view.getParameters().sequencer.getCurrentScene();
+	const auto  wave  = view.findWave(channelId, scene);
 
 	assert(wave != nullptr);
 
@@ -275,14 +276,15 @@ ID SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 	const auto snapshot = m_model.getSnapshot();
 	const auto view     = model::makeModelView(snapshot);
 
-	const int  sampleRate   = view.getDocument().kernelAudio.samplerate;
-	const int  bufferSize   = view.getDocument().kernelAudio.buffersize;
-	const auto trackIndex   = view.getDocument().tracks.getByChannel(channelId).getIndex();
-	const auto originalWave = view.findWave(channelId, m_sequencer.getCurrentScene());
-	const auto clonedWave   = waveFactory::createFromWave(*originalWave, a, b);
+	const int   sampleRate   = view.getDocument().kernelAudio.samplerate;
+	const int   bufferSize   = view.getDocument().kernelAudio.buffersize;
+	const auto  trackIndex   = view.getDocument().tracks.getByChannel(channelId).getIndex();
+	const Scene scene        = view.getParameters().sequencer.getCurrentScene();
+	const auto  originalWave = view.findWave(channelId, scene);
+	const auto  clonedWave   = waveFactory::createFromWave(*originalWave, a, b);
 
 	const ID newChannelId = m_channelManager.addChannel(ChannelType::SAMPLE, trackIndex, sampleRate, bufferSize);
-	m_channelManager.loadSampleChannel(newChannelId, std::move(clonedWave), m_sequencer.getCurrentScene());
+	m_channelManager.loadSampleChannel(newChannelId, std::move(clonedWave), scene);
 
 	return newChannelId;
 }
@@ -291,12 +293,14 @@ ID SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::setRange(ID channelId, FrameRange range)
 {
-	m_channelManager.setRange(channelId, range, m_sequencer.getCurrentScene());
+	const Scene scene = m_model.getParameters().sequencer.getCurrentScene();
+	m_channelManager.setRange(channelId, range, scene);
 }
 
 void SampleEditorApi::resetRange(ID channelId)
 {
-	m_channelManager.resetRange(channelId, m_sequencer.getCurrentScene());
+	const Scene scene = m_model.getParameters().sequencer.getCurrentScene();
+	m_channelManager.resetRange(channelId, scene);
 }
 
 /* -------------------------------------------------------------------------- */

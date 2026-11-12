@@ -47,7 +47,7 @@ class Sequencer;
 class SampleEditorApi
 {
 public:
-	SampleEditorApi(model::RealtimeModel&, KernelAudio&, ChannelManager&, rendering::Reactor&, Sequencer&);
+	SampleEditorApi(model::RealtimeModel&, ChannelManager&, rendering::Reactor&);
 
 	void          loadPreviewChannel(ID sourceChannelId);
 	void          freePreviewChannel();
@@ -73,11 +73,9 @@ public:
 	void reload(ID channelId);
 
 private:
-	model::RealtimeModel&       m_model;
-	KernelAudio&        m_kernelAudio;
-	ChannelManager&     m_channelManager;
-	rendering::Reactor& m_reactor;
-	Sequencer&          m_sequencer;
+	model::RealtimeModel& m_model;
+	ChannelManager&       m_channelManager;
+	rendering::Reactor&   m_reactor;
 
 	/* waveBuffer
 	A Wave used during cut/copy/paste operations. */
