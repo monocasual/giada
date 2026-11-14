@@ -99,11 +99,7 @@ private:
 	    const model::ModelView&,
 	    const juce::AudioPlayHead::PositionInfo&,
 	    const model::ChannelView& masterOut,
-	    mcl::AudioBuffer&         hardwareOut,
-	    const mcl::AudioBuffer&   in,
-	    Scene,
-	    bool hasSolos,
-	    bool seqIsRunning) const;
+	    mcl::AudioBuffer&         hardwareOut) const;
 
 	void renderNormalChannel(
 	    const model::ChannelView&,

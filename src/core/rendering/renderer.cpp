@@ -178,7 +178,6 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	/* Then render Mixer, channels and finalize output. */
 
 	const Scene              scene         = params.sequencer.getCurrentScene();
-	const bool               hasSolos      = doc.mixer.hasSolos;
 	const model::Channel&    masterOutCh   = doc.tracks.getChannel(MASTER_OUT_CHANNEL_ID);
 	const model::ChannelView masterOutView = view.makeChannelView(masterOutCh);
 	const model::Channel&    previewCh     = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
@@ -191,8 +190,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	// Render tracks
 
-	renderTracks(view, pluginPosition, masterOutView, out, assets.mixerRendering->getInBuffer(),
-	    scene, hasSolos, doc.sequencer.isRunning());
+	renderTracks(view, pluginPosition, masterOutView, out);
 
 	renderMasterOut(masterOutView, assets, pluginPosition, out, doc.kernelAudio.deviceOut.channelsStart);
 
@@ -266,19 +264,21 @@ void Renderer::renderTracks(
     const model::ModelView&                  view,
     const juce::AudioPlayHead::PositionInfo& pluginPosition,
     const model::ChannelView&                masterOut,
-    mcl::AudioBuffer&                        hardwareOut,
-    const mcl::AudioBuffer&                  in,
-    Scene                                    scene,
-    bool                                     hasSolos,
-    bool                                     seqIsRunning) const
+    mcl::AudioBuffer&                        hardwareOut) const
 {
-	const model::Tracks&             tracks             = view.getDocument().tracks;
+	const model::Document&           doc                = view.getDocument();
 	const model::Assets&             assets             = view.getAssets();
+	const model::Parameters&         params             = view.getParameters();
 	const model::Channel::Rendering& masterOutRendering = masterOut.getRendering();
+
+	const mcl::AudioBuffer& in           = assets.mixerRendering->getInBuffer();
+	const bool              seqIsRunning = doc.sequencer.isRunning();
+	const bool              hasSolos     = doc.mixer.hasSolos;
+	const Scene             scene        = params.sequencer.getCurrentScene();
 
 	masterOutRendering.clearAudioBuffer(0);
 
-	for (const model::Track& track : tracks.getAll())
+	for (const model::Track& track : doc.tracks.getAll())
 	{
 		if (track.isInternal())
 			continue;
