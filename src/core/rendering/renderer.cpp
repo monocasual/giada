@@ -177,30 +177,17 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int                maxFramesToRec = doc.mixer.inputRecMode == InputRecMode::FREE ? doc.sequencer.getMaxFramesInLoop(sampleRate) : doc.sequencer.getFramesInLoop(sampleRate);
-	const Scene              scene          = params.sequencer.getCurrentScene();
-	const bool               hasSolos       = doc.mixer.hasSolos;
-	const bool               hasInput       = in.isAllocd();
-	const model::Channel&    masterOutCh    = doc.tracks.getChannel(MASTER_OUT_CHANNEL_ID);
-	const model::ChannelView masterOutView  = view.makeChannelView(masterOutCh);
-	const model::Channel&    masterInCh     = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
-	const model::Channel&    previewCh      = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const Scene              scene         = params.sequencer.getCurrentScene();
+	const bool               hasSolos      = doc.mixer.hasSolos;
+	const model::Channel&    masterOutCh   = doc.tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const model::ChannelView masterOutView = view.makeChannelView(masterOutCh);
+	const model::Channel&    previewCh     = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	/* Take care of the input side of audio: prepare it, check for recording
 	threshold, record it if required. */
 
-	const Peak inputPeak = m_mixer.prepareAudioInput(in, *assets.mixerRendering,
-	    masterInCh.volume);
-
-	if (hasInput)
-		m_mixer.checkInputSignal(inputPeak, doc.kernelAudio.recTriggerLevel,
-		    doc.sequencer.isActive());
-
-	if (hasInput && doc.sequencer.isActive() && doc.mixer.isRecordingInput)
-	{
-		m_mixer.recordAudioInput(*assets.mixerRendering, in.countFrames(),
-		    maxFramesToRec, doc.mixer.inputRecMode == InputRecMode::RIGID);
-	}
+	if (in.isAllocd())
+		m_mixer.handleAudioInput(in, view);
 
 	// Render tracks
 

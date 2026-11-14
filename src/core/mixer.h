@@ -27,9 +27,8 @@
 #ifndef G_MIXER_H
 #define G_MIXER_H
 
-#include "src/core/midiEvent.h"
+#include "src/core/model/modelView.h"
 #include "src/core/model/types.h"
-#include "src/core/ringBuffer.h"
 #include "src/core/sequencer.h"
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
@@ -93,32 +92,11 @@ public:
 	void enable();
 	void disable();
 
-	/* prepareAudioInput
-	Copies the audio input for the current block into the mixer's input buffer,
-	applies the Master Input channel volume, and updates the input peak.
-	Does not process plug-ins or record input. */
+	/* handleAudioInput
+	Prepares the input for the current audio block, checks the recording signal
+	threshold, and records the input when recording is active. */
 
-	Peak prepareAudioInput(
-	    const mcl::AudioBuffer& input,
-	    const model::Mixer::Rendering&,
-	    float masterInputGain) const;
-
-	/* checkInputSignal
-	Checks this block's input peak against the recording threshold and fires the
-	signal callback once the threshold is reached. */
-
-	void checkInputSignal(Peak peak, float threshold, bool sequencerIsActive) const;
-
-	/* recordAudioInput
-	Adds the prepared input block to the recording buffer and advances the input
-	tracker. Fires the end-of-recording callback when recording reaches its limit
-	and overdubbing is disabled. */
-
-	void recordAudioInput(
-	    const model::Mixer::Rendering& rendering,
-	    int                            inputFrames,
-	    int                            maxFrames,
-	    bool                           allowsOverdub) const;
+	void handleAudioInput(const mcl::AudioBuffer& input, const model::ModelView&) const;
 
 	/* allocRecBuffer
 	Allocates new memory for the virtual input channel. */
@@ -189,6 +167,33 @@ public:
 	std::function<void()> onEndOfRecording;
 
 private:
+	/* prepareAudioInput
+	Copies the audio input for the current block into the mixer's input buffer,
+	applies the Master Input channel volume, and updates the input peak.
+	Does not process plug-ins or record input. */
+
+	Peak prepareAudioInput(
+	    const mcl::AudioBuffer& input,
+	    const model::Mixer::Rendering&,
+	    float masterInputGain) const;
+
+	/* checkInputSignal
+	Checks this block's input peak against the recording threshold and fires the
+	signal callback once the threshold is reached. */
+
+	void checkInputSignal(Peak peak, float threshold, bool sequencerIsActive) const;
+
+	/* recordAudioInput
+	Adds the prepared input block to the recording buffer and advances the input
+	tracker. Fires the end-of-recording callback when recording reaches its limit
+	and overdubbing is disabled. */
+
+	void recordAudioInput(
+	    const model::Mixer::Rendering& rendering,
+	    int                            inputFrames,
+	    int                            maxFrames,
+	    bool                           allowsOverdub) const;
+
 	/* thresholdReached
 	Returns true if left or right channel's peak has reached a certain
 	threshold. */

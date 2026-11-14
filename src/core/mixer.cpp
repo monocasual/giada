@@ -85,6 +85,33 @@ void Mixer::disable()
 
 /* -------------------------------------------------------------------------- */
 
+void Mixer::handleAudioInput(const mcl::AudioBuffer& input, const model::ModelView& view) const
+{
+	assert(input.isAllocd());
+
+	const model::Document& doc       = view.getDocument();
+	const auto&            rendering = *view.getAssets().mixerRendering;
+	const model::Channel&  masterIn  = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
+
+	const Peak peak = prepareAudioInput(input, rendering, masterIn.volume);
+
+	const bool sequencerIsActive = doc.sequencer.isActive();
+	checkInputSignal(peak, doc.kernelAudio.recTriggerLevel, sequencerIsActive);
+
+	if (sequencerIsActive && doc.mixer.isRecordingInput)
+	{
+		const bool allowsOverdub = doc.mixer.inputRecMode == InputRecMode::RIGID;
+		const int  sampleRate    = doc.kernelAudio.samplerate;
+		const int  maxFrames     = doc.mixer.inputRecMode == InputRecMode::FREE
+		                               ? doc.sequencer.getMaxFramesInLoop(sampleRate)
+		                               : doc.sequencer.getFramesInLoop(sampleRate);
+
+		recordAudioInput(rendering, input.countFrames(), maxFrames, allowsOverdub);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 Peak Mixer::prepareAudioInput(
     const mcl::AudioBuffer&        hardwareInput,
     const model::Mixer::Rendering& rendering,
