@@ -81,11 +81,6 @@ public:
 	RecTriggerMode getRecTriggerMode() const;
 	InputRecMode   getInputRecMode() const;
 
-	/* render
-	Core rendering function. */
-
-	void render(const mcl::AudioBuffer& in, const model_DEPR_::Document&, int maxFramesToRec) const;
-
 	/* reset
 	Brings everything back to the initial state. Must be called only when mixer
 	is disabled.*/
@@ -103,10 +98,27 @@ public:
 	applies the Master Input channel volume, and updates the input peak.
 	Does not process plug-ins or record input. */
 
-	void prepareAudioInput(
+	Peak prepareAudioInput(
 	    const mcl::AudioBuffer& input,
 	    const model::Mixer::Rendering&,
 	    float masterInputGain) const;
+
+	/* checkInputSignal
+	Checks this block's input peak against the recording threshold and fires the
+	signal callback once the threshold is reached. */
+
+	void checkInputSignal(Peak peak, float threshold, bool sequencerIsActive) const;
+
+	/* recordAudioInput
+	Adds the prepared input block to the recording buffer and advances the input
+	tracker. Fires the end-of-recording callback when recording reaches its limit
+	and overdubbing is disabled. */
+
+	void recordAudioInput(
+	    const model::Mixer::Rendering& rendering,
+	    int                            inputFrames,
+	    int                            maxFrames,
+	    bool                           allowsOverdub) const;
 
 	/* allocRecBuffer
 	Allocates new memory for the virtual input channel. */
@@ -188,21 +200,6 @@ private:
 	account. */
 
 	Peak makePeak(const mcl::AudioBuffer& b) const;
-
-	/* lineInRec
-	Records from line in. 'maxFrames' determines how many frames to record
-	before the internal tracker loops over. The value changes whether you are
-	recording in RIGID or FREE mode. Returns the number of recorded frames. */
-
-	int lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf,
-	    Frame inputTracker, int maxFrames, float inVol, bool allowsOverdub) const;
-
-	/* processLineIn
-	Computes line in peaks and prepares the internal working buffer for input
-	recording. */
-
-	void processLineIn(const model_DEPR_::Mixer& mixer, const mcl::AudioBuffer& inBuf,
-	    float inVol, float recTriggerLevel, bool isSeqActive) const;
 
 	/* limit
 	Applies a very dumb hard limiter. */

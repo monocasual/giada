@@ -186,15 +186,21 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	const model::Channel&    masterInCh     = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
 	const model::Channel&    previewCh      = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	/* Prepare this block's audio input before rendering channels. */
+	/* Take care of the input side of audio: prepare it, check for recording
+	threshold, record it if required. */
 
-	m_mixer.prepareAudioInput(in, *assets.mixerRendering, masterInCh.volume);
-	// TODO
-	// m_mixer.render(in, document_RT, maxFramesToRec);
+	const Peak inputPeak = m_mixer.prepareAudioInput(in, *assets.mixerRendering,
+	    masterInCh.volume);
 
-	// TODO
-	// if (hasInput)
-	//	renderMasterIn(masterInCh, mixer.getInBuffer());
+	if (hasInput)
+		m_mixer.checkInputSignal(inputPeak, doc.kernelAudio.recTriggerLevel,
+		    doc.sequencer.isActive());
+
+	if (hasInput && doc.sequencer.isActive() && doc.mixer.isRecordingInput)
+	{
+		m_mixer.recordAudioInput(*assets.mixerRendering, in.countFrames(),
+		    maxFramesToRec, doc.mixer.inputRecMode == InputRecMode::RIGID);
+	}
 
 	// Render tracks
 

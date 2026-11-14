@@ -147,6 +147,16 @@ void Mixer::Rendering::prepareInputBufferFrom(const mcl::AudioBuffer& src, float
 }
 
 /* -------------------------------------------------------------------------- */
+
+void Mixer::Rendering::sumInputToRecBuffer(Frame offset) const
+{
+	assert(offset >= 0 && offset < m_recBuffer.countFrames());
+
+	m_recBuffer.sumAll(m_inBuffer, m_inBuffer.countFrames(), /*srcOffset=*/0,
+	    /*destOffset=*/offset);
+}
+
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 

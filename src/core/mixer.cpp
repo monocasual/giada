@@ -85,13 +85,54 @@ void Mixer::disable()
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::prepareAudioInput(
+Peak Mixer::prepareAudioInput(
     const mcl::AudioBuffer&        hardwareInput,
     const model::Mixer::Rendering& rendering,
     float                          masterInputGain) const
 {
 	rendering.prepareInputBufferFrom(hardwareInput, masterInputGain);
-	m_model.getParameters().mixer.setPeakIn(makePeak(rendering.getInBuffer()));
+
+	const Peak peak = makePeak(rendering.getInBuffer());
+	m_model.getParameters().mixer.setPeakIn(peak);
+	return peak;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::checkInputSignal(Peak peak, float threshold, bool sequencerIsActive) const
+{
+	if (sequencerIsActive && !m_signalCbFired && thresholdReached(peak, threshold))
+	{
+		m_signalCbFired = true;
+		onSignalTresholdReached();
+		G_DEBUG("Signal > threshold!", );
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::recordAudioInput(
+    const model::Mixer::Rendering& rendering,
+    int                            inputFrames,
+    int                            maxFrames,
+    bool                           allowsOverdub) const
+{
+	const auto& params  = m_model.getParameters().mixer;
+	const Frame tracker = params.getInputTracker();
+
+	assert(maxFrames > 0 && maxFrames <= rendering.getRecBuffer().countFrames());
+	assert(onEndOfRecording != nullptr);
+
+	if (tracker >= maxFrames && !allowsOverdub && !m_endOfRecCbFired)
+	{
+		onEndOfRecording();
+		m_endOfRecCbFired = true;
+		params.setInputTracker(0);
+		return;
+	}
+
+	rendering.sumInputToRecBuffer(tracker % maxFrames);
+	params.setInputTracker(tracker + inputFrames);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -147,42 +188,6 @@ void Mixer::setInputRecMode(InputRecMode m)
 	{
 		doc.mixer.inputRecMode = m;
 	});
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Mixer::render(const mcl::AudioBuffer& in, const model_DEPR_::Document& document_RT, int maxFramesToRec) const
-{
-	const model_DEPR_::Mixer&       mixer       = document_RT.mixer;
-	const model_DEPR_::Sequencer&   sequencer   = document_RT.sequencer;
-	const model_DEPR_::Tracks&      tracks      = document_RT.tracks;
-	const model_DEPR_::KernelAudio& kernelAudio = document_RT.kernelAudio;
-
-	const Channel& masterInCh = tracks.getChannel(MASTER_IN_CHANNEL_ID);
-
-	const bool  hasInput        = in.isAllocd();
-	const bool  seqIsActive     = sequencer.isActive();
-	const bool  shouldLineInRec = seqIsActive && mixer.isRecordingInput && hasInput;
-	const float recTriggerLevel = kernelAudio.recTriggerLevel;
-	const bool  allowsOverdub   = mixer.inputRecMode == InputRecMode::RIGID;
-
-	mixer.getInBuffer().clear();
-
-	/* Reset peak computation. */
-
-	mixer.a_setPeakOut({0.0f, 0.0f});
-	mixer.a_setPeakIn({0.0f, 0.0f});
-
-	if (hasInput)
-		processLineIn(mixer, in, masterInCh.volume, recTriggerLevel, seqIsActive);
-
-	if (shouldLineInRec)
-	{
-		const Frame newTrackerPos = lineInRec(in, mixer.getRecBuffer(),
-		    mixer.a_getInputTracker(), maxFramesToRec, masterInCh.volume,
-		    allowsOverdub);
-		mixer.a_setInputTracker(newTrackerPos);
-	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -284,54 +289,6 @@ Peak Mixer::makePeak(const mcl::AudioBuffer& b) const
 	if (!b.isAllocd())
 		return {0.0f, 0.0f};
 	return {b.getPeak(CH_LEFT), b.getPeak(b.countChannels() == 1 ? CH_LEFT : CH_RIGHT)};
-}
-
-/* -------------------------------------------------------------------------- */
-
-int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Frame inputTracker,
-    int maxFrames, float inVol, bool allowsOverdub) const
-{
-	assert(maxFrames > 0 && maxFrames <= recBuf.countFrames());
-	assert(onEndOfRecording != nullptr);
-
-	if (inputTracker >= maxFrames && !allowsOverdub && !m_endOfRecCbFired)
-	{
-		onEndOfRecording();
-		m_endOfRecCbFired = true;
-		return 0;
-	}
-
-	const int   framesToCopy = -1; // copy everything
-	const Frame srcOffset    = 0;
-	const Frame destOffset   = inputTracker % maxFrames; // loop over at maxFrames
-
-	recBuf.sumAll(inBuf, framesToCopy, srcOffset, destOffset, inVol);
-
-	return inputTracker + inBuf.countFrames();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Mixer::processLineIn(const model_DEPR_::Mixer& mixer, const mcl::AudioBuffer& inBuf,
-    float inVol, float recTriggerLevel, bool isSeqActive) const
-{
-	/* Prepare the working buffer for input stream, which will be processed
-	later on by the Master Input Channel with plug-ins. */
-
-	assert(inBuf.countChannels() <= mixer.getInBuffer().countChannels());
-
-	mixer.getInBuffer().setAll(inBuf, inVol);
-
-	const Peak peak = makePeak(mixer.getInBuffer());
-
-	if (thresholdReached(peak, recTriggerLevel) && !m_signalCbFired && isSeqActive)
-	{
-		m_signalCbFired = true;
-		onSignalTresholdReached();
-		G_DEBUG("Signal > threshold!", );
-	}
-
-	mixer.a_setPeakIn(peak);
 }
 
 /* -------------------------------------------------------------------------- */

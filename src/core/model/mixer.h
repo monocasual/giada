@@ -69,7 +69,18 @@ public:
 		const mcl::AudioBuffer& getInBuffer() const;
 		const mcl::AudioBuffer& getRecBuffer() const;
 
+		/* prepareInputBufferFrom
+		Prepares internal buffer for audio input, by filling it with 'src' and
+		a certain gain value. Typically 'src' is the hardware input. */
+
 		void prepareInputBufferFrom(const mcl::AudioBuffer& src, float gain) const;
+
+		/* sumInputToRecBuffer
+		Adds the prepared (with prepareInputBufferFrom()) input buffer to the
+		recording buffer, starting at offset. Existing recorded audio is
+		preserved and mixed with the new input. */
+
+		void sumInputToRecBuffer(Frame offset) const;
 
 	private:
 		/* recBuffer
