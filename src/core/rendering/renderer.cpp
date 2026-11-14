@@ -206,7 +206,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	/* Post processing. */
 
-	m_mixer.finalizeOutput(assets.mixerRendering->getInBuffer(), out, doc.mixer.inToOut,
+	m_mixer.finalizeOutput(masterInView.getRendering().getAudioBuffer(), out, doc.mixer.inToOut,
 	    doc.kernelAudio.limitOutput, masterOutCh.volume);
 
 	/* CPU load computation. */
