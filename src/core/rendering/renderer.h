@@ -111,11 +111,17 @@ private:
 	    bool seqIsRunning) const;
 
 	void renderMasterOut(
-	    const model::ChannelView& channelView,
-	    const model::Assets&      assets,
+	    const model::ChannelView&,
+	    const model::Assets&,
 	    const juce::AudioPlayHead::PositionInfo&,
 	    mcl::AudioBuffer& out,
 	    int               channelOffset) const;
+
+	void renderMasterIn(
+	    const model::ChannelView&,
+	    const model::Assets&,
+	    const juce::AudioPlayHead::PositionInfo&,
+	    const mcl::AudioBuffer& input) const;
 
 	void renderPreview(const model::SampleChannelView&, mcl::AudioBuffer& out) const;
 

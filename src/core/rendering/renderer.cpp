@@ -180,6 +180,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	const Scene              scene         = params.sequencer.getCurrentScene();
 	const model::Channel&    masterOutCh   = doc.tracks.getChannel(MASTER_OUT_CHANNEL_ID);
 	const model::ChannelView masterOutView = view.makeChannelView(masterOutCh);
+	const model::Channel&    masterInCh    = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
+	const model::ChannelView masterInView  = view.makeChannelView(masterInCh);
 	const model::Channel&    previewCh     = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	/* Take care of the input side of audio: prepare it, check for recording
@@ -187,7 +189,11 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 
 	m_mixer.handleAudioInput(in, view);
 
-	// Render tracks
+	/* Then render the Master input channel. */
+
+	renderMasterIn(masterInView, assets, pluginPosition, assets.mixerRendering->getInBuffer());
+
+	/* Render tracks. */
 
 	renderTracks(view, pluginPosition, masterOutView, out);
 
@@ -349,6 +355,22 @@ void Renderer::renderMasterOut(
 {
 	renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
 	mergeChannel(channelView, out, channelOffset);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::renderMasterIn(
+    const model::ChannelView&                channelView,
+    const model::Assets&                     assets,
+    const juce::AudioPlayHead::PositionInfo& pluginPosition,
+    const mcl::AudioBuffer&                  input) const
+{
+	const model::Channel::Rendering& rendering = channelView.getRendering();
+
+	rendering.clearAudioBuffer(0);
+	rendering.copyToAudioBufferFrom(input, input.countFrames(), 0, 0);
+
+	renderAudioPlugins(channelView, assets, pluginPosition, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
