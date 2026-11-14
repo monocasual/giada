@@ -32,7 +32,6 @@
 #include "src/core/weakAtomic.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/types.h"
-#include <atomic>
 
 namespace giada::m::model
 {
@@ -81,6 +80,9 @@ public:
 		preserved and mixed with the new input. */
 
 		void sumInputToRecBuffer(Frame offset) const;
+
+		void resizeRecBuffer(Frame) const;
+		void clearRecBuffer() const;
 
 	private:
 		/* recBuffer

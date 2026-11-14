@@ -26,7 +26,6 @@
 
 #include "src/core/mixer.h"
 #include "src/core/const.h"
-#include "src/core/model_DEPR_/model.h"
 #include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/log.h"
 
@@ -47,10 +46,9 @@ constexpr int CH_RIGHT = 1;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Mixer::Mixer(model_DEPR_::Model& m_DEPR_, model::RealtimeModel& m)
+Mixer::Mixer(model::RealtimeModel& m)
 : onSignalTresholdReached(nullptr)
 , onEndOfRecording(nullptr)
-, m_model_DEPR_(m_DEPR_)
 , m_model(m)
 , m_signalCbFired(false)
 , m_endOfRecCbFired(false)
@@ -87,13 +85,14 @@ void Mixer::disable()
 
 void Mixer::handleAudioInput(const mcl::AudioBuffer& input, const model::ModelView& view) const
 {
-	assert(input.isAllocd());
-
 	const model::Document& doc       = view.getDocument();
 	const auto&            rendering = *view.getAssets().mixerRendering;
 	const model::Channel&  masterIn  = doc.tracks.getChannel(MASTER_IN_CHANNEL_ID);
 
 	const Peak peak = prepareAudioInput(input, rendering, masterIn.volume);
+
+	if (!input.isAllocd())
+		return;
 
 	const bool sequencerIsActive = doc.sequencer.isActive();
 	checkInputSignal(peak, doc.kernelAudio.recTriggerLevel, sequencerIsActive);
@@ -164,19 +163,19 @@ void Mixer::recordAudioInput(
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::allocRecBuffer(int frames)
+void Mixer::allocRecBuffer(Frame size)
 {
-	m_model_DEPR_.get().mixer.getRecBuffer().alloc(frames, G_MAX_IO_CHANS);
+	m_model.getCurrentAssets()->mixerRendering->resizeRecBuffer(size);
 }
 
 void Mixer::clearRecBuffer()
 {
-	m_model_DEPR_.get().mixer.getRecBuffer().clear();
+	return m_model.getCurrentAssets()->mixerRendering->clearRecBuffer();
 }
 
-const mcl::AudioBuffer& Mixer::getRecBuffer()
+const mcl::AudioBuffer& Mixer::getRecBuffer() const
 {
-	return m_model_DEPR_.get().mixer.getRecBuffer();
+	return m_model.getCurrentAssets()->mixerRendering->getRecBuffer();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -266,39 +265,39 @@ Peak Mixer::getPeakIn() const { return m_model.getParameters().mixer.getPeakIn()
 
 /* -------------------------------------------------------------------------- */
 
-bool Mixer::getInToOut() const { return m_model_DEPR_.get().mixer.inToOut; }
+bool Mixer::getInToOut() const { return m_model.getCurrentDocument()->mixer.inToOut; }
 
 /* -------------------------------------------------------------------------- */
 
 Mixer::RecordInfo Mixer::getRecordInfo() const
 {
 	return {
-	    m_model_DEPR_.get().mixer.a_getInputTracker(),
-	    m_model_DEPR_.get().mixer.getRecBuffer().countFrames()};
+	    m_model.getParameters().mixer.getInputTracker(),
+	    m_model.getCurrentAssets()->mixerRendering->getRecBuffer().countFrames()};
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Mixer::isRecordingActions() const
 {
-	return m_model_DEPR_.get().mixer.isRecordingActions;
+	return m_model.getCurrentDocument()->mixer.isRecordingActions;
 }
 
 bool Mixer::isRecordingInput() const
 {
-	return m_model_DEPR_.get().mixer.isRecordingInput;
+	return m_model.getCurrentDocument()->mixer.isRecordingInput;
 }
 
 /* -------------------------------------------------------------------------- */
 
 RecTriggerMode Mixer::getRecTriggerMode() const
 {
-	return m_model_DEPR_.get().mixer.recTriggerMode;
+	return m_model.getCurrentDocument()->mixer.recTriggerMode;
 }
 
 InputRecMode Mixer::getInputRecMode() const
 {
-	return m_model_DEPR_.get().mixer.inputRecMode;
+	return m_model.getCurrentDocument()->mixer.inputRecMode;
 }
 
 /* -------------------------------------------------------------------------- */

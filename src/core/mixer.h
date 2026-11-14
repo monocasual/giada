@@ -40,13 +40,6 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m::model_DEPR_
-{
-class Mixer;
-class Channels;
-struct Document;
-} // namespace giada::m::model_DEPR_
-
 namespace giada::m
 {
 struct Action;
@@ -63,7 +56,7 @@ public:
 		int   maxLength;
 	};
 
-	Mixer(model_DEPR_::Model&, model::RealtimeModel&);
+	Mixer(model::RealtimeModel&);
 
 	Peak getPeakOut() const;
 	Peak getPeakIn() const;
@@ -101,7 +94,7 @@ public:
 	/* allocRecBuffer
 	Allocates new memory for the virtual input channel. */
 
-	void allocRecBuffer(int frames);
+	void allocRecBuffer(Frame size);
 
 	/* clearRecBuffer
 	Clears internal virtual channel. */
@@ -112,7 +105,7 @@ public:
 	Returns a read-only reference to the internal virtual channel. Use this to
 	merge data into channel after an input recording session. */
 
-	const mcl::AudioBuffer& getRecBuffer();
+	const mcl::AudioBuffer& getRecBuffer() const;
 
 	/* startInputRec, stopInputRec
 	Starts/stops input recording on frame 'from'. The latter returns the frame
@@ -211,7 +204,6 @@ private:
 
 	void limit(mcl::AudioBuffer& outBuf) const;
 
-	model_DEPR_::Model&   m_model_DEPR_;
 	model::RealtimeModel& m_model;
 
 	/* m_signalCbFired, m_endOfRecCbFired

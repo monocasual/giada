@@ -185,8 +185,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, model::
 	/* Take care of the input side of audio: prepare it, check for recording
 	threshold, record it if required. */
 
-	if (in.isAllocd())
-		m_mixer.handleAudioInput(in, view);
+	m_mixer.handleAudioInput(in, view);
 
 	// Render tracks
 
