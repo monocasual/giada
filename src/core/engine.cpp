@@ -329,21 +329,20 @@ void Engine::reset()
 
 void Engine::shutdown(Conf& conf)
 {
-	if (m_kernelAudio.isReady())
-	{
-		m_kernelAudio.shutdown();
-		u::log::print("[Engine::shutdown] KernelAudio closed\n");
-		m_mixer.disable();
-		u::log::print("[Engine::shutdown] Mixer closed\n");
-	}
+	m_renderGate.suspend();
+	m_mixer.disable();
+	m_kernelAudio.shutdown();
+
+	u::log::print("[Engine::shutdown] Audio and mixer closed\n");
 
 	m_model.store(conf);
-	m_model.flush();
 
 	/* It's safer and cleaner to free all plug-ins before closing the app. Some
 	would crash badly otherwise. */
 
 	m_pluginHost.freeAllPlugins();
+
+	m_model.flush();
 }
 
 /* -------------------------------------------------------------------------- */
