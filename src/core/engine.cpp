@@ -271,7 +271,8 @@ model::ModelView Engine::readModel() const
 
 void Engine::init(const Conf& conf)
 {
-	// TODO - m_model_DEPR_.load(conf);
+	m_model.load(conf);
+	m_model.flush();
 
 	const model::Document& document = m_model.read().getDocument();
 
@@ -336,7 +337,8 @@ void Engine::shutdown(Conf& conf)
 		u::log::print("[Engine::shutdown] Mixer closed\n");
 	}
 
-	// TODO - m_model_DEPR_.store(conf);
+	m_model.store(conf);
+	m_model.flush();
 
 	/* It's safer and cleaner to free all plug-ins before closing the app. Some
 	would crash badly otherwise. */

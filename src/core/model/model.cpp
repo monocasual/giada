@@ -63,6 +63,23 @@ void Model::reset()
 
 /* -------------------------------------------------------------------------- */
 
+void Model::load(const Conf& conf)
+{
+	m_realtimeModel.writeDocument(SwapType::HARD, [&conf](Document& document)
+	{
+		document.load(conf);
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::store(Conf& conf) const
+{
+	m_realtimeModel.getSnapshot().getDocument().store(conf);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Model::write(SwapType type, DocumentWriteCallback callback)
 {
 	m_realtimeModel.writeDocument(type, [this, callback = std::move(callback)](Document& document)

@@ -53,6 +53,16 @@ public:
 
 	void reset();
 
+	/* load
+	Loads data from a Conf object. */
+
+	void load(const Conf&);
+
+	/* store
+	Stores current data into a Conf object. */
+
+	void store(Conf&) const;
+
 	/* Queues an edit on the writer thread. Use the edit and references obtained
 	from it only during the callback. Do not call from the audio thread. */
 
