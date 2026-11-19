@@ -206,7 +206,7 @@ void Ui::refresh()
 	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
 
 	refreshSampleEditor();
-	// refreshSubWindow(WID_ACTION_EDITOR);
+	refreshActionEditor();
 }
 
 /* -------------------------------------------------------------------------- */
