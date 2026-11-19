@@ -47,6 +47,12 @@ public:
 
 	[[nodiscard]] ModelView read() const;
 
+	/* reset
+	Clears project data and assets while preserving audio/MIDI settings and
+	behavior preferences. */
+
+	void reset();
+
 	/* Queues an edit on the writer thread. Use the edit and references obtained
 	from it only during the callback. Do not call from the audio thread. */
 

@@ -43,6 +43,7 @@ list(APPEND SOURCES
 	src/tick.h
 	src/core/engine.cpp
 	src/core/engine.h
+	src/core/rendering/renderGate.h
 	src/core/rendering/renderer.cpp
 	src/core/rendering/renderer.h
 	src/core/rendering/reactor.cpp
@@ -204,6 +205,7 @@ list(APPEND SOURCES
 	src/core/model/modelEdit.h
 	src/core/model/modelView.cpp
 	src/core/model/modelView.h
+	src/core/model/parameters.cpp
 	src/core/model/parameters.h
 	src/core/model/sampleChannel.cpp
 	src/core/model/sampleChannel.h

@@ -53,6 +53,7 @@
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/recorder.h"
 #include "src/core/rendering/reactor.h"
+#include "src/core/rendering/renderGate.h"
 #include "src/core/rendering/renderer.h"
 #include "src/core/sequencer.h"
 #include "src/core/waveFactory.h"
@@ -99,8 +100,8 @@ public:
 	/* suspend, resume
 	Toggles Mixer's rendering operation. */
 
-	void suspend();
-	void resume();
+	bool suspend();
+	bool resume();
 
 #if G_DEBUG_MODE
 	void debug();
@@ -141,8 +142,9 @@ private:
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer m_jackSynchronizer;
 #endif
-	rendering::Renderer m_renderer;
-	rendering::Reactor  m_reactor;
+	rendering::Renderer   m_renderer;
+	rendering::Reactor    m_reactor;
+	rendering::RenderGate m_renderGate;
 
 	MainApi         m_mainApi;
 	ChannelsApi     m_channelsApi;

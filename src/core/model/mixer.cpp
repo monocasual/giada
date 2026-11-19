@@ -54,6 +54,18 @@ void updatePeak_(WeakAtomic<float>& peak, float value)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+void Mixer::Parameters::reset() const
+{
+	setActive(false);
+	setInputTracker(0);
+	setPeakOut({0, 0});
+	setPeakIn({0, 0});
+	getPeakOut(); // Drain values
+	getPeakIn();  // Drain values
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Mixer::Parameters::isActive() const
 {
 	return m_active.load() == true;

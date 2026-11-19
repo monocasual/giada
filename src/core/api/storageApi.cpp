@@ -112,10 +112,12 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 
 	progress(0.3f);
 
-	/* Then suspend Mixer, MIDI synch and reset the engine. */
+	/* Then suspend the engine, MIDI synch and reset the engine. */
+
+	if (!m_engine.suspend())
+		return {};
 
 	m_midiSynchronizer.stopSendClock();
-	m_mixer.disable();
 	m_engine.reset();
 
 	/* Load the patch into Model. */
@@ -141,7 +143,11 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 
 	/* Bring everything back online. */
 
-	m_mixer.enable();
+	m_model.flush(); // Finish queued model writes before rendering resumes.
+
+	if (!m_engine.resume())
+		return {};
+
 	// m_midiSynchronizer.startSendClock(m_model.get().sequencer.getBpm());
 
 	progress(1.0f);

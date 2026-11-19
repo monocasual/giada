@@ -35,6 +35,8 @@ namespace giada::m::model
 {
 struct Parameters
 {
+	void reset() const;
+
 	Sequencer::Parameters   sequencer;
 	Mixer::Parameters       mixer;
 	KernelAudio::Parameters kernelAudio;

@@ -30,6 +30,16 @@
 
 namespace giada::m::model
 {
+void Sequencer::Parameters::reset() const
+{
+	setCurrentFrame(0, 0, 0); // Also resets the current beat.
+	setCurrentScene(Scene{0});
+	setNextScene(Scene{0});
+	setSceneStatus(SceneStatus::IDLE);
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Sequencer::Parameters::isOnBar(int sampleRate, Tick ticksInBar, SeqStatus status, float bpm) const
 {
 	const Tick currentTick = getCurrentTick(sampleRate, bpm);

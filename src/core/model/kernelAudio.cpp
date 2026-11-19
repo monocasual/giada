@@ -28,6 +28,11 @@
 
 namespace giada::m::model
 {
+void KernelAudio::Parameters::reset() const
+{
+	setCpuLoad(0);
+}
+
 void KernelAudio::Parameters::setCpuLoad(double v) const
 {
 	m_cpuLoad.store(v);

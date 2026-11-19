@@ -41,6 +41,7 @@ public:
 	class Parameters
 	{
 	public:
+		void   reset() const;
 		void   setCpuLoad(double) const;
 		double getCpuLoad() const;
 

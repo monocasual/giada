@@ -41,6 +41,7 @@ public:
 	class Parameters
 	{
 	public:
+		void  reset() const;
 		bool  isActive() const;
 		Frame getInputTracker() const;
 		Peak  getPeakOut() const;

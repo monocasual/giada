@@ -36,6 +36,33 @@ ModelView Model::read() const
 
 /* -------------------------------------------------------------------------- */
 
+void Model::reset()
+{
+	m_realtimeModel.getParameters().reset();
+
+	m_realtimeModel.writeDocumentAndAssets(SwapType::HARD,
+	    [](Document& document, Assets& assets)
+	{
+		const auto kernelAudio = document.kernelAudio;
+		const auto kernelMidi  = document.kernelMidi;
+		const auto midiIn      = document.midiIn;
+		const auto behaviors   = document.behaviors;
+
+		document = {};
+
+		document.kernelAudio = kernelAudio;
+		document.kernelMidi  = kernelMidi;
+		document.midiIn      = midiIn;
+		document.behaviors   = behaviors;
+
+		assets = {};
+	});
+
+	m_realtimeModel.flush();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Model::write(SwapType type, DocumentWriteCallback callback)
 {
 	m_realtimeModel.writeDocument(type, [this, callback = std::move(callback)](Document& document)

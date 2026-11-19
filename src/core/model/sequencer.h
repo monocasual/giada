@@ -41,6 +41,7 @@ public:
 	class Parameters
 	{
 	public:
+		void        reset() const;
 		bool        isOnBar(int sampleRate, Tick ticksInBars, SeqStatus, float bpm) const;
 		bool        isOnBeat(int sampleRate, Tick ticksInBeat, float bpm) const;
 		bool        isOnFirstBeat() const;

@@ -64,6 +64,12 @@ Engine::Engine()
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
 	{
+		auto guard = m_renderGate.tryEnter();
+		if (!guard)
+		{
+			out.clear();
+			return 0;
+		}
 		m_renderer.render(out, in, m_model);
 		return 0;
 	};
@@ -265,7 +271,6 @@ model::ModelView Engine::readModel() const
 
 void Engine::init(const Conf& conf)
 {
-	// TODO - m_model_DEPR_.init();
 	// TODO - m_model_DEPR_.load(conf);
 
 	const model::Document& document = m_model.read().getDocument();
@@ -310,12 +315,13 @@ void Engine::reset()
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
 
-	// TODO - m_model_DEPR_.reset();
+	m_model.reset();
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(sampleRate), bufferSize);
 	m_channelManager.reset(sampleRate, bufferSize);
 	m_sequencer.reset(sampleRate);
 	m_actionManager.reset();
 	m_pluginHost.reset(bufferSize);
+	m_model.flush(); // Wait for async writes
 }
 
 /* -------------------------------------------------------------------------- */
@@ -340,14 +346,32 @@ void Engine::shutdown(Conf& conf)
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::suspend()
+bool Engine::suspend()
 {
+	m_renderGate.suspend(); // Wait for the audio renderer to stop
+	if (!m_kernelAudio.stopStream())
+	{
+		u::log::print("[Engine::suspend] Unable to stop audio stream\n");
+		return false;
+	}
+
 	m_mixer.disable();
+	return true;
 }
 
-void Engine::resume()
+bool Engine::resume()
 {
 	m_mixer.enable();
+
+	if (!m_kernelAudio.startStream())
+	{
+		m_mixer.disable();
+		u::log::print("[Engine::resume] Unable to start audio stream\n");
+		return false;
+	}
+
+	m_renderGate.resume(); // Allow rendering once the stream is running
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
