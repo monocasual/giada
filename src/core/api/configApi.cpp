@@ -113,7 +113,7 @@ void ConfigApi::audio_storeData(bool limitOutput, Resampler::Quality rsmpQuality
 	m_model.write(model::SwapType::NONE,
 	    [limitOutput, rsmpQuality, recTriggerLevel](model::DocumentEdit& edit)
 	{
-		model::Document& doc = edit.get();
+		model::Document& doc            = edit.get();
 		doc.kernelAudio.limitOutput     = limitOutput;
 		doc.kernelAudio.rsmpQuality     = rsmpQuality;
 		doc.kernelAudio.recTriggerLevel = recTriggerLevel;

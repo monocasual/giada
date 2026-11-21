@@ -138,7 +138,7 @@ void ChannelManager::reset(int sampleRate, Frame framesInBuffer)
 	{
 		model::Document& doc    = edit.getDocument();
 		model::Assets&   assets = edit.getAssets();
-		doc.tracks = {};
+		doc.tracks              = {};
 
 		model::Track& internalTrack = doc.tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
 		internalTrack.addChannel(std::move(masterInData.channel));
@@ -199,9 +199,9 @@ void ChannelManager::removeTrack(std::size_t trackIndex)
 
 	m_model.write(model::SwapType::HARD, [trackIndex](model::ModelEdit& edit)
 	{
-		model::Document& doc    = edit.getDocument();
-		model::Assets&   assets = edit.getAssets();
-		const ID groupId = doc.tracks.get(trackIndex).getGroupChannel().id;
+		model::Document& doc     = edit.getDocument();
+		model::Assets&   assets  = edit.getAssets();
+		const ID         groupId = doc.tracks.get(trackIndex).getGroupChannel().id;
 
 		doc.tracks.remove(trackIndex);
 		assets.channelsParameters.remove(groupId);
@@ -271,10 +271,10 @@ void ChannelManager::loadSampleChannel(ID channelId, std::shared_ptr<model::Wave
 	m_model.write(model::SwapType::HARD,
 	    [channelId, newWave, scene](model::ModelEdit& edit) mutable
 	{
-		model::Document& doc    = edit.getDocument();
-		model::Assets&   assets = edit.getAssets();
-		model::Channel& channel   = doc.tracks.getChannel(channelId);
-		const ID        oldWaveId = channel.sampleChannel->getWaveId(scene);
+		model::Document& doc       = edit.getDocument();
+		model::Assets&   assets    = edit.getAssets();
+		model::Channel&  channel   = doc.tracks.getChannel(channelId);
+		const ID         oldWaveId = channel.sampleChannel->getWaveId(scene);
 		loadSampleChannel_(channel, newWave.get(), scene);
 		assets.waves.set(newWave->id, std::move(newWave));
 		assets.waves.remove(oldWaveId);
@@ -292,8 +292,8 @@ void ChannelManager::cloneChannel(ID channelId, Scene scene, int sampleRate, int
 	m_model.write(model::SwapType::HARD,
 	    [channelId, scene, sampleRate, bufferSize](model::ModelEdit& edit)
 	{
-		model::Document& doc    = edit.getDocument();
-		model::Assets&   assets = edit.getAssets();
+		model::Document&         doc            = edit.getDocument();
+		model::Assets&           assets         = edit.getAssets();
 		const model::Channel&    oldChannel     = doc.tracks.getChannel(channelId);
 		const std::size_t        trackIndex     = doc.tracks.getByChannel(channelId).getIndex();
 		const Resampler::Quality rsmpQuality    = doc.kernelAudio.rsmpQuality;
@@ -400,7 +400,7 @@ void ChannelManager::moveChannel(ID channelId, std::size_t newTrackIndex, std::s
 	m_model.write(model::SwapType::HARD, [channelId, newTrackIndex, newPosition](model::DocumentEdit& edit)
 	{
 		model::Document& doc = edit.get();
-		model::Channel ch = doc.tracks.getChannel(channelId); // Make copy
+		model::Channel   ch  = doc.tracks.getChannel(channelId); // Make copy
 		doc.tracks.removeChannel(channelId);
 		doc.tracks.addChannel(std::move(ch), newTrackIndex, newPosition);
 	});
@@ -413,9 +413,9 @@ void ChannelManager::deleteChannel(ID channelId)
 	m_model.write(model::SwapType::HARD,
 	    [channelId](model::ModelEdit& edit) mutable
 	{
-		model::Document& doc    = edit.getDocument();
-		model::Assets&   assets = edit.getAssets();
-		const model::Channel& ch = doc.tracks.getChannel(channelId);
+		model::Document&      doc    = edit.getDocument();
+		model::Assets&        assets = edit.getAssets();
+		const model::Channel& ch     = doc.tracks.getChannel(channelId);
 
 		if (ch.type == ChannelType::SAMPLE)
 			for (const Sample& sample : ch.sampleChannel->getSamples())
@@ -482,9 +482,9 @@ void ChannelManager::setPitch(ID channelId, float value, Scene scene)
 {
 	m_model.write(model::SwapType::SOFT, [channelId, value, scene](model::DocumentEdit& edit)
 	{
-		model::Document& doc = edit.get();
-		model::Channel& ch      = doc.tracks.getChannel(channelId);
-		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+		model::Document& doc     = edit.get();
+		model::Channel&  ch      = doc.tracks.getChannel(channelId);
+		model::Channel&  preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 		assert(ch.sampleChannel);
 
@@ -519,9 +519,9 @@ void ChannelManager::setTime(ID channelId, float value, Scene scene)
 {
 	m_model.write(model::SwapType::SOFT, [channelId, value, scene](model::DocumentEdit& edit)
 	{
-		model::Document& doc = edit.get();
-		model::Channel& ch      = doc.tracks.getChannel(channelId);
-		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+		model::Document& doc     = edit.get();
+		model::Channel&  ch      = doc.tracks.getChannel(channelId);
+		model::Channel&  preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 		assert(ch.sampleChannel);
 
@@ -538,9 +538,9 @@ void ChannelManager::setPlaybackMode(ID channelId, PlaybackMode playbackMode, Sc
 {
 	m_model.write(model::SwapType::SOFT, [channelId, playbackMode, scene](model::DocumentEdit& edit)
 	{
-		model::Document& doc = edit.get();
-		model::Channel& ch      = doc.tracks.getChannel(channelId);
-		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+		model::Document& doc     = edit.get();
+		model::Channel&  ch      = doc.tracks.getChannel(channelId);
+		model::Channel&  preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 		assert(ch.sampleChannel);
 
@@ -566,10 +566,10 @@ void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 	m_model.write(model::SwapType::HARD,
 	    [channelId, range, scene](model::ModelEdit& edit) mutable
 	{
-		model::Document& doc    = edit.getDocument();
-		model::Assets&   assets = edit.getAssets();
-		model::Channel& ch      = doc.tracks.getChannel(channelId);
-		model::Channel& preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
+		model::Document& doc     = edit.getDocument();
+		model::Assets&   assets  = edit.getAssets();
+		model::Channel&  ch      = doc.tracks.getChannel(channelId);
+		model::Channel&  preview = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 		assert(ch.sampleChannel);
 		assert(ch.sampleChannel->hasWave(scene));
@@ -597,7 +597,7 @@ void ChannelManager::resetRange(ID channelId, Scene scene)
 	{
 		model::Document& doc    = edit.getDocument();
 		model::Assets&   assets = edit.getAssets();
-		model::Channel& ch = doc.tracks.getChannel(channelId);
+		model::Channel&  ch     = doc.tracks.getChannel(channelId);
 
 		assert(ch.sampleChannel);
 
@@ -695,7 +695,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId, Scene scene)
 {
 	m_model.write(model::SwapType::SOFT, [channelId, scene](model::DocumentEdit& edit)
 	{
-		model::Document& doc = edit.get();
+		model::Document&      doc       = edit.get();
 		model::Channel&       previewCh = doc.tracks.getChannel(PREVIEW_CHANNEL_ID);
 		const model::Channel& sourceCh  = doc.tracks.getChannel(channelId);
 
@@ -856,11 +856,11 @@ void ChannelManager::recordChannel(
 	m_model.write(model::SwapType::HARD,
 	    [this, channelId, wave, scene, currentFrame](model::ModelEdit& edit) mutable
 	{
-		model::Document& doc    = edit.getDocument();
-		model::Assets&   assets = edit.getAssets();
-		model::Channel& channel = doc.tracks.getChannel(channelId);
-		const auto      params  = assets.channelsParameters.get(channelId);
-		const ID        waveId  = wave->id;
+		model::Document& doc     = edit.getDocument();
+		model::Assets&   assets  = edit.getAssets();
+		model::Channel&  channel = doc.tracks.getChannel(channelId);
+		const auto       params  = assets.channelsParameters.get(channelId);
+		const ID         waveId  = wave->id;
 
 		loadSampleChannel_(channel, wave.get(), scene);
 		assets.waves.set(waveId, std::move(wave));
@@ -880,11 +880,11 @@ void ChannelManager::overdubChannel(
 	m_model.write(model::SwapType::HARD,
 	    [this, channelId, &mixerRecBuffer, currentFrame, scene](model::ModelEdit& edit)
 	{
-		model::Document& doc    = edit.getDocument();
-		model::Assets&   assets = edit.getAssets();
-		model::Channel& channel = doc.tracks.getChannel(channelId);
-		const ID        waveId  = channel.sampleChannel->getWaveId(scene);
-		const auto      params  = assets.channelsParameters.get(channelId);
+		model::Document& doc     = edit.getDocument();
+		model::Assets&   assets  = edit.getAssets();
+		model::Channel&  channel = doc.tracks.getChannel(channelId);
+		const ID         waveId  = channel.sampleChannel->getWaveId(scene);
+		const auto       params  = assets.channelsParameters.get(channelId);
 
 		/* Copy the wave before changing it: the audio thread may still be reading
 		the original. Publish the copy once the overdub is complete. Same
