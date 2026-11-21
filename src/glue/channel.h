@@ -27,15 +27,12 @@
 #ifndef G_GLUE_CHANNEL_H
 #define G_GLUE_CHANNEL_H
 
+#include "src/core/kernelAudio.h"
 #include "src/core/model/channel.h"
 #include "src/core/types.h"
-#include "src/core/weakAtomic.h"
-#include "src/deps/geompp/src/line.hpp"
 #include "src/deps/geompp/src/range.hpp"
 #include "src/scene.h"
 #include "src/types.h"
-
-#include <atomic>
 #include <optional>
 #include <string>
 #include <vector>
@@ -146,8 +143,13 @@ public:
 	std::vector<Channel> channels;
 };
 
-struct RoutingData
+class RoutingData
 {
+public:
+	RoutingData(const m::model::Channel&, const m::KernelAudio::Device& outDevice);
+
+	void update(const m::model::Channel&, const m::KernelAudio::Device& outDevice);
+
 	ID               id;
 	bool             isGroup;
 	float            volume;
@@ -165,9 +167,14 @@ described by m::model::Tracks. */
 std::vector<Track> getTracks(const m::model::Document&, const m::model::Assets&, Scene);
 
 /* getRoutingData
-Returns a single viewModel object for the 'Routing' window. */
+Returns a single data object for the channel's 'Routing' window. */
 
 RoutingData getRoutingData(ID channelId);
+
+/* updateRoutingData
+Updates an existing RoutingData object with model data. */
+
+void updateRoutingData(RoutingData&);
 
 /* addChannel
 Adds an empty new channel to the stack. */

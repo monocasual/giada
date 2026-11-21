@@ -30,6 +30,7 @@
 #include "src/glue/plugin.h"
 #include "src/glue/sampleEditor.h"
 #include "src/gui/const.h"
+#include "src/gui/dialogs/channelRouting.h"
 #include "src/gui/dialogs/pluginList.h"
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/dialogs/warnings.h"
@@ -259,6 +260,7 @@ void Ui::rebuildSampleEditorWindow()
 void Ui::update()
 {
 	updateMainWindow();
+	updateChannelRoutingWindow();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -266,6 +268,15 @@ void Ui::update()
 void Ui::updateMainWindow()
 {
 	mainWindow->update();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::updateChannelRoutingWindow()
+{
+	auto* w = static_cast<gdChannelRouting*>(getSubwindow(WID_CHANNEL_ROUTING));
+	if (w != nullptr)
+		w->update();
 }
 
 /* -------------------------------------------------------------------------- */

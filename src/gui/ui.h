@@ -99,6 +99,7 @@ public:
 
 	void update();
 	void updateMainWindow();
+	void updateChannelRoutingWindow();
 
 	/* [rebuild|refresh]SubWindow
 	Rebuilds or refreshes subwindow with ID 'wid' if it exists, i.e. if it's open. */

@@ -151,7 +151,7 @@ void openChannelMidiInputWindow(ID channelId)
 
 void openChannelRoutingWindow(ID channelId)
 {
-	g_ui->openSubWindow(new v::gdChannelRouting(channelId, g_ui->model));
+	g_ui->openSubWindow(new v::gdChannelRouting(c::channel::getRoutingData(channelId), g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */

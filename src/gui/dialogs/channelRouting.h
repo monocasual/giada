@@ -29,10 +29,10 @@
 
 #include "src/glue/channel.h"
 #include "src/gui/dialogs/window.h"
-#include "src/gui/model.h"
 
 namespace giada::v
 {
+struct Model;
 class geVolumeTool;
 class gePanTool;
 class geCheck;
@@ -42,14 +42,13 @@ class geLiquidScroll;
 class gdChannelRouting : public gdWindow
 {
 public:
-	gdChannelRouting(ID channelId, const Model&);
+	gdChannelRouting(const c::channel::RoutingData&, const Model&);
 	~gdChannelRouting();
 
-	void rebuild();
+	void update();
 
 private:
-	ID                      m_channelId;
-	c::channel::RoutingData m_data;
+	std::optional<c::channel::RoutingData> m_data;
 
 	geVolumeTool*   m_volume;
 	gePanTool*      m_pan;

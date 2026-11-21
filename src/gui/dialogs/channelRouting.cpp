@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/channelRouting.h"
+#include "src/glue/channel.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/choice.h"
@@ -35,6 +36,7 @@
 #include "src/gui/elems/panTool.h"
 #include "src/gui/elems/volumeTool.h"
 #include "src/gui/graphics.h"
+#include "src/gui/model.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
 #include <fmt/core.h>
@@ -76,10 +78,9 @@ private:
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
+gdChannelRouting::gdChannelRouting(const c::channel::RoutingData& data, const Model& model)
 : gdWindow(u::gui::getCenterWinBounds(model.channelRoutingBounds), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
-, m_channelId(channelId)
-, m_data(c::channel::getRoutingData(channelId))
+, m_data(data)
 {
 	constexpr int LABEL_WIDTH = 70;
 
@@ -87,9 +88,9 @@ gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
 	{
 		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 		{
-			m_volume       = new geVolumeTool(m_data.id, m_data.volume, LABEL_WIDTH);
-			m_pan          = new gePanTool(m_data.id, m_data.pan, LABEL_WIDTH);
-			m_sendToMaster = new geCheck(g_ui->getI18Text(m_data.isGroup ? LangMap::CHANNELROUTING_SENDTOMASTEROUT : LangMap::CHANNELROUTING_SENDTOPARENTGROUP));
+			m_volume       = new geVolumeTool(m_data->id, m_data->volume, LABEL_WIDTH);
+			m_pan          = new gePanTool(m_data->id, m_data->pan, LABEL_WIDTH);
+			m_sendToMaster = new geCheck(g_ui->getI18Text(m_data->isGroup ? LangMap::CHANNELROUTING_SENDTOMASTEROUT : LangMap::CHANNELROUTING_SENDTOPARENTGROUP));
 			m_addNewOutput = new geChoice(g_ui->getI18Text(LangMap::CHANNELROUTING_ADDNEWOUTPUT));
 			m_outputs      = new geLiquidScroll(Direction::VERTICAL, Fl_Scroll::VERTICAL);
 			body->addWidget(m_volume, G_GUI_UNIT);
@@ -116,12 +117,12 @@ gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	m_sendToMaster->onChange = [id = m_data.id](bool value)
+	m_sendToMaster->onChange = [id = m_data->id](bool value)
 	{
 		c::channel::setSendToMaster(id, value);
 	};
 
-	m_addNewOutput->onChange = [channelId = m_data.id](int id)
+	m_addNewOutput->onChange = [channelId = m_data->id](int id)
 	{
 		c::channel::addExtraOutput(channelId, id - 1);
 	};
@@ -129,8 +130,7 @@ gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
 	m_close->onClick = [this]()
 	{ do_callback(); };
 
-	rebuild();
-
+	update();
 	size_range(260, 176);
 	set_modal();
 	show();
@@ -145,12 +145,12 @@ gdChannelRouting::~gdChannelRouting()
 
 /* -------------------------------------------------------------------------- */
 
-void gdChannelRouting::rebuild()
+void gdChannelRouting::update()
 {
-	m_data = c::channel::getRoutingData(m_channelId);
+	c::channel::updateRoutingData(*m_data);
 
-	m_sendToMaster->value(m_data.sendToMaster);
-	m_data.extraOutputs.size() > 0 ? m_sendToMaster->activate() : m_sendToMaster->deactivate();
+	m_sendToMaster->value(m_data->sendToMaster);
+	m_data->extraOutputs.size() > 0 ? m_sendToMaster->activate() : m_sendToMaster->deactivate();
 
 	const auto makeOutputName = [](const std::string& deviceName, int offset, int maxNumChannels)
 	{
@@ -160,13 +160,13 @@ void gdChannelRouting::rebuild()
 
 	m_addNewOutput->clear();
 	m_addNewOutput->addItem(g_ui->getI18Text(LangMap::CHANNELROUTING_OUTPUT_CHOOSE), {});
-	for (int offset = 0; offset < m_data.outputMaxNumChannels; offset += 2)
-		m_addNewOutput->addItem(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), offset + 1);
+	for (int offset = 0; offset < m_data->outputMaxNumChannels; offset += 2)
+		m_addNewOutput->addItem(makeOutputName(m_data->outputDeviceName, offset, m_data->outputMaxNumChannels), offset + 1);
 	m_addNewOutput->showFirstItem();
 
 	m_outputs->removeAllChildren();
 	std::size_t i = 0;
-	for (const int offset : m_data.extraOutputs)
-		m_outputs->addWidget(new geOutput(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), m_data.id, i++));
+	for (const int offset : m_data->extraOutputs)
+		m_outputs->addWidget(new geOutput(makeOutputName(m_data->outputDeviceName, offset, m_data->outputMaxNumChannels), m_data->id, i++));
 }
 } // namespace giada::v

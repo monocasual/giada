@@ -236,6 +236,36 @@ void Track::update(const m::model::Track& track, Scene scene)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+RoutingData::RoutingData(const m::model::Channel& ch, const m::KernelAudio::Device& outDevice)
+: id(ch.id)
+, isGroup(ch.type == ChannelType::GROUP)
+, volume(ch.volume)
+, pan(ch.pan.asFloat())
+, sendToMaster(ch.sendToMaster)
+, outputMaxNumChannels(outDevice.maxOutputChannels)
+, extraOutputs(ch.extraOutputs)
+, outputDeviceName(outDevice.name)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+void RoutingData::update(const m::model::Channel& ch, const m::KernelAudio::Device& outDevice)
+{
+	assert(id == ch.id);
+
+	volume               = ch.volume;
+	pan                  = ch.pan.asFloat();
+	sendToMaster         = ch.sendToMaster;
+	outputMaxNumChannels = outDevice.maxOutputChannels;
+	extraOutputs         = ch.extraOutputs;
+	outputDeviceName     = outDevice.name;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 std::vector<Track> getTracks(
     const m::model::Document& doc,
     const m::model::Assets&   assets,
@@ -252,21 +282,21 @@ std::vector<Track> getTracks(
 
 RoutingData getRoutingData(ID channelId)
 {
-#if 0
-	const m::Channel&             channel   = g_engine->getChannelsApi().get(channelId);
-	const m::KernelAudio::Device& outDevice = g_engine->getConfigApi().audio_getCurrentOutDevice();
+	const auto view = g_engine->readModel();
 
-	return {
-	    .id                   = channelId,
-	    .isGroup              = channel.type == ChannelType::GROUP,
-	    .volume               = channel.volume,
-	    .pan                  = channel.pan.asFloat(),
-	    .sendToMaster         = channel.sendToMaster,
-	    .outputMaxNumChannels = outDevice.maxOutputChannels,
-	    .extraOutputs         = channel.extraOutputs,
-	    .outputDeviceName     = outDevice.name};
-#endif
-	return {};
+	return RoutingData(
+	    view.getDocument().tracks.getChannel(channelId),
+	    g_engine->getConfigApi().audio_getCurrentOutDevice());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void updateRoutingData(RoutingData& data)
+{
+	const auto view = g_engine->readModel();
+
+	data.update(view.getDocument().tracks.getChannel(data.id),
+	    g_engine->getConfigApi().audio_getCurrentOutDevice());
 }
 
 /* -------------------------------------------------------------------------- */

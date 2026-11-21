@@ -672,7 +672,7 @@ void ChannelManager::addExtraOutput(ID channelId, int offset)
 	/* 'offset' can be only multiple of 2, that is stereo pair. */
 	assert(offset >= 0 && offset % 2 == 0);
 
-	m_model.write(model::SwapType::HARD, [channelId, offset](model::DocumentEdit& edit)
+	m_model.write(model::SwapType::SOFT, [channelId, offset](model::DocumentEdit& edit)
 	{
 		edit.get().tracks.getChannel(channelId).extraOutputs.push_back(offset);
 	});
@@ -680,7 +680,7 @@ void ChannelManager::addExtraOutput(ID channelId, int offset)
 
 void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 {
-	m_model.write(model::SwapType::HARD, [channelId, i](model::DocumentEdit& edit)
+	m_model.write(model::SwapType::SOFT, [channelId, i](model::DocumentEdit& edit)
 	{
 		model::Channel& ch = edit.get().tracks.getChannel(channelId);
 		utils::container::removeAt(ch.extraOutputs, i);
